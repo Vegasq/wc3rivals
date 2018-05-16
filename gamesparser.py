@@ -14,6 +14,11 @@ from log import LOG
 
 
 class Player(dict):
+    """
+    Player representation.
+    Inherit dict since we need some base class that can be serialized by
+    pymongo.
+    """
     @property
     def username(self):
         return self["username"]
@@ -53,23 +58,40 @@ class LastSavedGameSelector(object):
     Return last known game.
 
     Usage:
-    >>> game_obj = LastSavedGameSelector("Lordaeron").get()
+    >>> game_obj = LastSavedGameSelector("Lordaeron").last()
     """
 
     def __init__(self, gateway: str):
+        """
+        :param gateway: Battle.Net classic Realm
+        """
         self.db = DB(gateway)
 
     def last(self) -> int:
+        # Return game with biggest game_id
         return self.db.collection.find_one(
             sort=[("game_id", pymongo.DESCENDING)])
 
     def first(self) -> int:
+        # Return game with smallest game_id
         return self.db.collection.find_one(
             sort=[("game_id", pymongo.ASCENDING)])
 
 
 class GamePageParser(object):
+    """
+    GamePageParser - downloads game page from Battle.Net site,
+    parses it and saves data in DB.
+
+    Smart enough to ignore duplicates.
+    """
+
     def __init__(self, gateway: str, game_id: int, db: DB) -> None:
+        """
+        :param gateway: Battle.Net classic Realm
+        :param game_id: Uniq BNet game ID
+        :param db: Instance of DB
+        """
         LOG.info(f"Parse game {gateway}#{game_id}.")
         self.gateway = gateway
         self.game_id = game_id
@@ -83,6 +105,14 @@ class GamePageParser(object):
         self.stats = None
 
     def _parse_players(self) -> List[Player]:
+        """
+        Collect players information like:
+        Player(
+            username,
+            race,
+            result
+        )
+        """
         ranking_row_left = self.soup.find_all("td", class_="rankingRowLeft")
 
         players = []
@@ -99,6 +129,14 @@ class GamePageParser(object):
         return players
 
     def _parse_levels(self) -> List[Dict]:
+        """
+        Collect players information like:
+        Player(
+            level,
+            xp,
+            xp_diff
+        )
+        """
         levels = []
         levels_row = self.soup.find_all(class_="rankingRow")
         for i in range(0, len(levels_row), 4):
@@ -123,6 +161,15 @@ class GamePageParser(object):
         return levels
 
     def _parse_stats(self) -> Dict:
+        """
+        Collect game information like:
+        {
+            map,
+            date,
+            type,
+            length
+        }
+        """
         player_stats_data_left = self.soup.find_all(
             "td", class_="playerStatsDataLeft")
 
@@ -164,6 +211,11 @@ class GamePageParser(object):
         }
 
     def fetch(self) -> bool:
+        """
+        Parse game page.
+
+        :return: True if success and False if other case.
+        """
         if self.db.get_by_id(self.game_id):
             LOG.info(f"Game {self.gateway}#{self.game_id} exists.")
             return
@@ -196,7 +248,24 @@ class GamePageParser(object):
 
 
 class GPManager(object):
+    """
+    GameParser Manager:
+    - Detect where to start parsing based on cli params.
+    - Calls GamePageParser.fetch() for each entry.
+    - Quits once errors_pool overflows. It works this way cause sometimes
+      Bnet skips game IDs. And once in a while we can see game that not exists,
+      when games around it are fine. So far I have seen only single skipped ID
+      but in case of multiple skipped IDs we wait for 100 unknown games before
+      assume we at the end.
+    """
+
     def __init__(self, gateway: str, new: bool=True, init: int=0):
+        """
+        :param gateway: Battle.Net classic Realm
+        :param new: If True increase GameID each iteration.
+                    If False decrease GameID each iteration.
+        :param init: Game ID for start position
+        """
         self.gateway = gateway
         self.new = new
         self.game_id = init
@@ -204,7 +273,10 @@ class GPManager(object):
 
         self.db = DB(gateway)
 
-    def start(self):
+    def start(self) -> None:
+        """
+        Start parsing Battle.Net games one-by-one.
+        """
         if self.game_id == -1:
             lsgs = LastSavedGameSelector(self.gateway)
             try:

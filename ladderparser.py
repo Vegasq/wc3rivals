@@ -15,12 +15,23 @@ from log import LOG
 
 
 class UserNotFound(Exception):
+    """In case of unavailable User profile"""
     pass
 
 
-class Profile(object):
+class ProfileHistoryParser(object):
+    """
+    ProfileHistoryParser - collect information about games played
+    by specified user.
+    """
+
     def __init__(self, args: argparse.Namespace, username: str,
                  gateway: str) -> None:
+        """
+        :param args: Settings
+        :param username: Battle.Net username
+        :param gateway: Battle.Net classic Realm
+        """
         self.args = args
         self.username = username
         self.gateway = gateway
@@ -30,7 +41,7 @@ class Profile(object):
         self.database = DB(self.gateway)
 
     def _get_history_page_count(self) -> int:
-        """Returns count of pages with games"""
+        """Returns total count of pages with games"""
         page = 1
         url = (f"http://classic.battle.net/war3/ladder/"
                f"w3xp-player-logged-games.aspx"
@@ -55,6 +66,7 @@ class Profile(object):
         return last_page
 
     def _parse_game_tr(self, game: BSTag) -> None:
+        """Extract GameID and send it to GamePageParser"""
         game_uri = game.find(class_="rankingRow").find("a").attrs["href"]
         parsed_url = urlparse(game_uri)
         parsed_query = parse_qs(parsed_url.query)
@@ -65,6 +77,11 @@ class Profile(object):
                        db=self.database).fetch()
 
     def fetch_page(self, page: int) -> None:
+        """
+        Read history page, and parse games one-by-one.
+
+        :param page: page number to request.
+        """
         url = (f"http://classic.battle.net/war3/ladder/"
                f"w3xp-player-logged-games.aspx"
                f"?Gateway={self.gateway}&"
@@ -99,6 +116,12 @@ class Profile(object):
                 return
 
     def check_game_in_db(self, game_id: int) -> bool:
+        """
+        Check if GameID already exists in database.
+
+        :param game_id: Uniq Battle.Net game ID.
+        :return: True if game already in DB, False if not.
+        """
         data = self.database.get_by_id(game_id)
         LOG.debug("check_game_in_db", data)
         if data:
@@ -106,6 +129,9 @@ class Profile(object):
         return False
 
     def _save(self) -> None:
+        """
+        Save all games from buffer to DB
+        """
         for g in self.game_matches:
             LOG.debug("save game ", g)
             if not self.check_game_in_db(g.id):
@@ -133,6 +159,10 @@ class Profile(object):
 
 class Ladder(object):
     def __init__(self, args: argparse.Namespace, gateway: str) -> None:
+        """
+        :param args: Settings
+        :param gateway: Battle.Net classic Realm
+        """
         self.gateway = gateway
         self.player_counter = 0
         self.args = args
@@ -170,7 +200,7 @@ class Ladder(object):
 
             parsed_url = urlparse(n.attrs["href"])
             parsed_query = parse_qs(parsed_url.query)
-            p = Profile(
+            p = ProfileHistoryParser(
                 self.args,
                 username=urllib.parse.quote(parsed_query["PlayerName"][0]),
                 gateway=self.gateway)
