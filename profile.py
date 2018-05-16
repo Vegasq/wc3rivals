@@ -33,17 +33,17 @@ class UserNotFound(Exception):
 
 
 class DB(object):
-    def __init__(self, gateway: str):
+    def __init__(self, gateway: str) -> None:
         self.client = MongoClient(host="localhost")
         self.db = MongoClient().battle
         self.gateway = gateway.lower()
 
-    def get_by_id(self, game_id):
+    def get_by_id(self, game_id) -> Dict:
         d =  self.db[self.gateway].find_one({"game_id": game_id})
         # print(d)
         return d
 
-    def insert(self, data):
+    def insert(self, data) -> None:
         # print(data)
         LOG.debug("Save to DB")
         self.db[self.gateway].insert_one(data)
@@ -54,7 +54,7 @@ class Player(object):
         self.username = username
         self.gateway = gateway
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.username
 
 
@@ -72,7 +72,7 @@ class GameMatch(object):
         # self.own_team = []
         # self.their_team = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.player_left}-vs-{self.player_right}"
 
     def generate_json(self) -> Dict:
@@ -88,7 +88,8 @@ class GameMatch(object):
 
 
 class Profile(object):
-    def __init__(self, args, username: str, gateway: str) -> None:
+    def __init__(self, args: argparse.Namespace, username: str,
+                 gateway: str) -> None:
         self.args = args
         self.username = username
         self.gateway = gateway
@@ -232,14 +233,14 @@ class Profile(object):
             if exit_now:
                 return
 
-    def check_game_in_db(self, game_id: int):
+    def check_game_in_db(self, game_id: int) -> bool:
         data = self.database.get_by_id(game_id)
         LOG.debug("check_game_in_db", data)
         if data:
             return True
         return False
 
-    def _save(self):
+    def _save(self) -> None:
         for g in self.game_matches:
             LOG.debug("save game ", g)
             if not self.check_game_in_db(g.id):
@@ -271,7 +272,7 @@ class Profile(object):
 
 
 class Ladder(object):
-    def __init__(self, args, gateway: str) -> None:
+    def __init__(self, args: argparse.Namespace, gateway: str) -> None:
         self.gateway = gateway
         self.player_counter = 0
         self.args = args
