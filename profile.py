@@ -27,6 +27,10 @@ class AlreadyParsed(Exception):
     pass
 
 
+class UserNotFound(Exception):
+    pass
+
+
 class DB(object):
     def __init__(self):
         self.client = MongoClient(host="localhost")
@@ -108,9 +112,8 @@ class Profile(object):
         soup = BeautifulSoup(data.text, 'html.parser')
 
         if "Player Full Game Listings" not in soup.find("title").text:
-            raise Exception(
-                "User not found. Title: %s, url %s" % (
-                    soup.find("title").text, url))
+            raise UserNotFound(
+                "Title: %s, url %s" % (soup.find("title").text, url))
 
         pages = soup.find_all("td", class_="rankingFiller")
         if pages[0].find_all("a"):
@@ -205,7 +208,11 @@ class Profile(object):
                 self.game_matches.append(gm)
 
     def _read_history(self) -> None:
-        total_pages = self._get_history_page_count()
+        try:
+            total_pages = self._get_history_page_count()
+        except UserNotFound as e:
+            LOG.debug(f"User not found {e}")
+            return
         # if total_pages > 100:
         #     total_pages = 100
         for i in range(1, total_pages+1):
