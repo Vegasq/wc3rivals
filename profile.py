@@ -48,6 +48,9 @@ class Player(object):
         self.username = username
         self.gateway = gateway
 
+    def __str__(self):
+        return self.username
+
 
 class GameMatch(object):
     def __init__(self, game_id: int, gateway: str, date: str, game_map: str,
@@ -58,22 +61,18 @@ class GameMatch(object):
         self.map = game_map
         self.winner = winner
 
-        self.own_team = []
-        self.their_team = []
+        self.player_left = None
+        self.player_right = None
+        # self.own_team = []
+        # self.their_team = []
 
     def __str__(self):
-        return f"{self.winner.username}-vs-{self.their_team[0].username}"
-
-    def add_player(self, player: Player, opponent: bool = True):
-        if opponent:
-            self.their_team.append(player)
-        else:
-            self.own_team.append(player)
+        return f"{self.player_left}-vs-{self.player_right}"
 
     def generate_json(self) -> Dict:
         return {
-            "player_left": self.own_team[0].username,
-            "player_right": self.their_team[0].username,
+            "player_left": self.player_left.username,
+            "player_right": self.player_right.username,
             "map": self.map,
             "winner": self.winner.username,
             "game_id": self.id,
@@ -110,7 +109,8 @@ class Profile(object):
 
         if "Player Full Game Listings" not in soup.find("title").text:
             raise Exception(
-                "User not found. Title: %s" % soup.find("title").text)
+                "User not found. Title: %s, url %s" % (
+                    soup.find("title").text, url))
 
         pages = soup.find_all("td", class_="rankingFiller")
         if pages[0].find_all("a"):
@@ -123,7 +123,7 @@ class Profile(object):
         # Parse game type START
         game_match_type = game.find_all(class_="rankingRowLeft")[1].text
         if "Solo" not in game_match_type:
-            LOG.debug("Not solo")
+            LOG.debug("Ignore not 1v1 game types.")
             return
         # Parse game type END
 
@@ -151,8 +151,6 @@ class Profile(object):
         if not opponents_list:
             return
 
-        allies_list = [self.player]
-
         # Parse players END
 
         # Parse game date START
@@ -179,17 +177,15 @@ class Profile(object):
             game_match_winner = opponents_list[0]
             self.looses += 1
         else:
-            game_match_winner = Player(username="",
-                                       gateway="")
+            game_match_winner = Player(username="", gateway="")
         # Parse winner END
 
         gm = GameMatch(game_id=game_match_id, gateway=game_match_gateway,
                        date=game_match_date, game_map=game_match_map,
                        winner=game_match_winner)
-        for a in allies_list:
-            gm.add_player(a, opponent=False)
-        for a in opponents_list:
-            gm.add_player(a)
+        gm.player_left = self.player
+        gm.player_right = opponents_list[0]
+
         return gm
 
     def _read_history_page(self, page: int) -> None:
@@ -268,8 +264,9 @@ class Profile(object):
 
 
 class Ladder(object):
-    def __init__(self, gateway: str):
+    def __init__(self, gateway: str) -> None:
         self.gateway = gateway
+        self.player_counter = 0
 
     def _get_ladder_page_count(self) -> int:
         """Returns count of pages with games"""
@@ -282,15 +279,15 @@ class Ladder(object):
         last_page = int(pages[0].find_all("a")[-1].text)
         return last_page
 
-    def fetch(self):
+    def fetch(self) -> None:
+        """Read all players from ladder one by one."""
         LOG.info(f"Fetch ladder for {self.gateway}.")
-        # url = (f"http://classic.battle.net/war3/ladder/w3xp-ladder-solo.aspx"
-        #        f"?Gateway={self.gateway}")
         total_pages = self._get_ladder_page_count()
         for i in range(1, total_pages+1):
             self.fetch_page(i)
 
-    def fetch_page(self, page: int):
+    def fetch_page(self, page: int) -> None:
+        """Read single page from battle.net."""
         url = (f"http://classic.battle.net/war3/ladder/w3xp-ladder-solo.aspx"
                f"?Gateway={self.gateway}&"
                f"PageNo={page}")
@@ -299,6 +296,8 @@ class Ladder(object):
         names = soup.find_all("span", class_="rankingName")
         for name in names:
             n = name.find("a")
+            self.player_counter += 1
+            LOG.info(f"Ladder placement #{self.player_counter}")
 
             parsed_url = urlparse(n.attrs["href"])
             parsed_query = parse_qs(parsed_url.query)
