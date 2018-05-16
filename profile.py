@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.6
 
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import requests
 from typing import List, Dict
@@ -32,19 +32,25 @@ class UserNotFound(Exception):
     pass
 
 
+class TooOld(Exception):
+    pass
+
+
 class DB(object):
     def __init__(self, gateway: str) -> None:
         self.client = MongoClient(host="localhost")
         self.db = MongoClient().battle
         self.gateway = gateway.lower()
 
+    @property
+    def collection(self):
+        return self.db[self.gateway]
+
     def get_by_id(self, game_id) -> Dict:
-        d =  self.db[self.gateway].find_one({"game_id": game_id})
-        # print(d)
+        d = self.db[self.gateway].find_one({"game_id": game_id})
         return d
 
     def insert(self, data) -> None:
-        # print(data)
         LOG.debug("Save to DB")
         self.db[self.gateway].insert_one(data)
 
@@ -59,8 +65,8 @@ class Player(object):
 
 
 class GameMatch(object):
-    def __init__(self, game_id: int, gateway: str, date: str, game_map: str,
-                 winner: Player) -> None:
+    def __init__(self, game_id: int, gateway: str, date: datetime,
+                 game_map: str, winner: Player) -> None:
         self.id = game_id
         self.gateway = gateway
         self.date = date
@@ -140,7 +146,7 @@ class Profile(object):
         parsed_url = urlparse(game_uri)
         parsed_query = parse_qs(parsed_url.query)
 
-        game_match_id = parsed_query["GameID"][0]
+        game_match_id = int(parsed_query["GameID"][0])
         if self.args.pure is False and self.database.get_by_id(game_match_id):
             raise AlreadyParsed()
         game_match_gateway = parsed_query["Gateway"][0]
@@ -168,6 +174,9 @@ class Profile(object):
         game_match_date = " ".join(game_match_date.split()[:-1])
         game_match_date = datetime.strptime(game_match_date,
                                             "%m/%d/%Y %I:%M %p")
+        now = datetime.now()
+        if self.args.only_new and (now - game_match_date) > timedelta(days=2):
+            raise TooOld()
         # Parse game date END
 
         # Parse map START
@@ -225,7 +234,7 @@ class Profile(object):
             exit_now = False
             try:
                 self._read_history_page(page=i)
-            except AlreadyParsed:
+            except (AlreadyParsed, TooOld):
                 exit_now = True
 
             self._save()
@@ -322,6 +331,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pure", action="store_true",
         help="Run thru all ladders without stops on duplicates.")
+    parser.add_argument(
+        "--only-new", action="store_true",
+        help="Get only games played in last 2 days.")
 
     args = parser.parse_args()
 
