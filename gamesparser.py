@@ -147,6 +147,12 @@ class GamePageParser(object):
         # START match_length
         match_len = self.soup.find_all(
             "td", class_="playerStatsDataLeft")[3].text
+        if "minutes" in match_len:
+            match_len = int(match_len.split()[0])
+        else:
+            LOG.error("Unknown length {match_len}")
+            match_len = 0
+
         LOG.debug("match_length", match_len)
         # END match_length
 
