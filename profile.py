@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.6
 
+import argparse
 from datetime import datetime
 import logging
 import requests
@@ -17,7 +18,7 @@ LOG = logging.getLogger("classicbnet")
 LOG.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 
 LOG.addHandler(ch)
@@ -32,19 +33,20 @@ class UserNotFound(Exception):
 
 
 class DB(object):
-    def __init__(self):
+    def __init__(self, gateway: str):
         self.client = MongoClient(host="localhost")
         self.db = MongoClient().battle
+        self.gateway = gateway.lower()
 
     def get_by_id(self, game_id):
-        d =  self.db["lordaeron"].find_one({"game_id": game_id})
+        d =  self.db[self.gateway].find_one({"game_id": game_id})
         # print(d)
         return d
 
     def insert(self, data):
         # print(data)
         LOG.debug("Save to DB")
-        self.db["lordaeron"].insert_one(data)
+        self.db[self.gateway].insert_one(data)
 
 
 class Player(object):
@@ -86,7 +88,8 @@ class GameMatch(object):
 
 
 class Profile(object):
-    def __init__(self, username: str, gateway: str) -> None:
+    def __init__(self, args, username: str, gateway: str) -> None:
+        self.args = args
         self.username = username
         self.gateway = gateway
         self.player = Player(username=self.username, gateway=self.gateway)
@@ -96,7 +99,7 @@ class Profile(object):
         self.wins = 0
         self.looses = 0
 
-        self.database = DB()
+        self.database = DB(self.gateway)
 
     def _get_history_page_count(self) -> int:
         """Returns count of pages with games"""
@@ -111,12 +114,13 @@ class Profile(object):
         data = requests.get(url)
         soup = BeautifulSoup(data.text, 'html.parser')
 
-        if "Player Full Game Listings" not in soup.find("title").text:
-            raise UserNotFound(
-                "Title: %s, url %s" % (soup.find("title").text, url))
+        if soup.find("title"):
+            if "Player Full Game Listings" not in soup.find( "title").text:
+                raise UserNotFound(
+                    "Title: %s, url %s" % (soup.find("title").text, url))
 
         pages = soup.find_all("td", class_="rankingFiller")
-        if pages[0].find_all("a"):
+        if pages and pages[0].find_all("a"):
             last_page = int(pages[0].find_all("a")[-1].text)
         else:
             last_page = 1
@@ -136,7 +140,7 @@ class Profile(object):
         parsed_query = parse_qs(parsed_url.query)
 
         game_match_id = parsed_query["GameID"][0]
-        if self.database.get_by_id(game_match_id):
+        if self.args.pure is False and self.database.get_by_id(game_match_id):
             raise AlreadyParsed()
         game_match_gateway = parsed_query["Gateway"][0]
         # Parse Game ID END
@@ -203,7 +207,7 @@ class Profile(object):
         games_on_page = soup.find_all("tr", class_="rankingRow")
         for game in games_on_page:
             gm = self._parse_game_tr(game)
-            if gm:
+            if gm and self.check_game_in_db(gm.id) == False:
                 LOG.info(f"New game found {gm}")
                 self.game_matches.append(gm)
 
@@ -213,8 +217,7 @@ class Profile(object):
         except UserNotFound as e:
             LOG.debug(f"User not found {e}")
             return
-        # if total_pages > 100:
-        #     total_pages = 100
+
         for i in range(1, total_pages+1):
             LOG.debug(f"Read page {i}.")
 
@@ -248,9 +251,6 @@ class Profile(object):
         LOG.info(f"Fetch history for {self.username}.")
         self._read_history()
 
-    # def print_wins(self):
-    #     print(f"Wins: {self.wins}\nLooses: {self.looses}")
-    #
     # def rematches(self):
     #     names = {}
     #     for g in self.game_matches:
@@ -271,9 +271,10 @@ class Profile(object):
 
 
 class Ladder(object):
-    def __init__(self, gateway: str) -> None:
+    def __init__(self, args, gateway: str) -> None:
         self.gateway = gateway
         self.player_counter = 0
+        self.args = args
 
     def _get_ladder_page_count(self) -> int:
         """Returns count of pages with games"""
@@ -309,17 +310,22 @@ class Ladder(object):
             parsed_url = urlparse(n.attrs["href"])
             parsed_query = parse_qs(parsed_url.query)
             p = Profile(
+                self.args,
                 username=urllib.parse.quote(parsed_query["PlayerName"][0]),
                 gateway=self.gateway)
             p.fetch()
 
 
-# ladders = ["Northrend", "Lordaeron", "Azeroth", "Kalimdor"]
-
-
 if __name__ == "__main__":
-    ladders = ["Northrend", "Lordaeron", "Azeroth", "Kalimdor"]
-    for l in ladders:
-        Ladder(l).fetch()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--pure", action="store_true",
+        help="Run thru all ladders without stops on duplicates.")
 
-# Profile(username="Hero.M.Magic", gateway="Lordaeron").fetch()
+    args = parser.parse_args()
+
+    ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
+    # Profile(args, username="SumniyRobot", gateway="Lordaeron").fetch()
+    for l in ladders:
+        Ladder(args, l).fetch()
+
