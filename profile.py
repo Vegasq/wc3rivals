@@ -159,8 +159,8 @@ class Profile(object):
         # Parse game date START
         game_match_date = game.find(class_="rankingRowLeft").text
         game_match_date = game_match_date.replace("\n", "")
-        game_match_date = game_match_date[0:-3]
         game_match_date = game_match_date.strip()
+        game_match_date = " ".join(game_match_date.split()[:-1])
         game_match_date = datetime.strptime(game_match_date,
                                             "%m/%d/%Y %I:%M %p")
         # Parse game date END
@@ -314,10 +314,12 @@ class Ladder(object):
             p.fetch()
 
 
-ladders = ["Northrend", "Lordaeron", "Azeroth", "Kalimdor"]
+# ladders = ["Northrend", "Lordaeron", "Azeroth", "Kalimdor"]
 
 
 if __name__ == "__main__":
-    Ladder("Lordaeron").fetch()
+    ladders = ["Northrend", "Lordaeron", "Azeroth", "Kalimdor"]
+    for l in ladders:
+        Ladder(l).fetch()
 
 # Profile(username="Hero.M.Magic", gateway="Lordaeron").fetch()
