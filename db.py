@@ -31,29 +31,22 @@ class DB(object):
         else:
             uri = "mongodb://%s" % settings.hostname
 
-        # self.client = MongoClient(uri)
-        self.db = MongoClient(uri).battle
-        self.gateway = gateway.lower()+"_games"
+        self._db = MongoClient(uri).battle
+        self._gateway = gateway.lower()+"_games"
 
     @property
     def collection(self):
-        return self.db[self.gateway]
+        return self._db[self._gateway]
 
     def get_by_id(self, game_id) -> Dict:
-        return self.db[self.gateway].find_one({"game_id": game_id})
+        return self.collection.find_one({"game_id": game_id})
 
     def insert(self, data) -> None:
         LOG.debug(f"Save {data} to DB.")
-        self.db[self.gateway].insert_one(data)
+        self.collection.insert_one(data)
 
-    def fix_game_len(self):
-        """
-        Fix old records that had game len as a string.
-        """
-        broken_lens = self.db[self.gateway].find(
-            {"length": {'$regex': 'minutes'}})
-        for g in broken_lens:
-            new_len = int(g['length'].split(" ")[0])
-            LOG.info(f"Fix {g['game_id']}, from {g['length']} to {new_len}.")
-            self.db[self.gateway].update_one({"game_id": g["game_id"]},
-                                             {"$set": {"length": new_len}})
+
+class EnemiesDB(DB):
+    def get_solo_games_by_user(self, username: str):
+        return self.collection.find(
+            {"players": username, "type": "Solo", "length": {"$gt": 3}})

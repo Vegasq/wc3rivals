@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solo Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <style>
+        .stats_table {
+            width: 100%;
+        }
+        .search_form {
+            margin: 10px;
+            display: block;
+            padding: 10px;
+            margin: 10px;
+        }
+        .search_form > input, select {
+            height: 40px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .hidden {
+            display: none;
+        }
+        #search_box {
+            border: 0px;
+            box-shadow: 0px 0px 3px #888888;
+            padding: 5px;
+            position: relative;
+            z-index: 1;
+            width: 25em;
+        }
+        #search_gateway {
+            height: 29px;
+            width: 7em;
+            padding: 0em 1em;
+            border-radius: 0;
+            z-index: 2;
+            position: relative;
+        }
+        #search_btn{
+            height: 29px;
+            z-index: 2;
+            position: relative;
+        }
+        #searchbar_buttons_owner {
+            width: 100%;
+        }
+        #searchbar_buttons_owner > div {
+            width: 25em;
+            margin: 0 auto;
+            text-align: right;
+            margin-top: -38px;
+            padding: 0 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <h1>Opponents</h1>
+    </div>
+    <div class="row justify-content-md-center">
+        <small>Solo opponents stats</small>
+    </div>
+
+    <div class="row justify-content-md-center " >
+        <div class="alert alert-success hidden" role="alert" id="info_msg">
+          A simple success alert—check it out!
+        </div>
+        <div class="alert alert-danger hidden" role="alert" id="error_msg">
+          A simple danger alert—check it out!
+        </div>
+    </div>
+
+    <div class="row justify-content-md-center" style="min-height: 3em;">
+        <!--<form class="search_form">-->
+                <input class="search_box" id="search_box">
+
+            <div id="searchbar_buttons_owner">
+                <div>
+                    <select id="search_gateway">
+                        <option value="Northrend" disabled>Northrend (Europe)</option>
+                        <option value="Lordaeron">Lordaeron (US West)</option>
+                        <option value="Azeroth" disabled>Azeroth (US East)</option>
+                        <option value="Kalimdor" disabled>Kalimdor (Asia)</option>
+                    </select>
+                    <input class="submit" type="button" value="Search" id="search_btn">
+                </div>
+            </div>
+        <!--</form>-->
+    </div>
+    <div class="row justify-content-md-center">
+        <table class="stats_table table table-sm table-hover text-center">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" width="40%">Player</th>
+                    <th scope="col">Score</th>
+                    <th scope="col" width="40%">Opponent</th>
+                </tr>
+            </thead>
+            <tbody id="stats_body">
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-md-center">
+        <div class="footer navbar-fixed-bottom">2018, Mykola Yakovliev</div>
+    </div>
+</div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <script>
+        function render(result){
+            console.log([result, "<<"]);
+
+            result = JSON.parse(result);
+
+            console.log([result, "<<"]);
+
+            var stats_body = document.getElementById("stats_body");
+            stats_body.innerHTML = "";
+
+            var err_msg_box = document.getElementById("error_msg");
+            var info_msg_box = document.getElementById("info_msg");
+            err_msg_box.style.display = "none";
+            info_msg_box.style.display = "none";
+
+            if ("error" in result) {
+                err_msg_box.innerHTML = result["error"];
+                err_msg_box.style.display = "block";
+                return;
+            } else if  ("info" in result) {
+                info_msg_box.innerHTML = result["info"];
+                info_msg_box.style.display = "block";
+                return;
+            }
+
+            var tpl = "" +
+                "            <tr>\n" +
+                "                <td>%player%</td>\n" +
+                "                <td class='%state_class%'>\n" +
+                "                    <span class=\"win\">%win%</span>\n" +
+                "                    x\n" +
+                "                    <span class=\"loss\">%loss%</span>\n" +
+                "                </td>\n" +
+                "                <td>%opponent%</td>\n" +
+                "            </tr>\n";
+
+            // var tpl = document.getElementById("stats_template").innerHTML;
+            var name = document.getElementById("search_box").value;
+
+            for (var i=0; i<result.length;i+=1) {
+                console.log(result[i]);
+
+                var body = "";
+                body += tpl.replace("%win%", result[i][1]["win"]);
+                body = body.replace("%loss%", result[i][1]["loss"]);
+                body = body.replace("%opponent%", result[i][0]);
+                body = body.replace("%player%", name);
+
+                var state = "";
+                if (result[i][1]["state"] == 1) {
+                    state = "table-success";
+                } else if (result[i][1]["state"] == -1) {
+                    state = "table-danger";
+                }
+                body = body.replace("%state_class%", state);
+
+                stats_body.innerHTML += body;
+            };
+        }
+
+        (function(){
+            function http_get(theUrl)
+            {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+                xmlHttp.send( null );
+                return xmlHttp.responseText;
+            }
+
+
+            var search_fn = function(){
+                var name = document.getElementById("search_box");
+                var gateway = document.getElementById("search_gateway");
+                var out =
+                    http_get("/api?name="+name.value+"&gateway="+gateway.value);
+                console.log(out);
+                render(out);
+            };
+
+            var btn = document.getElementById("search_btn");
+            btn.addEventListener("click", search_fn);
+        })();
+    </script>
+</body>
+</html>

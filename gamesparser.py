@@ -234,7 +234,7 @@ class GamePageParser(object):
         """
         if self.db.get_by_id(self.game_id):
             LOG.info(f"Game {self.gateway}#{self.game_id} exists.")
-            return
+            return True
 
         url = (f"http://classic.battle.net/war3/ladder/w3xp-game-detail.aspx"
                f"?Gateway={self.gateway}&GameID={self.game_id}")
