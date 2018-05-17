@@ -1,5 +1,11 @@
 #!/usr/bin/env python3.6
 
+"""
+GameParser:
+
+Parses all game in Battle.Net one-by-one and collect information in database.
+"""
+
 from bs4 import BeautifulSoup
 import pymongo
 import requests
@@ -13,6 +19,16 @@ from db import DB
 from log import LOG
 
 
+__author__ = "Mykola Yakovliev"
+__copyright__ = "Copyright 2018, Mykola Yakovliev"
+__credits__ = ["Mykola Yakovliev"]
+__license__ = "Proprietary software"
+__version__ = "1.0"
+__maintainer__ = "Mykola Yakovliev"
+__email__ = "vegasq@gmail.com"
+__status__ = "Production"
+
+
 class Player(dict):
     """
     Player representation.
@@ -20,34 +36,34 @@ class Player(dict):
     pymongo.
     """
     @property
-    def username(self):
+    def username(self) -> str:
         return self["username"]
 
     @username.setter
-    def username(self, value):
+    def username(self, value) -> None:
         self["username"] = value
 
     @property
-    def race(self):
+    def race(self) -> str:
         return self["race"]
 
     @race.setter
-    def race(self, value):
+    def race(self, value) -> None:
         self["race"] = value
 
     @property
-    def result(self):
+    def result(self) -> str:
         return self["result"]
 
     @result.setter
-    def result(self, value):
+    def result(self, value) -> None:
         self["result"] = value
 
     def __str__(self) -> str:
         return (f"User: {self.username}\nRace: {self.race}\n"
                 f"Result: {self.result}")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return json.dumps({"username": self.username,
                            "race": self.race,
                            "result": self.result})
@@ -61,7 +77,7 @@ class LastSavedGameSelector(object):
     >>> game_obj = LastSavedGameSelector("Lordaeron").last()
     """
 
-    def __init__(self, gateway: str):
+    def __init__(self, gateway: str) -> None:
         """
         :param gateway: Battle.Net classic Realm
         """
@@ -233,7 +249,8 @@ class GamePageParser(object):
         self.stats = self._parse_stats()
         self.stats["players_data"] = self._parse_players()
 
-        self.stats["players"] = [p.username for p in self.stats["players_data"]]
+        self.stats["players"] = [p.username
+                                 for p in self.stats["players_data"]]
         levels = self._parse_levels()
         for i, p in enumerate(self.stats["players_data"]):
             self.stats["players_data"][i].update(levels[i])
@@ -309,7 +326,7 @@ class GPManager(object):
                 self.game_id -= 1
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--old", action="store_true", help="Parse backwards.")

@@ -1,5 +1,12 @@
 #!/usr/bin/env python3.6
 
+"""
+LadderParser:
+
+Parses all game in Battle.Net top ladder one-by-one and collect information in
+database.
+"""
+
 import argparse
 import requests
 from urllib.parse import urlparse
@@ -12,6 +19,16 @@ from bs4.element import Tag as BSTag
 from gamesparser import GamePageParser
 from db import DB
 from log import LOG
+
+
+__author__ = "Mykola Yakovliev"
+__copyright__ = "Copyright 2018, Mykola Yakovliev"
+__credits__ = ["Mykola Yakovliev"]
+__license__ = "Proprietary software"
+__version__ = "1.0"
+__maintainer__ = "Mykola Yakovliev"
+__email__ = "vegasq@gmail.com"
+__status__ = "Production"
 
 
 class UserNotFound(Exception):
@@ -54,7 +71,7 @@ class ProfileHistoryParser(object):
         soup = BeautifulSoup(data.text, 'html.parser')
 
         if soup.find("title"):
-            if "Player Full Game Listings" not in soup.find( "title").text:
+            if "Player Full Game Listings" not in soup.find("title").text:
                 raise UserNotFound(
                     "Title: %s, url %s" % (soup.find("title").text, url))
 
@@ -94,7 +111,7 @@ class ProfileHistoryParser(object):
         for game in games_on_page:
             self._parse_game_tr(game)
 
-    def fetch(self, max: int) -> None:
+    def fetch(self) -> None:
         """Collect information about player games and save it to DB."""
         LOG.info(f"Fetch history for {self.username}.")
 
@@ -110,7 +127,7 @@ class ProfileHistoryParser(object):
                 total_pages = new_total_pages
 
         for i in range(1, total_pages+1):
-            LOG.debug(f"Read page {i} from {total_pages+1}.")
+            LOG.info(f"Read page {i} from {total_pages+1}.")
 
             exit_now = False
             self.fetch_page(page=i)
@@ -211,7 +228,7 @@ class Ladder(object):
                 self.args,
                 username=urllib.parse.quote(parsed_query["PlayerName"][0]),
                 gateway=self.gateway)
-            p.fetch(max=self.args.max_per_user)
+            p.fetch()
 
 
 def main():

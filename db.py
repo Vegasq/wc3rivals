@@ -3,7 +3,6 @@ from pymongo import MongoClient
 from typing import Dict
 from log import LOG
 
-
 try:
     from settings import settings
 except ImportError:
@@ -11,6 +10,16 @@ except ImportError:
         hostname = "localhost"
         username = ""
         password = ""
+
+
+__author__ = "Mykola Yakovliev"
+__copyright__ = "Copyright 2018, Mykola Yakovliev"
+__credits__ = ["Mykola Yakovliev"]
+__license__ = "Proprietary software"
+__version__ = "1.0"
+__maintainer__ = "Mykola Yakovliev"
+__email__ = "vegasq@gmail.com"
+__status__ = "Production"
 
 
 class DB(object):
