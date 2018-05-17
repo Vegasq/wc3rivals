@@ -22,8 +22,8 @@ class DB(object):
         else:
             uri = "mongodb://%s" % settings.hostname
 
-        self.client = MongoClient(uri)
-        self.db = MongoClient().battle
+        # self.client = MongoClient(uri)
+        self.db = MongoClient(uri).battle
         self.gateway = gateway.lower()+"_games"
 
     @property
