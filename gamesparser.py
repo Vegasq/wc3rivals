@@ -315,6 +315,8 @@ class GPManager(object):
 
             if not success:
                 self.errors_pool += 1
+            elif self.errors_pool > 0 and success:
+                self.errors_pool -= 1
 
             if self.errors_pool >= 100:
                 LOG.error("More than 100 errors in pool. Exit.")
