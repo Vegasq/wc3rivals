@@ -182,6 +182,12 @@ class Ladder(object):
         """Read all players from ladder one by one."""
         LOG.info(f"Fetch ladder for {self.gateway}.")
         total_pages = self._get_ladder_page_count()
+
+        if self.args.max_per_user != -1:
+            new_total_pages = int(self.args.max_per_user / 20)
+            if total_pages > new_total_pages:
+                total_pages = new_total_pages
+
         for i in range(1, total_pages+1):
             self.fetch_page(i)
 
@@ -212,7 +218,8 @@ def main():
 
     ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
     parser.add_argument("--gateway", help="Specify gateway", choices=ladders)
-
+    parser.add_argument("--max-per-user", help="Total games to parse",
+                        type=int, default=-1)
     args = parser.parse_args()
 
     Ladder(args, args.gateway).fetch()
