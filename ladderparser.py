@@ -189,6 +189,7 @@ class Ladder(object):
                 total_pages = new_total_pages
 
         for i in range(1, total_pages+1):
+            LOG.info(f"Fetch page {i} from {total_pages}")
             self.fetch_page(i)
 
     def fetch_page(self, page: int) -> None:
