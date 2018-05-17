@@ -94,7 +94,7 @@ class ProfileHistoryParser(object):
         for game in games_on_page:
             self._parse_game_tr(game)
 
-    def fetch(self) -> None:
+    def fetch(self, max: int) -> None:
         """Collect information about player games and save it to DB."""
         LOG.info(f"Fetch history for {self.username}.")
 
@@ -104,8 +104,13 @@ class ProfileHistoryParser(object):
             LOG.debug(f"User not found {e}")
             return
 
+        if self.args.max_per_user != -1:
+            new_total_pages = int(self.args.max_per_user / 20)
+            if total_pages > new_total_pages:
+                total_pages = new_total_pages
+
         for i in range(1, total_pages+1):
-            LOG.debug(f"Read page {i}.")
+            LOG.debug(f"Read page {i} from {total_pages+1}.")
 
             exit_now = False
             self.fetch_page(page=i)
@@ -183,13 +188,8 @@ class Ladder(object):
         LOG.info(f"Fetch ladder for {self.gateway}.")
         total_pages = self._get_ladder_page_count()
 
-        if self.args.max_per_user != -1:
-            new_total_pages = int(self.args.max_per_user / 20)
-            if total_pages > new_total_pages:
-                total_pages = new_total_pages
-
         for i in range(1, total_pages+1):
-            LOG.info(f"Fetch page {i} from {total_pages}")
+            LOG.info(f"Fetch ladder page {i} from {total_pages}")
             self.fetch_page(i)
 
     def fetch_page(self, page: int) -> None:
@@ -211,7 +211,7 @@ class Ladder(object):
                 self.args,
                 username=urllib.parse.quote(parsed_query["PlayerName"][0]),
                 gateway=self.gateway)
-            p.fetch()
+            p.fetch(max=self.args.max_per_user)
 
 
 def main():
