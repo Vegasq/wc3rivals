@@ -1,11 +1,28 @@
+from urllib.parse import quote_plus
 from pymongo import MongoClient
 from typing import Dict
 from log import LOG
 
 
+try:
+    from settings import settings
+except ImportError:
+    class settings(object):
+        hostname = "localhost"
+        username = ""
+        password = ""
+
+
 class DB(object):
     def __init__(self, gateway: str) -> None:
-        self.client = MongoClient(host="localhost")
+        if settings.username and settings.password:
+            uri = "mongodb://%s:%s@%s" % (quote_plus(settings.username),
+                                          quote_plus(settings.password),
+                                          settings.hostname)
+        else:
+            uri = "mongodb://%s" % settings.hostname
+
+        self.client = MongoClient(uri)
         self.db = MongoClient().battle
         self.gateway = gateway.lower()+"_games"
 
