@@ -329,11 +329,17 @@
             for (var i=0; i<result.length;i+=1) {
                 // console.log(result[i]);
 
+                var secondary_player =
+                    "<a href='/u/"+current_gateway()+"/"+result[i][1]["secondary_player"]+"'>"+
+                    result[i][1]["secondary_player"]+
+                    "</a>";
+
+
                 var body = "";
                 body += tpl.replace("%win%", result[i][1]["win"]);
                 body = body.replace("%loss%", result[i][1]["loss"]);
                 body = body.replace(
-                    "%opponent%", result[i][1]["secondary_player"]);
+                    "%opponent%", secondary_player);
                 body = body.replace(
                     "%player%", result[i][1]["primary_player"]);
 
@@ -423,7 +429,9 @@
                         var player = game_info["players_data"][z];
                         if (player["result"] == "Win") {
                             winners +=
-                                player["username"] + " ["+simplify_race(player["race"])+"]";
+                                "<a href='/u/"+current_gateway()+"/"+player["username"]+"'>"+
+                                player["username"] + " ["+simplify_race(player["race"])+"]"+
+                                "</a>";
                         }
                     }
                     console.log("Winners:", winners);
@@ -433,7 +441,9 @@
                         var player = game_info["players_data"][z];
                         if (player["result"] == "Loss") {
                             loosers +=
-                                player["username"] + " ["+simplify_race(player["race"])+"]";
+                                "<a href='/u/"+current_gateway()+"/"+player["username"]+"'>"+
+                                player["username"] + " ["+simplify_race(player["race"])+"]"+
+                                "</a>";
                         }
                     }
                     console.log("Loosers:", loosers);
@@ -455,6 +465,17 @@
             history.pushState({}, "", href);
         }
 
+        function current_gateway(){
+            if (window.location.href.indexOf("/u/") !== -1) {
+                var q = window.location.href.split("/u/")[1].split("/");
+                return q[0];
+            } else {
+                return document.getElementById("search_gateway").value;
+
+            }
+
+        }
+
 
         (function(){
 
@@ -467,6 +488,8 @@
                     var name = document.getElementById("search_box").value;
                     var gateway = document.getElementById("search_gateway").value;
                 }
+
+                fix_location(name, gateway);
 
                 for
                 (var i=0;i<document.getElementsByClassName("show_on_search").length;i++){
@@ -492,7 +515,6 @@
                 var xs = new XpStatistic(name, gateway);
                 xs.start();
 
-                fix_location(name, gateway);
             }
 
             var btn = document.getElementById("search_btn");
