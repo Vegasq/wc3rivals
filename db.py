@@ -1,6 +1,6 @@
 from urllib.parse import quote_plus
 from pymongo import MongoClient
-from typing import Dict
+from typing import Dict, List
 from log import LOG
 
 try:
@@ -50,3 +50,14 @@ class EnemiesDB(DB):
     def get_solo_games_by_user(self, username: str):
         return self.collection.find(
             {"players": username, "type": "Solo", "length": {"$gt": 3}})
+
+    def get_solo_games_with_users(self, usernames: List[str]):
+        return self.collection.find(
+            {
+                "$and": [
+                    {"players": usernames[0]},
+                    {"players": usernames[1]}
+                ],
+                "type": "Solo", "length": {"$gt": 3}
+            }
+        )

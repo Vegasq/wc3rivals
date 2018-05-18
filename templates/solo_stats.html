@@ -169,8 +169,10 @@
                 var body = "";
                 body += tpl.replace("%win%", result[i][1]["win"]);
                 body = body.replace("%loss%", result[i][1]["loss"]);
-                body = body.replace("%opponent%", result[i][0]);
-                body = body.replace("%player%", name);
+                body = body.replace(
+                    "%opponent%", result[i][1]["secondary_player"]);
+                body = body.replace(
+                    "%player%", result[i][1]["primary_player"]);
 
                 var state = "";
                 if (result[i][1]["state"] == 1) {

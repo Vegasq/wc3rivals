@@ -33,17 +33,30 @@ class MyEnemiesView(object):
         self.db = EnemiesDB(gateway)
 
     def get_stats(self, username: str) -> str:
-        all_games = [MatchObject(g, username)
-                     for g in self.db.get_solo_games_by_user(username)]
+        if username and "," in username:
+            usernames = [u.strip() for u in username.split(",")]
+            username = usernames[0]
+            all_games = [MatchObject(g, username)
+                         for g in self.db.get_solo_games_with_users(usernames)]
+        else:
+            all_games = [MatchObject(g, username)
+                         for g in self.db.get_solo_games_by_user(username)]
         enemies = []
         for game in all_games:
             match_enemies = game.get_enemies()
             enemies += match_enemies
 
+        game_history = []
         stats = {}
         for enemy, result in enemies:
             if enemy not in stats:
-                stats[enemy] = {"win": 0, "loss": 0, "state": 0}
+                stats[enemy] = {
+                    "primary_player": username,
+                    "secondary_player": enemy,
+                    "win": 0,
+                    "loss": 0,
+                    "state": 0
+                }
 
             if result:
                 stats[enemy]["win"] += 1
@@ -56,9 +69,8 @@ class MyEnemiesView(object):
             elif stats[e]["win"] < stats[e]["loss"]:
                 stats[e]["state"] = -1
 
-        ordered_stats = OrderedDict(
-            sorted(stats.items(),
-                   key=lambda x: -1 * (x[1]["win"] + x[1]["loss"])))
+        ordered_stats = sorted(stats.items(),
+                               key=lambda x: -1 * (x[1]["win"] + x[1]["loss"]))
 
-        stats = list(ordered_stats.items())[0:20]
+        stats = ordered_stats[0:20]
         return stats
