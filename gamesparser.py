@@ -273,8 +273,8 @@ class GPManager(object):
     - Quits once errors_pool overflows. It works this way cause sometimes
       Bnet skips game IDs. And once in a while we can see game that not exists,
       when games around it are fine. So far I have seen only single skipped ID
-      but in case of multiple skipped IDs we wait for 100 unknown games before
-      assume we at the end.
+      but in case of multiple skipped IDs we wait for 10 unknown games in a row
+      before assume we at the end.
     """
 
     def __init__(self, gateway: str, new: bool=True, init: int=0):
@@ -319,8 +319,8 @@ class GPManager(object):
             elif self.errors_pool > 0 and success:
                 self.errors_pool -= 1
 
-            if self.errors_pool >= 100:
-                LOG.error("More than 100 errors in pool. Exit.")
+            if self.errors_pool >= 10:
+                LOG.error("More than 10 errors in a row. Exit.")
                 exit()
 
             if self.new:
