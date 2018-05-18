@@ -241,7 +241,8 @@ class GamePageParser(object):
         data = requests.get(url)
         self.soup = BeautifulSoup(data.text, 'html.parser')
 
-        if "error" in self.soup.find("b").text.lower():
+        if not self.soup.find("b") or "error" in self.soup.find(
+                "b").text.lower():
             LOG.error("Failed to parse page: {}".format(
                 self.soup.find("b").text))
             return False
