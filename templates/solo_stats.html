@@ -286,17 +286,13 @@
 
           start() {
             do_get(
-                "/api?username="+this.username+"&gateway="+this.gateway,
+                "/opponents?username="+this.username+"&gateway="+this.gateway,
                 this.parse
             );
           }
 
           parse(result) {
-            // console.log([result, "<<"]);
-
             result = JSON.parse(result);
-
-            // console.log([result, "<<"]);
 
             var stats_body = document.getElementById("stats_body");
             stats_body.innerHTML = "";
@@ -328,7 +324,7 @@
                 "            </tr>\n";
 
             // var tpl = document.getElementById("stats_template").innerHTML;
-            var name = document.getElementById("search_box").value;
+            // var name = document.getElementById("search_box").value;
 
             for (var i=0; i<result.length;i+=1) {
                 // console.log(result[i]);
@@ -455,7 +451,7 @@
         }
 
         function fix_location(username, gateway){
-            var href = "/u/"+username+"/"+gateway;
+            var href = "/u/"+gateway+"/"+username;
             history.pushState({}, "", href);
         }
 
@@ -515,23 +511,15 @@
 
             window.onload = function () {
                 // Check if autorequest necessary
-                var q = window.location.href.split("?")[1].split("&");
-                var c = {};
-
-                for (let pair of q) {
-                    console.log(pair);
-                    var p = pair.split("=");
-                    c[p[0]] = p[1];
+                if (window.location.href.indexOf("/u/") !== -1){
+                    var q = window.location.href.split("/u/")[1].split("/");
+                    var username = q[1];
+                    var gateway = q[0];
+                    document.getElementById("search_box").value = username;
+                    document.getElementById("search_gateway").value = gateway;
+                    send_request(username, gateway);
                 }
-
-                if("username" in c && "gateway" in c){
-                    document.getElementById("search_box").value = c["username"];
-                    document.getElementById("search_gateway").value = c["gateway"];
-                    send_request(c["username"], c["gateway"]);
-                }
-
             };
-
 
         })();
 

@@ -5,17 +5,12 @@ import json
 
 urls = (
     '/', 'index',
-    '/api', 'api',
+    '/u/(.*)/(.*)', 'index',
+    '/opponents', 'opponents',
     '/stats', 'stats',
     '/history', 'history',
     '/xp', 'xp',
-    '/u/(.*)/(.*)', 'user_redirect'
 )
-
-
-class user_redirect(object):
-    def GET(self, username: str, gateway: str):
-        raise web.seeother(f"/?username={username}&gateway={gateway}")
 
 
 class xp(object):
@@ -60,12 +55,12 @@ class stats(object):
 
 
 class index(object):
-    def GET(self):
+    def GET(self, gateway: str="", username: str=""):
         with open("templates/solo_stats.html") as fl:
             return fl.read()
 
 
-class api(object):
+class opponents(object):
     def GET(self):
         inp = web.input(username=None, gateway=None)
 
