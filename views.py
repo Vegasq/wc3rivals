@@ -2,7 +2,6 @@
 from db import EnemiesDB
 from collections import OrderedDict
 from typing import List
-from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 class MatchObject(object):
@@ -32,11 +31,6 @@ class MyEnemiesView(object):
     def __init__(self, gateway: str):
         self.gateway = gateway
         self.db = EnemiesDB(gateway)
-
-        self.jinja2_env = Environment(
-            loader=PackageLoader('templates', '.'),
-            autoescape=select_autoescape(['html', 'xml'])
-        )
 
     def get_stats(self, username: str) -> str:
         all_games = [MatchObject(g, username)
@@ -68,17 +62,3 @@ class MyEnemiesView(object):
 
         stats = list(ordered_stats.items())[0:20]
         return stats
-
-    def render(self, username: str) -> str:
-        stats = self.get_stats(username)
-        template = self.jinja2_env.get_template('solo_stats.html')
-        html = template.render(stats=stats)
-
-        return html
-
-
-if __name__ == "__main__":
-    mew = MyEnemiesView("lordaeron")
-    s = mew.get_stats("David")
-    from pprint import pprint
-    pprint(s)
