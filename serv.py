@@ -8,8 +8,14 @@ urls = (
     '/api', 'api',
     '/stats', 'stats',
     '/history', 'history',
-    '/xp', 'xp'
+    '/xp', 'xp',
+    '/u/(.*)/(.*)', 'user_redirect'
 )
+
+
+class user_redirect(object):
+    def GET(self, username: str, gateway: str):
+        raise web.seeother(f"/?username={username}&gateway={gateway}")
 
 
 class xp(object):
