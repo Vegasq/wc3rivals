@@ -2,8 +2,6 @@
 from db import EnemiesDB
 from collections import OrderedDict
 from typing import List
-import jinja2
-import json
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
