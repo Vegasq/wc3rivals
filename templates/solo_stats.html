@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
         .stats_table {
@@ -58,6 +59,9 @@
             margin-top: -38px;
             padding: 0 6px;
         }
+        .show_on_search{
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -81,7 +85,7 @@
 
     <div class="row justify-content-md-center" style="min-height: 3em;">
         <!--<form class="search_form">-->
-                <input class="search_box" id="search_box">
+            <input class="search_box" id="search_box">
 
             <div id="searchbar_buttons_owner">
                 <div>
@@ -96,19 +100,48 @@
             </div>
         <!--</form>-->
     </div>
-    <div class="row justify-content-md-center">
-        <table class="stats_table table table-sm table-hover text-center">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col" width="40%">Player</th>
-                    <th scope="col">Score</th>
-                    <th scope="col" width="40%">Opponent</th>
-                </tr>
-            </thead>
-            <tbody id="stats_body">
 
-            </tbody>
-        </table>
+
+    <div class="row show_on_search">
+        <div class="col-8">
+            <div id="games_per_day_chart"
+                 style="width: 100%; height: 300px;"></div>
+
+            <div id="xp_chart"
+                 style="width: 100%; height: 300px;"></div>
+        </div>
+        <div class="col-4">
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col" colspan="2">Score against</th></tr>
+                    <tr>
+                        <!--<th scope="col" width="40%">Player</th>-->
+                        <th scope="col">Score</th>
+                        <th scope="col" width="80%">Opponent</th>
+                    </tr>
+                </thead>
+                <tbody id="stats_body">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row justify-content-md-center show_on_search">
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col" colspan="4">Last played</th></tr>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Map</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Looser</th>
+                    </tr>
+                </thead>
+                <tbody id="game_history_body">
+
+                </tbody>
+            </table>
     </div>
 
     <div class="row justify-content-md-center">
@@ -123,13 +156,89 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 
+    <script type="text/javascript">
+      // Load Charts and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+        function draw_statistic(source_data){
+
+            var source_data = JSON.parse(source_data);
+            source_data = source_data.reverse();
+
+            Array.prototype.unshift.apply(source_data, [["Day", "Games"]]);
+
+            var data = google.visualization.arrayToDataTable(source_data);
+
+            var options = {
+                title: 'Played per day',
+                hAxis: {title: 'Day',  titleTextStyle: {color: '#333'}},
+                vAxis: {minValue: 0}
+            };
+
+            var chart = new google.visualization.AreaChart(
+                document.getElementById('games_per_day_chart'));
+            chart.draw(data, options);
+
+        }
+
+        function draw_xp_statistic(source_data){
+            var source_data = JSON.parse(source_data);
+            source_data = source_data.reverse();
+
+            Array.prototype.unshift.apply(source_data, [["#", "XP"]]);
+
+
+            var data = google.visualization.arrayToDataTable(source_data);
+
+            var options = {
+                title: 'Solo XP earnings in 3 months',
+                hAxis: {title: '',  titleTextStyle: {color: '#333'}},
+                vAxis: {minValue: 0}
+            };
+
+            var chart = new google.visualization.AreaChart(
+                document.getElementById('xp_chart'));
+            chart.draw(data, options);
+        }
+
+    </script>
+
     <script>
+        function http_get(theUrl)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", theUrl, false); // false for synchronous request
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+
+
+        function do_get(url, report_to)
+        {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+
+            xhr.responseType = 'text';
+
+            xhr.onload = function () {
+                if (xhr.readyState === xhr.DONE) {
+                    if (xhr.status === 200) {
+                        // console.log(xhr.response);
+                        // console.log(xhr.responseText);
+                        report_to(xhr.responseText);
+                    }
+                }
+            };
+
+            xhr.send(null);
+        }
+
         function render(result){
-            console.log([result, "<<"]);
+            // console.log([result, "<<"]);
 
             result = JSON.parse(result);
 
-            console.log([result, "<<"]);
+            // console.log([result, "<<"]);
 
             var stats_body = document.getElementById("stats_body");
             stats_body.innerHTML = "";
@@ -151,7 +260,7 @@
 
             var tpl = "" +
                 "            <tr>\n" +
-                "                <td>%player%</td>\n" +
+                "                <!--td>%player%</td-->\n" +
                 "                <td class='%state_class%'>\n" +
                 "                    <span class=\"win\">%win%</span>\n" +
                 "                    x\n" +
@@ -164,7 +273,7 @@
             var name = document.getElementById("search_box").value;
 
             for (var i=0; i<result.length;i+=1) {
-                console.log(result[i]);
+                // console.log(result[i]);
 
                 var body = "";
                 body += tpl.replace("%win%", result[i][1]["win"]);
@@ -186,28 +295,153 @@
             };
         }
 
+        class GamesStatistic {
+          constructor(username, gateway) {
+            this.username = username;
+            this.gateway = gateway;
+          }
+
+          start() {
+            do_get(
+                "/stats?username="+this.username+"&gateway="+this.gateway,
+                this.parse
+            );
+          }
+
+          parse(data) {
+              draw_statistic(data);
+          }
+        }
+
+        class XpStatistic {
+          constructor(username, gateway) {
+            this.username = username;
+            this.gateway = gateway;
+          }
+
+          start() {
+            do_get(
+                "/xp?username="+this.username+"&gateway="+this.gateway,
+                this.parse
+            );
+          }
+
+          parse(data) {
+              draw_xp_statistic(data);
+          }
+        }
+
+        class GameHistory {
+          constructor(username, gateway) {
+            this.username = username;
+            this.gateway = gateway;
+          }
+
+          start() {
+            do_get(
+                "/history?username="+this.username+"&gateway="+this.gateway+"&limit=5",
+                this.parse
+            );
+          }
+
+            parse(data) {
+                var game_history_body = document.getElementById("game_history_body");
+                game_history_body.innerHTML = "";
+                data = JSON.parse(data);
+
+                var tpl = "" +
+                    "            <tr>\n" +
+                    "                <td>%date%</td>\n" +
+                    "                <td>%map%</td>\n" +
+                    "                <td>%winners%</td>\n" +
+                    "                <td>%loosers%</td>\n" +
+                    "            </tr>\n";
+
+                for (var i=0; i<data.length;i++) {
+                    var game_info = data[i];
+                    console.log("Parsing game_info", game_info);
+
+                    var winners = "";
+                    for (var z=0; z<game_info["players_data"].length;z++) {
+                        var player = game_info["players_data"][z];
+                        if (player["result"] == "Win") {
+                            winners +=
+                                player["username"] + " ["+player["race"]+"]";
+                        }
+                    }
+                    console.log("Winners:", winners);
+
+                    var loosers = "";
+                    for (var z=0; z<game_info["players_data"].length;z++) {
+                        var player = game_info["players_data"][z];
+                        if (player["result"] == "Loss") {
+                            loosers +=
+                                player["username"] + " ["+player["race"]+"]";
+                        }
+                    }
+                    console.log("Loosers:", loosers);
+
+                    var body = "";
+                    body += tpl.replace("%date%", game_info["date"]);
+                    body = body.replace("%map%", game_info["map"]);
+                    body = body.replace("%winners%", winners);
+                    body = body.replace("%loosers%", loosers);
+
+                    game_history_body.innerHTML += body;
+                }
+              console.log("GameHistory");
+          }
+        }
+
+
         (function(){
-            function http_get(theUrl)
-            {
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-                xmlHttp.send( null );
-                return xmlHttp.responseText;
-            }
 
 
             var search_fn = function(){
+                for
+                (var i=0;i<document.getElementsByClassName("show_on_search").length;i++){
+                    document.getElementsByClassName("show_on_search")[i].style.display = "flex";
+                }
+
                 var name = document.getElementById("search_box");
                 var gateway = document.getElementById("search_gateway");
                 var out =
-                    http_get("/api?name="+name.value+"&gateway="+gateway.value);
-                console.log(out);
+                    http_get("/api?username="+name.value+"&gateway="+gateway.value);
                 render(out);
             };
 
+
+
             var btn = document.getElementById("search_btn");
             btn.addEventListener("click", search_fn);
+
+            // Request and display statistic
+            btn.addEventListener("click", function(){
+                var name = document.getElementById("search_box").value;
+                var gateway = document.getElementById("search_gateway").value;
+                var gs = new GamesStatistic(name, gateway);
+                gs.start()
+            });
+
+            // Request and display history
+            btn.addEventListener("click", function(){
+                var name = document.getElementById("search_box").value;
+                var gateway = document.getElementById("search_gateway").value;
+                var gh = new GameHistory(name, gateway);
+                gh.start()
+            });
+
+            // Request and display XP
+            btn.addEventListener("click", function(){
+                var name = document.getElementById("search_box").value;
+                var gateway = document.getElementById("search_gateway").value;
+                var xs = new XpStatistic(name, gateway);
+                xs.start()
+            });
+
         })();
+
+
     </script>
 </body>
 </html>

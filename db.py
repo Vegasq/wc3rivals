@@ -2,6 +2,8 @@ from urllib.parse import quote_plus
 from pymongo import MongoClient
 from typing import Dict, List
 from log import LOG
+from datetime import datetime, timedelta
+
 
 try:
     from settings import settings
@@ -61,3 +63,22 @@ class EnemiesDB(DB):
                 "type": "Solo", "length": {"$gt": 3}
             }
         )
+
+
+class HistoryDB(DB):
+    def get_history(self, username: str):
+        d = datetime.today() - timedelta(days=90)
+
+        return self.collection.find({
+            "players": username,
+            "length": {"$gt": 3},
+            "date": {"$gt": d}
+        }).sort("date", -1)
+
+    def get_history_last(self, username: str, limit: int=5):
+        if limit > 50:
+            limit = 50
+        return self.collection.find({
+            "players": username,
+            "length": {"$gt": 3}
+        }).sort("date", -1).limit(limit)

@@ -1,6 +1,10 @@
+"""
+This module acts as a middleware between DB and actual data that we want to
+display. Here we request information from DB and preformat it to be used by
+client.
+"""
 
-from db import EnemiesDB
-from collections import OrderedDict
+from db import EnemiesDB, HistoryDB
 from typing import List
 
 
@@ -46,7 +50,6 @@ class MyEnemiesView(object):
             match_enemies = game.get_enemies()
             enemies += match_enemies
 
-        game_history = []
         stats = {}
         for enemy, result in enemies:
             if enemy not in stats:
@@ -74,3 +77,29 @@ class MyEnemiesView(object):
 
         stats = ordered_stats[0:20]
         return stats
+
+
+class MyHistoryView(object):
+    def __init__(self, username: str, gateway: str):
+        self.username = username
+        self.gateway = gateway
+
+        self.db = HistoryDB(self.gateway)
+
+    def get(self, limit: int=-1):
+        if limit == -1:
+            return self.db.get_history(self.username)
+        else:
+            return self.db.get_history_last(self.username, limit)
+
+
+class MyStatsView(MyHistoryView):
+    def get(self):
+        data = self.db.get_history(self.username)
+
+        per_day = {}
+        for game in data:
+            if str(game["date"].date()) not in per_day:
+                per_day[str(game["date"].date())] = 0
+            per_day[str(game["date"].date())] += 1
+        return per_day
