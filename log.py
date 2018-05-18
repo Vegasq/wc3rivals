@@ -19,3 +19,7 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 
 LOG.addHandler(ch)
+
+
+def set_level(lvl):
+    LOG.setLevel(lvl)

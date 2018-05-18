@@ -145,7 +145,6 @@ class ProfileHistoryParser(object):
         :return: True if game already in DB, False if not.
         """
         data = self.database.get_by_id(game_id)
-        LOG.debug("check_game_in_db", data)
         if data:
             return True
         return False
@@ -155,7 +154,6 @@ class ProfileHistoryParser(object):
         Save all games from buffer to DB
         """
         for g in self.game_matches:
-            LOG.debug("save game ", g)
             if not self.check_game_in_db(g.id):
                 self.database.insert(g.generate_json())
         self.game_matches = []

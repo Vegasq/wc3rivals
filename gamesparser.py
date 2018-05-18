@@ -12,6 +12,8 @@ import requests
 
 import argparse
 from datetime import datetime
+import logging
+from time import time
 from typing import List, Dict
 import json
 
@@ -193,19 +195,16 @@ class GamePageParser(object):
         # START date
         match_date = " ".join(player_stats_data_left[0].text.split()[:-1])
         match_date = datetime.strptime(match_date, "%m/%d/%Y %I:%M:%S %p")
-        LOG.debug("match_date", match_date)
         # END date
 
         # START map
         match_map = self.soup.find_all(
             "td", class_="playerStatsDataLeft")[1].text
-        LOG.debug("match_map", match_map)
         # END map
 
         # START match_type
         match_type = self.soup.find_all(
             "td", class_="playerStatsDataLeft")[2].text
-        LOG.debug("match_type", match_type)
         # END match_type
 
         # START match_length
@@ -214,10 +213,9 @@ class GamePageParser(object):
         if "minutes" in match_len:
             match_len = int(match_len.split()[0])
         else:
-            LOG.error("Unknown length {match_len}")
+            LOG.error(f"Unknown length {match_len}")
             match_len = 0
 
-        LOG.debug("match_length", match_len)
         # END match_length
 
         return {
@@ -233,13 +231,20 @@ class GamePageParser(object):
 
         :return: True if success and False if other case.
         """
+        timer = time()
         if self.db.get_by_id(self.game_id):
             LOG.info(f"Game {self.gateway}#{self.game_id} exists.")
             return True
+        LOG.debug('Check if game exists in DB took: %f' % (time() - timer))
 
         url = (f"http://classic.battle.net/war3/ladder/w3xp-game-detail.aspx"
                f"?Gateway={self.gateway}&GameID={self.game_id}")
+
+        timer = time()
         data = requests.get(url)
+        LOG.debug('HTTP request towards Battle.Net took: %f' % (time() - timer))
+
+        timer = time()
         self.soup = BeautifulSoup(data.text, 'html.parser')
 
         if not self.soup.find("b") or "error" in self.soup.find(
@@ -259,8 +264,11 @@ class GamePageParser(object):
 
         self.stats["game_id"] = self.game_id
         self.stats["gateway"] = self.gateway
+        LOG.debug('Game parsing took: %f' % (time() - timer))
 
+        timer = time()
         self.db.insert(self.stats)
+        LOG.debug('Save game in DB took: %f' % (time() - timer))
         LOG.info(f"Game {self.gateway}#{self.game_id} saved.")
 
         return True
@@ -343,6 +351,7 @@ class GPManager(object):
 def main() -> None:
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--debug", action="store_true", help="Debug")
     parser.add_argument("--old", action="store_true", help="Parse backwards.")
     ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
     parser.add_argument("--gateway", help="Specify gateway", choices=ladders)
@@ -351,6 +360,8 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    if args.debug:
+        LOG.setLevel(logging.DEBUG)
     GPManager(args.gateway, not args.old, args.init_id).start()
 
 
