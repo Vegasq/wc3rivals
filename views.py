@@ -92,6 +92,9 @@ class MyHistoryView(object):
         else:
             return self.db.get_history_last(self.username, limit)
 
+    def get_solo(self):
+        return self.db.get_solo_history(self.username)
+
 
 class MyStatsView(MyHistoryView):
     def get(self):

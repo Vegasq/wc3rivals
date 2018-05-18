@@ -75,6 +75,16 @@ class HistoryDB(DB):
             "date": {"$gt": d}
         }).sort("date", -1)
 
+    def get_solo_history(self, username: str):
+        d = datetime.today() - timedelta(days=90)
+
+        return self.collection.find({
+            "type": "Solo",
+            "players": username,
+            "length": {"$gt": 3},
+            "date": {"$gt": d}
+        }).sort("date", -1)
+
     def get_history_last(self, username: str, limit: int=5):
         if limit > 50:
             limit = 50

@@ -18,7 +18,7 @@ class xp(object):
         inp = web.input(username=None, gateway=None)
         msv = MyHistoryView(inp.username, inp.gateway)
         xp = []
-        for game in msv.get():
+        for game in msv.get_solo():
             for p in game["players_data"]:
                 if p["username"] == inp.username:
                     xp.append([str(game["date"]), p["xp"]])
