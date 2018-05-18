@@ -3,6 +3,9 @@ from typing import List
 from db import DB
 
 
+chunk_size = 10000
+
+
 def unused(db: DB, init_id: int) -> List[int]:
     """
 
@@ -10,7 +13,7 @@ def unused(db: DB, init_id: int) -> List[int]:
     :param init_id: first game_id
     :return: List of IDs not created in DB
     """
-    low = init_id-1000
+    low = init_id-chunk_size
     high = init_id
 
     got = db.get_by_range(low, high)

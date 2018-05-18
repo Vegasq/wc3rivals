@@ -17,7 +17,7 @@ import json
 
 from db import DB
 from log import LOG
-from unused import unused
+import unused
 
 
 __author__ = "Mykola Yakovliev"
@@ -332,12 +332,12 @@ class GPManager(object):
                     self.game_id -= 1
             else:
                 LOG.info("Parsing old games")
-                ids = unused(self.db, self.game_id)
+                ids = unused.unused(self.db, self.game_id)
                 LOG.info(f"Found {len(ids)} not parsed games.")
                 for i in ids:
                     gpp = GamePageParser(self.gateway, i, db=self.db)
                     gpp.fetch()
-                self.game_id -= 1000
+                self.game_id -= unused.chunk_size
 
 
 def main() -> None:
