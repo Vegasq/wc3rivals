@@ -17,6 +17,7 @@ import json
 
 from db import DB
 from log import LOG
+from unused import unused
 
 
 __author__ = "Mykola Yakovliev"
@@ -298,10 +299,11 @@ class GPManager(object):
         if self.game_id == -1:
             lsgs = LastSavedGameSelector(self.gateway)
             try:
-                if self.new:
-                    self.game_id = lsgs.last()["game_id"] + 1
-                else:
-                    self.game_id = lsgs.first()["game_id"] - 1
+                # if self.new:
+                #     self.game_id = lsgs.last()["game_id"] + 1
+                # else:
+                #     self.game_id = lsgs.first()["game_id"] - 1
+                self.game_id = lsgs.last()["game_id"]
             except TypeError:
                 LOG.error("Database is empty. Use --init-id to bootstrap.")
                 exit()
@@ -311,22 +313,31 @@ class GPManager(object):
                 LOG.info("Last game parsed.")
                 return
 
-            gpp = GamePageParser(self.gateway, self.game_id, db=self.db)
-            success = gpp.fetch()
-
-            if not success:
-                self.errors_pool += 1
-            elif self.errors_pool > 0 and success:
-                self.errors_pool -= 1
-
-            if self.errors_pool >= 10:
-                LOG.error("More than 10 errors in a row. Exit.")
-                exit()
-
             if self.new:
-                self.game_id += 1
+                gpp = GamePageParser(self.gateway, self.game_id, db=self.db)
+                success = gpp.fetch()
+
+                if not success:
+                    self.errors_pool += 1
+                elif self.errors_pool > 0 and success:
+                    self.errors_pool -= 1
+
+                if self.errors_pool >= 10:
+                    LOG.error("More than 10 errors in a row. Exit.")
+                    exit()
+
+                if self.new:
+                    self.game_id += 1
+                else:
+                    self.game_id -= 1
             else:
-                self.game_id -= 1
+                LOG.info("Parsing old games")
+                ids = unused(self.db, self.game_id)
+                LOG.info(f"Found {len(ids)} not parsed games.")
+                for i in ids:
+                    gpp = GamePageParser(self.gateway, i, db=self.db)
+                    gpp.fetch()
+                self.game_id -= 1000
 
 
 def main() -> None:

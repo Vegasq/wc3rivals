@@ -47,6 +47,15 @@ class DB(object):
         LOG.debug(f"Save {data} to DB.")
         self.collection.insert_one(data)
 
+    def get_by_range(self, low, high):
+        LOG.info(f"Collect entries between {low} and {high}")
+        return self.collection.find({
+            "$and": [
+                {"game_id": {"$gte": low}},
+                {"game_id": {"$lte": high}}
+            ]
+        }).sort("game_id", 1)
+
 
 class EnemiesDB(DB):
     def get_solo_games_by_user(self, username: str):
