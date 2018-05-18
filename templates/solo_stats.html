@@ -256,10 +256,6 @@
             xhr.send(null);
         }
 
-        function render(result){
-
-        }
-
         class GamesStatistic {
           constructor(username, gateway) {
             this.username = username;
@@ -330,7 +326,7 @@
                 // console.log(result[i]);
 
                 var secondary_player =
-                    "<a href='/u/"+current_gateway()+"/"+result[i][1]["secondary_player"]+"'>"+
+                    "<a onclick='send_request(\""+result[i][1]["secondary_player"]+"\", \""+current_gateway()+"\");return false;' href='#'>"+
                     result[i][1]["secondary_player"]+
                     "</a>";
 
@@ -429,7 +425,7 @@
                         var player = game_info["players_data"][z];
                         if (player["result"] == "Win") {
                             winners +=
-                                "<a href='/u/"+current_gateway()+"/"+player["username"]+"'>"+
+                                "<a onclick='send_request(\""+player["username"]+"\", \""+current_gateway()+"\");return false;' href='#'>"+
                                 player["username"] + " ["+simplify_race(player["race"])+"]"+
                                 "</a>";
                         }
@@ -441,7 +437,7 @@
                         var player = game_info["players_data"][z];
                         if (player["result"] == "Loss") {
                             loosers +=
-                                "<a href='/u/"+current_gateway()+"/"+player["username"]+"'>"+
+                                "<a onclick='send_request(\""+player["username"]+"\", \""+current_gateway()+"\");return false;' href='#'>"+
                                 player["username"] + " ["+simplify_race(player["race"])+"]"+
                                 "</a>";
                         }
@@ -473,49 +469,51 @@
                 return document.getElementById("search_gateway").value;
 
             }
+        }
+
+        function send_request(username, gateway){
+            // Enemies block
+            if (username && gateway){
+                var name = username;
+                var gateway = gateway;
+                document.getElementById("search_box").value = username;
+                document.getElementById("search_gateway").value = gateway;
+            } else {
+                var name = document.getElementById("search_box").value;
+                var gateway = document.getElementById("search_gateway").value;
+            }
+
+            fix_location(name, gateway);
+
+            for
+            (var i=0;i<document.getElementsByClassName("show_on_search").length;i++){
+                document.getElementsByClassName("show_on_search")[i].style.display = "flex";
+            }
+
+            // var out =
+            //     http_get("/api?username="+name+"&gateway="+gateway);
+            // render(out);
+
+            var os = new OpponentsStatistic(name, gateway);
+            os.start();
+
+            // stats
+            var gs = new GamesStatistic(name, gateway);
+            gs.start();
+
+            // history
+            var gh = new GameHistory(name, gateway);
+            gh.start();
+
+            // xp
+            var xs = new XpStatistic(name, gateway);
+            xs.start();
 
         }
 
-
         (function(){
 
-            function send_request(username, gateway){
-                // Enemies block
-                if (username && gateway){
-                    var name = username;
-                    var gateway = gateway;
-                } else {
-                    var name = document.getElementById("search_box").value;
-                    var gateway = document.getElementById("search_gateway").value;
-                }
 
-                fix_location(name, gateway);
-
-                for
-                (var i=0;i<document.getElementsByClassName("show_on_search").length;i++){
-                    document.getElementsByClassName("show_on_search")[i].style.display = "flex";
-                }
-
-                // var out =
-                //     http_get("/api?username="+name+"&gateway="+gateway);
-                // render(out);
-
-                var os = new OpponentsStatistic(name, gateway);
-                os.start();
-
-                // stats
-                var gs = new GamesStatistic(name, gateway);
-                gs.start();
-
-                // history
-                var gh = new GameHistory(name, gateway);
-                gh.start();
-
-                // xp
-                var xs = new XpStatistic(name, gateway);
-                xs.start();
-
-            }
 
             var btn = document.getElementById("search_btn");
             btn.addEventListener("click", function(){
