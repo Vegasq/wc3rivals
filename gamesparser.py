@@ -250,11 +250,9 @@ class GamePageParser(object):
 
         if not self.soup.find("b") or "error" in self.soup.find(
                 "b").text.lower():
-            LOG.error("Failed to parse page: {}".format(
-                self.soup.find("b").text))
+            LOG.error("Failed to parse page.")
             return False
 
-        timer = time()
         self.stats = self._parse_stats()
         LOG.debug('Parse stats: %f' % (time() - timer))
 
