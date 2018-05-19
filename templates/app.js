@@ -344,7 +344,7 @@ function send_request(username, gateway){
     inp.addEventListener("keypress", function(e){
         var key = e.which || e.keyCode;
         if (key === 13) {
-            send_request();
+            send_request(undefined, undefined);
         }
     });
     // Register events for search END
