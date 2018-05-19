@@ -1,7 +1,7 @@
 import web
-from views import MyEnemiesView, MyStatsView, MyHistoryView
 import json
-from log import LOG
+
+from views import MyEnemiesView, MyStatsView, MyHistoryView
 
 
 urls = (
@@ -57,8 +57,11 @@ class stats(object):
 
 class index(object):
     def GET(self, gateway: str="", username: str=""):
+        with open("templates/app.js") as fl:
+            js = fl.read()
+
         with open("templates/solo_stats.html") as fl:
-            return fl.read()
+            return fl.read().replace("{{ app.js }}", js)
 
 
 class opponents(object):
@@ -77,21 +80,19 @@ class opponents(object):
             mew = MyEnemiesView(inp.gateway)
             data = mew.get_stats(inp.username)
 
-        print(data, len(data), type(data))
         if len(data) == 0:
             data = {
                 "info": "User not found."
             }
-        print(data)
 
         return json.dumps(data)
 
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
-    try:
-        web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
-    except (ImportError, ModuleNotFoundError):
-        LOG.error("Do you have spawn-fcgi?")
+    # try:
+    #     web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    # except (ImportError, ModuleNotFoundError, Exception):
+    #     LOG.error("Do you have spawn-fcgi?")
     app.run()
 
