@@ -1,6 +1,7 @@
 import web
 from views import MyEnemiesView, MyStatsView, MyHistoryView
 import json
+from log import LOG
 
 
 urls = (
@@ -88,6 +89,9 @@ class opponents(object):
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
-    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    try:
+        web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    except (ImportError, ModuleNotFoundError):
+        LOG.error("Do you have spawn-fcgi?")
     app.run()
 

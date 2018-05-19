@@ -189,27 +189,28 @@ class GamePageParser(object):
             length
         }
         """
+        timer = time()
         player_stats_data_left = self.soup.find_all(
             "td", class_="playerStatsDataLeft")
+        LOG.debug('Get playerStatsDataLeft: %f' % (time() - timer))
 
         # START date
+        timer = time()
         match_date = " ".join(player_stats_data_left[0].text.split()[:-1])
         match_date = datetime.strptime(match_date, "%m/%d/%Y %I:%M:%S %p")
+        LOG.debug('Extract date: %f' % (time() - timer))
         # END date
 
         # START map
-        match_map = self.soup.find_all(
-            "td", class_="playerStatsDataLeft")[1].text
+        match_map = player_stats_data_left[1].text
         # END map
 
         # START match_type
-        match_type = self.soup.find_all(
-            "td", class_="playerStatsDataLeft")[2].text
+        match_type = player_stats_data_left[2].text
         # END match_type
 
         # START match_length
-        match_len = self.soup.find_all(
-            "td", class_="playerStatsDataLeft")[3].text
+        match_len = player_stats_data_left[3].text
         if "minutes" in match_len:
             match_len = int(match_len.split()[0])
         else:
@@ -253,12 +254,21 @@ class GamePageParser(object):
                 self.soup.find("b").text))
             return False
 
+        timer = time()
         self.stats = self._parse_stats()
+        LOG.debug('Parse stats: %f' % (time() - timer))
+
+        timer = time()
         self.stats["players_data"] = self._parse_players()
+        LOG.debug('Parse players: %f' % (time() - timer))
 
         self.stats["players"] = [p.username
                                  for p in self.stats["players_data"]]
+
+        timer = time()
         levels = self._parse_levels()
+        LOG.debug('Parse levels: %f' % (time() - timer))
+
         for i, p in enumerate(self.stats["players_data"]):
             self.stats["players_data"][i].update(levels[i])
 

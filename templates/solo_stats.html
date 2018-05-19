@@ -62,6 +62,9 @@
         .show_on_search{
             display: none;
         }
+        .user_info_block {
+            padding: 1em 0em;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +106,33 @@
 
 
     <div class="row show_on_search">
+        <div class="col-4">
+          <h2 class="user_info_block">
+              <span id="username_block"></span>
+              <small class="badge badge-secondary" id="level_block">
+
+              </small>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row show_on_search">
+        <div class="col-4">
+
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col" colspan="2">Score against</th></tr>
+                    <tr>
+                        <!--<th scope="col" width="40%">Player</th>-->
+                        <th scope="col">Score</th>
+                        <th scope="col" width="80%">Opponent</th>
+                    </tr>
+                </thead>
+                <tbody id="stats_body">
+
+                </tbody>
+            </table>
+        </div>
         <div class="col-8">
             <table class="stats_table table table-sm table-hover text-center">
                 <thead class="thead-light">
@@ -146,21 +176,7 @@
 
             </table>
         </div>
-        <div class="col-4">
-            <table class="stats_table table table-sm table-hover text-center">
-                <thead class="thead-light">
-                    <tr><th scope="col" colspan="2">Score against</th></tr>
-                    <tr>
-                        <!--<th scope="col" width="40%">Player</th>-->
-                        <th scope="col">Score</th>
-                        <th scope="col" width="80%">Opponent</th>
-                    </tr>
-                </thead>
-                <tbody id="stats_body">
 
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <div class="row justify-content-md-center show_on_search">
@@ -412,8 +428,22 @@
                         r += "U";
                     }
                     return r;
-
                 }
+
+                console.log(data[0]);
+                document.getElementById(
+                    "username_block").innerHTML = data[0]["primary_player"];
+
+                var level = 0;
+                for (let o of data[0]["players_data"]) {
+                    if (o["username"] == data[0]["primary_player"]) {
+                        level = o["level"];
+                    }
+                }
+
+                document.getElementById("level_block").innerHTML = "Level " +
+                    level;
+
                 for (var i=0; i<data.length;i++) {
                     var game_info = data[i];
                     console.log("Parsing game_info", game_info);
@@ -471,14 +501,15 @@
 
         function send_request(username, gateway){
             // Enemies block
+            var gateway, name;
             if (username && gateway){
-                var name = username;
-                var gateway = gateway;
+                name = username;
+
                 document.getElementById("search_box").value = username;
                 document.getElementById("search_gateway").value = gateway;
             } else {
-                var name = document.getElementById("search_box").value;
-                var gateway = document.getElementById("search_gateway").value;
+                name = document.getElementById("search_box").value;
+                gateway = document.getElementById("search_gateway").value;
             }
 
             fix_location(name, gateway);
