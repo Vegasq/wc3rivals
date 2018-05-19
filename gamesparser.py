@@ -299,8 +299,9 @@ class GPManager(object):
         self.errors_pool = 0
 
         self.db = DB(gateway)
+        self.exit = False
 
-    def start(self) -> None:
+    def _start(self) -> None:
         """
         Start parsing Battle.Net games one-by-one.
         """
@@ -317,6 +318,9 @@ class GPManager(object):
                 exit()
 
         while True:
+            if self.exit:
+                return
+
             if self.game_id <= 0:
                 LOG.info("Last game parsed.")
                 return
@@ -346,6 +350,13 @@ class GPManager(object):
                     gpp = GamePageParser(self.gateway, i, db=self.db)
                     gpp.fetch()
                 self.game_id -= unused.chunk_size
+
+    def start(self) -> None:
+        try:
+            self._start()
+        except KeyboardInterrupt:
+            LOG.info("Quitting...")
+            self.exit = True
 
 
 def main() -> None:
