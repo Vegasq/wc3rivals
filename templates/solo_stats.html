@@ -13,12 +13,6 @@
         .stats_table {
             width: 100%;
         }
-        .search_form {
-            margin: 10px;
-            display: block;
-            padding: 10px;
-            margin: 10px;
-        }
         .search_form > input, select {
             height: 40px;
             -webkit-appearance: none;
@@ -29,35 +23,24 @@
             display: none;
         }
         #search_box {
-            border: 0px;
-            box-shadow: 0px 0px 3px #888888;
-            padding: 5px;
-            position: relative;
-            z-index: 1;
-            width: 25em;
+            height: 2em;
+            border: 1px solid gray;
+            border-radius: 0;
+            padding: 0.1em;
         }
         #search_gateway {
-            height: 29px;
-            width: 7em;
-            padding: 0em 1em;
+            background-color: aliceblue;
+            height: 2em;
+            border: 1px solid gray;
             border-radius: 0;
-            z-index: 2;
-            position: relative;
+            padding: 0.1em;
         }
         #search_btn{
-            height: 29px;
-            z-index: 2;
-            position: relative;
-        }
-        #searchbar_buttons_owner {
-            width: 100%;
-        }
-        #searchbar_buttons_owner > div {
-            width: 25em;
-            margin: 0 auto;
-            text-align: right;
-            margin-top: -38px;
-            padding: 0 6px;
+            background-color: aliceblue;
+            height: 2em;
+            border: 1px solid gray;
+            border-radius: 0;
+            padding: 0.1em;
         }
         .show_on_search{
             display: none;
@@ -65,17 +48,21 @@
         .user_info_block {
             padding: 1em 0em;
         }
+        #search_block {
+            padding-top: 0.6em;
+        }
+        .user_badge {
+            padding-top: 0.2em;
+        }
+        .header_block {
+            padding: 2em 0;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="row justify-content-md-center">
-        <h1>Opponents</h1>
-    </div>
-    <div class="row justify-content-md-center">
-        <small>Solo opponents stats</small>
-    </div>
+<div class="container-fluid">
+
 
     <div class="row justify-content-md-center " >
         <div class="alert alert-success hidden" role="alert" id="info_msg">
@@ -86,44 +73,45 @@
         </div>
     </div>
 
-    <div class="row justify-content-md-center" style="min-height: 3em;">
-        <!--<form class="search_form">-->
-            <input class="search_box" id="search_box">
 
-            <div id="searchbar_buttons_owner">
-                <div>
-                    <select id="search_gateway">
-                        <option value="Northrend" disabled>Northrend (Europe)</option>
-                        <option value="Lordaeron">Lordaeron (US West)</option>
-                        <option value="Azeroth" disabled>Azeroth (US East)</option>
-                        <option value="Kalimdor" disabled>Kalimdor (Asia)</option>
-                    </select>
-                    <input class="submit" type="button" value="Search" id="search_btn">
-                </div>
+    <div class="row header_block">
+        <div class="col-2">
+            <h1> <b>WC3</b>INSIDE</h1>
+        </div>
+        <div class="col-8">
+            <div id="search_block">
+                <input class="search_box" id="search_box" placeholder="Grubby">
+
+                <select id="search_gateway">
+                    <option value="Northrend">Northrend (Europe)</option>
+                    <option value="Lordaeron">Lordaeron (US West)</option>
+                    <option value="Azeroth" disabled>Azeroth (US East)</option>
+                    <option value="Kalimdor" disabled>Kalimdor (Asia)</option>
+                </select>
+                <input class="submit" type="button" value="Search" id="search_btn">
             </div>
-        <!--</form>-->
-    </div>
+        </div>
 
-
-    <div class="row show_on_search">
-        <div class="col-4">
-          <h2 class="user_info_block">
+        <div class="col-2">
+          <h2 class="user_badge show_on_search">
               <span id="username_block"></span>
               <small class="badge badge-secondary" id="level_block">
 
               </small>
             </h2>
         </div>
+
     </div>
+
 
     <div class="row show_on_search">
         <div class="col-4">
 
             <table class="stats_table table table-sm table-hover text-center">
                 <thead class="thead-light">
-                    <tr><th scope="col" colspan="2">Score against</th></tr>
+                    <tr><th scope="col" colspan="3">Score against</th></tr>
                     <tr>
-                        <!--<th scope="col" width="40%">Player</th>-->
+                        <th scope="col" width=""></th>
                         <th scope="col">Score</th>
                         <th scope="col" width="80%">Opponent</th>
                     </tr>
@@ -182,9 +170,19 @@
     <div class="row justify-content-md-center show_on_search">
     </div>
 
-    <div class="row justify-content-md-center">
-        <div class="footer navbar-fixed-bottom">2018, Mykola Yakovliev</div>
+    <div class="row justify-content-md-center header_block">
+        <div class="col-4">
+            <h5>Records in database</h5>
+            <span id="db_state"></span>
+        </div>
+        <div class="col-4">
+        </div>
+        <div class="col-4">
+            <h5>Credits</h5>
+            <span>2018, Mykola Yakovliev</span>
+        </div>
     </div>
+
 </div>
 
 

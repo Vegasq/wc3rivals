@@ -1,7 +1,7 @@
 import web
 import json
 
-from views import MyEnemiesView, MyStatsView, MyHistoryView
+from views import MyEnemiesView, MyStatsView, MyHistoryView, DBState
 
 
 urls = (
@@ -11,7 +11,14 @@ urls = (
     '/stats', 'stats',
     '/history', 'history',
     '/xp', 'xp',
+    '/dbstate', 'dbstate'
 )
+
+
+class dbstate(object):
+    def GET(self):
+        dbs = DBState()
+        return json.dumps(dbs.get_entries_count())
 
 
 class xp(object):

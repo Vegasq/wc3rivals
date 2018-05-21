@@ -4,7 +4,7 @@ display. Here we request information from DB and preformat it to be used by
 client.
 """
 
-from db import EnemiesDB, HistoryDB
+from db import EnemiesDB, HistoryDB, DBState
 from typing import List
 
 
@@ -106,3 +106,13 @@ class MyStatsView(MyHistoryView):
                 per_day[str(game["date"].date())] = 0
             per_day[str(game["date"].date())] += 1
         return per_day
+
+
+class DBStateView(object):
+    def __init__(self, gateway: str):
+        self.gateway = gateway
+
+        self.db = DBState()
+
+    def get(self):
+        return self.db.get_entries_count()

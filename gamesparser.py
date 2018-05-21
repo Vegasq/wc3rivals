@@ -247,12 +247,14 @@ class GamePageParser(object):
 
         timer = time()
         self.soup = BeautifulSoup(data.text, 'html.parser')
+        LOG.debug('BeautifulSoup init: %f' % (time() - timer))
 
         if not self.soup.find("b") or "error" in self.soup.find(
                 "b").text.lower():
             LOG.error("Failed to parse page.")
             return False
 
+        timer = time()
         self.stats = self._parse_stats()
         LOG.debug('Parse stats: %f' % (time() - timer))
 

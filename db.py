@@ -36,6 +36,9 @@ class DB(object):
         self._db = MongoClient(uri).battle
         self._gateway = gateway.lower()+"_games"
 
+    def set_gateway(self, gateway: str):
+        self._gateway = gateway.lower()+"_games"
+
     @property
     def collection(self):
         return self._db[self._gateway]
@@ -101,3 +104,21 @@ class HistoryDB(DB):
             "players": username,
             "length": {"$gt": 3}
         }).sort("date", -1).limit(limit)
+
+
+class DBState(DB):
+    def __init__(self):
+        super(DBState, self).__init__("?")
+        self.envs = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
+
+    def get_entries_count(self):
+        data = {
+            "Lordaeron": 0,
+            "Azeroth": 0,
+            "Northrend": 0,
+            "Kalimdor": 0
+        }
+        for e in self.envs:
+            self.set_gateway(e)
+            data[e] = self.collection.count()
+        return [(k, v) for k, v in data.items()]

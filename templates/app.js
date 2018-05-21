@@ -144,9 +144,14 @@ class OpponentsStatistic {
             return;
         }
 
+        // arrow &#9657;
+        // arrow on hover &#9656;
+        // arrow pressed &#9663;
+        // arrow pressed on hover &#9663;
+
         let tpl = "" +
                   "            <tr>\n" +
-                  "                <!--td>%player%</td-->\n" +
+                  "                <td>&#9657;</td-->\n" +
                   "                <td class='%state_class%'>\n" +
                   "                    <span class=\"win\">%win%</span>\n" +
                   "                    x\n" +
@@ -201,6 +206,28 @@ class XpStatistic {
         draw_xp_statistic(data);
     }
 }
+
+
+class DBState {
+    constructor() {}
+
+    start() {
+        do_get(
+            "/dbstate",
+            this.parse
+        );
+    }
+
+    parse(data) {
+        data = JSON.parse(data);
+        var html = "";
+        for (let e of data) {
+            html += "<div>" + e[0] + ": " + e[1] + "</div>";
+        }
+        document.getElementById("db_state").innerHTML = html;
+    }
+}
+
 
 class GameHistory {
     constructor(username, gateway) {
@@ -325,7 +352,6 @@ function send_request(username, gateway){
     // xp
     let xs = new XpStatistic(name, gateway);
     xs.start();
-
 }
 
 
@@ -348,6 +374,10 @@ function send_request(username, gateway){
         }
     });
     // Register events for search END
+
+    // DB state
+    let dbs = new DBState();
+    dbs.start()
 
     // Once page loaded - check href if it requests some user START
     window.onload = function () {
