@@ -34,6 +34,12 @@
             border: 1px solid gray;
             border-radius: 0;
             padding: 0.1em;
+            padding-right: 2em;
+        }
+        #search_gateway_drop {
+            display: inline;
+            position: relative;
+            left: -1.3em;
         }
         #search_btn{
             background-color: aliceblue;
@@ -41,6 +47,8 @@
             border: 1px solid gray;
             border-radius: 0;
             padding: 0.1em;
+            position: relative;
+            left: -1em;
         }
         .show_on_search{
             display: none;
@@ -88,6 +96,8 @@
                     <option value="Azeroth" disabled>Azeroth (US East)</option>
                     <option value="Kalimdor" disabled>Kalimdor (Asia)</option>
                 </select>
+                <div id="search_gateway_drop">▿</div>
+
                 <input class="submit" type="button" value="Search" id="search_btn">
             </div>
         </div>
