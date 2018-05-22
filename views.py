@@ -5,7 +5,7 @@ client.
 """
 
 from db import EnemiesDB, HistoryDB, DBState
-from typing import List
+from typing import List, Dict
 import copy
 
 
@@ -37,25 +37,13 @@ class MyEnemiesView(object):
         self.gateway = gateway
         self.db = EnemiesDB(gateway)
 
-    def get_stats(self, username: str) -> str:
-        if username and "," in username:
-            usernames = [u.strip() for u in username.split(",")]
-            username = usernames[0]
-            all_games = [MatchObject(g, username)
-                         for g in self.db.get_solo_games_with_users(usernames)]
-        else:
-            all_games = [MatchObject(g, username)
-                         for g in self.db.get_solo_games_by_user(username)]
-        enemies = []
-        for game in all_games:
-            match_enemies = game.get_enemies()
-            enemies += match_enemies
-
+    def _extract_stats(
+            self, enemies: List, player: str) -> Dict:
         stats = {}
         for enemy, result in enemies:
             if enemy not in stats:
                 stats[enemy] = {
-                    "primary_player": username,
+                    "primary_player": player,
                     "secondary_player": enemy,
                     "win": 0,
                     "loss": 0,
@@ -73,6 +61,17 @@ class MyEnemiesView(object):
                 stats[e]["state"] = 1
             elif stats[e]["win"] < stats[e]["loss"]:
                 stats[e]["state"] = -1
+
+        return stats
+
+    def get_stats(self, username: str) -> str:
+        all_games = [MatchObject(g, username)
+                     for g in self.db.get_solo_games_by_user(username)]
+        enemies = []
+        for game in all_games:
+            enemies += game.get_enemies()
+
+        stats = self._extract_stats(enemies, username)
 
         ordered_stats = sorted(stats.items(),
                                key=lambda x: -1 * (x[1]["win"] + x[1]["loss"]))
