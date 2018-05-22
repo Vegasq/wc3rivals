@@ -6,6 +6,7 @@ client.
 
 from db import EnemiesDB, HistoryDB, DBState
 from typing import List
+import copy
 
 
 class MatchObject(object):
@@ -58,7 +59,8 @@ class MyEnemiesView(object):
                     "secondary_player": enemy,
                     "win": 0,
                     "loss": 0,
-                    "state": 0
+                    "state": 0,
+                    "history": []
                 }
 
             if result:
@@ -76,6 +78,20 @@ class MyEnemiesView(object):
                                key=lambda x: -1 * (x[1]["win"] + x[1]["loss"]))
 
         stats = ordered_stats[0:20]
+        only_enemies_to_display = [s[0] for s in stats]
+
+        for game in all_games:
+            for enemy in only_enemies_to_display:
+                if enemy in game._game_dict["players"]:
+                    for s in stats:
+                        if len(s[1]["history"]) >= 5:
+                            continue
+                        if s[0] == enemy:
+                            g = copy.copy(game._game_dict)
+                            g.pop("_id")
+                            g["date"] = str(g["date"])
+                            s[1]["history"].append(g)
+
         return stats
 
 

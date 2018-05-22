@@ -150,15 +150,23 @@ class OpponentsStatistic {
         // arrow pressed on hover &#9663;
 
         let tpl = "" +
-                  "            <tr>\n" +
-                  "                <td>&#9657;</td-->\n" +
-                  "                <td class='%state_class%'>\n" +
+                  "            <tr class=''>\n" +
+                  "                <td class='show_opponent_details'>&#9657;</td>\n" +
+                  "                                                    <td class='%state_class%'>\n" +
                   "                    <span class=\"win\">%win%</span>\n" +
                   "                    x\n" +
                   "                    <span class=\"loss\">%loss%</span>\n" +
                   "                </td>\n" +
                   "                <td>%opponent%</td>\n" +
-                  "            </tr>\n";
+                  "            </tr>\n" +
+                  "            <tr class='hidden'>\n" +
+                  "                <td colspan='3'>" +
+                  "                    <table class='table '>" +
+                  "                        %games_info%" +
+                  "                    </table>" +
+                  "                </td>\n" +
+                  "            </tr>\n" +
+                  "            ";
 
         let player_url_tpl =
             "<a " +
@@ -167,6 +175,7 @@ class OpponentsStatistic {
 
         for (let i=0; i<result.length;i+=1) {
             let secondary_player = player_url_tpl.replace("%player_name%", result[i][1]["secondary_player"]);
+            let primary_player = result[i][1]["primary_player"]
             secondary_player = secondary_player.replace("%gateway%", current_gateway());
             secondary_player = secondary_player.replace("%link_text%", result[i][1]["secondary_player"]);
 
@@ -175,6 +184,23 @@ class OpponentsStatistic {
             body = body.replace("%loss%", result[i][1]["loss"]);
             body = body.replace("%opponent%", secondary_player);
             body = body.replace("%player%", result[i][1]["primary_player"]);
+
+            let game_info_html = "";
+            for (let g of result[i][1]["history"]){
+                let result = "";
+                for (let p of g["players_data"]){
+                    if (p["username"] === primary_player){
+                        result = p["result"];
+                    }
+                }
+                game_info_html += "<tr>" +
+                    "<td>"+result+"</td>" +
+                    "<td>"+g["date"].split(" ")[0]+"</td>" +
+                    "<td>"+g["map"]+"</td>" +
+                    "<td>"+g["length"]+" min</td>" +
+                    "</tr>";
+            }
+            body = body.replace("%games_info%", game_info_html);
 
             let state = "";
             if (result[i][1]["state"] === 1) {
@@ -185,6 +211,22 @@ class OpponentsStatistic {
             body = body.replace("%state_class%", state);
 
             stats_body.innerHTML += body;
+        }
+        let rows = document.getElementsByClassName("show_opponent_details");
+        for (let r of rows){
+            r.addEventListener("click",
+                function(e){
+                    console.log(e);
+                    if (e.target.className === "show_opponent_details"){
+                        if (e.target.parentNode.nextElementSibling.style.display === "table-row") {
+                            e.target.parentNode.nextElementSibling.style.display = "none";
+                        } else {
+                            e.target.parentNode.nextElementSibling.style.display = "table-row";
+                        }
+
+                    }
+                }
+            )
         }
     }
 }
