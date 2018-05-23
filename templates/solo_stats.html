@@ -65,6 +65,9 @@
         .header_block {
             padding: 2em 0;
         }
+        .logo_header_block {
+            max-width: 14em;
+        }
     </style>
 </head>
 <body>
@@ -82,8 +85,8 @@
     </div>
 
 
-    <div class="row header_block">
-        <div class="col-2">
+    <div class="row header_block" id="row_header_block">
+        <div class="col-2 logo_header_block">
             <h1> <b>WC3</b>INSIDE</h1>
         </div>
         <div class="col-7">
@@ -91,17 +94,21 @@
                 <input class="search_box" id="search_box" placeholder="Grubby">
 
                 <select id="search_gateway">
-                    <option value="Northrend">Northrend (Europe)</option>
-                    <option value="Lordaeron">Lordaeron (US West)</option>
-                    <option value="Azeroth" disabled>Azeroth (US East)</option>
-                    <option value="Kalimdor" disabled>Kalimdor (Asia)</option>
+                    <option value="Northrend">Europe</option>
+                    <option value="Lordaeron">US West</option>
+                    <option value="Azeroth" disabled>US East</option>
+                    <!--<option value="Kalimdor" disabled>Kalimdor (Asia)</option>-->
                 </select>
                 <div id="search_gateway_drop">▿</div>
 
                 <input class="submit" type="button" value="Search" id="search_btn">
             </div>
         </div>
+    </div>
 
+    <div class="row">
+        <div class="col-9">
+        </div>
         <div class="col-3">
           <h2 class="user_badge show_on_search">
               <span id="username_block"></span>
@@ -110,12 +117,10 @@
               </small>
             </h2>
         </div>
-
     </div>
 
-
     <div class="row show_on_search">
-        <div class="col-6">
+        <div class="col-6" id="score_against_table">
 
             <table class="stats_table table table-sm table-hover text-center">
                 <thead class="thead-light">
@@ -131,7 +136,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-6">
+        <div class="col-6" id="game_history_table">
             <table class="stats_table table table-sm table-hover text-center">
                 <thead class="thead-light">
                     <tr><th scope="col" colspan="4">Last played</th></tr>
@@ -180,7 +185,7 @@
     <div class="row justify-content-md-center show_on_search">
     </div>
 
-    <div class="row justify-content-md-center header_block">
+    <div class="row justify-content-md-center header_block " id="row_footer_block">
         <div class="col-4">
             <h5>Records in database</h5>
             <span id="db_state"></span>

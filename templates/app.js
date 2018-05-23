@@ -117,6 +117,7 @@ class OpponentsStatistic {
     }
 
     start() {
+        document.getElementById("score_against_table").style.display = "none";
         do_get(
             "/opponents?username="+this.username+"&gateway="+this.gateway,
             this.parse
@@ -228,6 +229,8 @@ class OpponentsStatistic {
                 }
             )
         }
+
+        document.getElementById("score_against_table").style.display = "";
     }
 }
 
@@ -278,6 +281,7 @@ class GameHistory {
     }
 
     start() {
+        document.getElementById("game_history_table").style.display = "none";
         do_get(
             "/history?username="+this.username+"&gateway="+this.gateway+"&limit=5",
             this.parse
@@ -352,10 +356,45 @@ class GameHistory {
 
             game_history_body.innerHTML += body;
         }
+        document.getElementById("game_history_table").style.display = "";
+    }
+}
+
+class DynamicSearchPage {
+    constructor(){
+        this.header = document.getElementById("row_header_block");
+        this.footer = document.getElementById("row_footer_block");
+    }
+
+    check_state(){
+        if (window.location.href.indexOf("/u/") !== -1){
+            this.header.style.padding = "2em 0";
+        } else {
+            var w_height = "innerHeight" in window
+                            ? window.innerHeight
+                            : document.documentElement.offsetHeight;
+            var h_height = "innerHeight" in this.header
+                            ? this.header.innerHeight
+                            : this.header.offsetHeight;
+
+            var h_footer = "innerHeight" in this.footer
+                            ? this.footer.innerHeight
+                            : this.footer.offsetHeight;
+
+            // let half_window = (w_height - h_footer - h_height/2) / 2;
+
+            let half_window = w_height/2 - h_footer/2 - h_height/2;
+
+            this.header.style.padding = "" + half_window + "px 5em";
+        }
     }
 }
 
 function send_request(username, gateway){
+    // for (let i=0;i<document.getElementsByClassName("show_on_search").length;i++){
+    //     document.getElementsByClassName("show_on_search")[i].style.display = "none";
+    // }
+
     // Enemies block
     let name;
 
@@ -371,8 +410,7 @@ function send_request(username, gateway){
 
     fix_location(name, gateway);
 
-    for
-    (let i=0;i<document.getElementsByClassName("show_on_search").length;i++){
+    for (let i=0;i<document.getElementsByClassName("show_on_search").length;i++){
         document.getElementsByClassName("show_on_search")[i].style.display = "flex";
     }
 
@@ -394,11 +432,17 @@ function send_request(username, gateway){
     // xp
     let xs = new XpStatistic(name, gateway);
     xs.start();
+
+    let dsp = new DynamicSearchPage();
+    dsp.check_state();
+
 }
 
 
 // INIT START
 (function(){
+    let dsp = new DynamicSearchPage();
+    dsp.check_state();
     // Module to draw charts.
     google.charts.load('current', {'packages':['corechart']});
 

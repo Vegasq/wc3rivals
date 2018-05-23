@@ -109,14 +109,14 @@ class HistoryDB(DB):
 class DBState(DB):
     def __init__(self):
         super(DBState, self).__init__("?")
-        self.envs = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
+        self.envs = ["Lordaeron", "Azeroth", "Northrend"]
 
     def get_entries_count(self):
         data = {
             "Lordaeron": 0,
             "Azeroth": 0,
             "Northrend": 0,
-            "Kalimdor": 0
+            # "Kalimdor": 0
         }
         for e in self.envs:
             self.set_gateway(e)
