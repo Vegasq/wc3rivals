@@ -14,7 +14,7 @@ import argparse
 from datetime import datetime
 import logging
 from time import time
-from typing import List, Dict
+from typing import List, Dict, NewType
 import json
 
 from db import DB
@@ -32,6 +32,10 @@ __email__ = "vegasq@gmail.com"
 __status__ = "Production"
 
 
+Race = NewType("Race", str)
+BNetRealm = NewType("BNetRealm", str)
+
+
 class Player(dict):
     """
     Player representation.
@@ -47,11 +51,11 @@ class Player(dict):
         self["username"] = value
 
     @property
-    def race(self) -> str:
+    def race(self) -> Race:
         return self["race"]
 
     @race.setter
-    def race(self, value) -> None:
+    def race(self, value: Race) -> None:
         self["race"] = value
 
     @property
@@ -105,7 +109,7 @@ class GamePageParser(object):
     Smart enough to ignore duplicates.
     """
 
-    def __init__(self, gateway: str, game_id: int, db: DB) -> None:
+    def __init__(self, gateway: BNetRealm, game_id: int, db: DB) -> None:
         """
         :param gateway: Battle.Net classic Realm
         :param game_id: Uniq BNet game ID
@@ -296,7 +300,7 @@ class GPManager(object):
       before assume we at the end.
     """
 
-    def __init__(self, gateway: str, new: bool=True, init: int=0):
+    def __init__(self, gateway: BNetRealm, new: bool=True, init: int=0):
         """
         :param gateway: Battle.Net classic Realm
         :param new: If True increase GameID each iteration.

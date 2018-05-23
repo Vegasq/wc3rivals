@@ -16,7 +16,7 @@ import urllib
 from bs4 import BeautifulSoup
 from bs4.element import Tag as BSTag
 
-from gamesparser import GamePageParser
+from gamesparser import GamePageParser, BNetRealm
 from db import DB
 from log import LOG
 
@@ -43,7 +43,7 @@ class ProfileHistoryParser(object):
     """
 
     def __init__(self, args: argparse.Namespace, username: str,
-                 gateway: str) -> None:
+                 gateway: BNetRealm) -> None:
         """
         :param args: Settings
         :param username: Battle.Net username
@@ -178,7 +178,7 @@ class ProfileHistoryParser(object):
 
 
 class Ladder(object):
-    def __init__(self, args: argparse.Namespace, gateway: str) -> None:
+    def __init__(self, args: argparse.Namespace, gateway: BNetRealm) -> None:
         """
         :param args: Settings
         :param gateway: Battle.Net classic Realm

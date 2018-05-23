@@ -480,5 +480,7 @@ function send_request(username, gateway){
     };
     // Once page loaded - check href if it requests some user END
 
+    window.addEventListener('popstate', window.onload);
+
 })();
 // INIT END
