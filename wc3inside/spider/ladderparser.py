@@ -16,9 +16,9 @@ import urllib
 from bs4 import BeautifulSoup
 from bs4.element import Tag as BSTag
 
-from gamesparser import GamePageParser, BNetRealm
-from db import DB
-from log import LOG
+from wc3inside.spider.gamesparser import GamePageParser, BNetRealm
+from wc3inside.utils.db import DB
+from wc3inside.utils.log import LOG
 
 
 __author__ = "Mykola Yakovliev"
@@ -233,7 +233,8 @@ def main():
     parser = argparse.ArgumentParser()
 
     ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
-    parser.add_argument("--gateway", help="Specify gateway", choices=ladders)
+    parser.add_argument("--gateway", help="Specify gateway", choices=ladders,
+                        required=True)
     parser.add_argument("--max-per-user", help="Total games to parse",
                         type=int, default=-1)
     args = parser.parse_args()

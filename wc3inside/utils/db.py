@@ -1,12 +1,13 @@
 from urllib.parse import quote_plus
 from pymongo import MongoClient
 from typing import Dict, List
-from log import LOG
 from datetime import datetime, timedelta
+
+from wc3inside.utils.log import LOG
 
 
 try:
-    from settings import settings
+    from wc3inside.settings import settings
 except ImportError:
     class settings(object):
         hostname = "localhost"

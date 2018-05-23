@@ -4,7 +4,8 @@ display. Here we request information from DB and preformat it to be used by
 client.
 """
 
-from db import EnemiesDB, HistoryDB, DBState
+from wc3inside.utils.db import EnemiesDB, HistoryDB, DBState
+
 from typing import List, Dict
 import copy
 
@@ -124,9 +125,7 @@ class MyStatsView(MyHistoryView):
 
 
 class DBStateView(object):
-    def __init__(self, gateway: str):
-        self.gateway = gateway
-
+    def __init__(self):
         self.db = DBState()
 
     def get(self):

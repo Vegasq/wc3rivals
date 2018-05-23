@@ -1,6 +1,6 @@
 from typing import List
 
-from db import DB
+from wc3inside.utils.db import DB
 
 
 chunk_size = 10000

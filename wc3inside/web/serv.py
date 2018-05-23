@@ -1,7 +1,9 @@
+import os
 import web
 import json
 
-from views import MyEnemiesView, MyStatsView, MyHistoryView, DBState
+from wc3inside.web.views import MyEnemiesView, MyStatsView, MyHistoryView, \
+    DBStateView
 
 
 urls = (
@@ -17,8 +19,8 @@ urls = (
 
 class dbstate(object):
     def GET(self):
-        dbs = DBState()
-        return json.dumps(dbs.get_entries_count())
+        dbs = DBStateView()
+        return json.dumps(dbs.get())
 
 
 class xp(object):
@@ -64,10 +66,11 @@ class stats(object):
 
 class index(object):
     def GET(self, gateway: str="", username: str=""):
-        with open("templates/app.js") as fl:
+        path = os.path.dirname(os.path.abspath(__file__))
+        with open(path + "/templates/app.js") as fl:
             js = fl.read()
 
-        with open("templates/solo_stats.html") as fl:
+        with open(path + "/templates/solo_stats.html") as fl:
             return fl.read().replace("{{ app.js }}", js)
 
 
@@ -95,7 +98,7 @@ class opponents(object):
         return json.dumps(data)
 
 
-if __name__ == "__main__":
+def main():
     app = web.application(urls, globals())
     # try:
     #     web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
@@ -103,3 +106,6 @@ if __name__ == "__main__":
     #     LOG.error("Do you have spawn-fcgi?")
     app.run()
 
+
+if __name__ == "__main__":
+    main()

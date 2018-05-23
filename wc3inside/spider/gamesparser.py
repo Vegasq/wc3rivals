@@ -17,9 +17,9 @@ from time import time
 from typing import List, Dict, NewType
 import json
 
-from db import DB
-from log import LOG
-import unused
+from wc3inside.utils.db import DB
+from wc3inside.utils.log import LOG
+from wc3inside.utils import unused
 
 
 __author__ = "Mykola Yakovliev"
@@ -361,7 +361,8 @@ class GPManager(object):
                 ids = unused.unused(self.db, self.game_id)
                 LOG.info(f"Found {len(ids)} not parsed games.")
                 for i in ids:
-                    gpp = GamePageParser(self.gateway, i, db=self.db)
+                    gpp = GamePageParser(
+                        BNetRealm(self.gateway), i, db=self.db)
                     gpp.fetch()
                 self.game_id -= unused.chunk_size
 
@@ -379,7 +380,8 @@ def main() -> None:
     parser.add_argument("--debug", action="store_true", help="Debug")
     parser.add_argument("--old", action="store_true", help="Parse backwards.")
     ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
-    parser.add_argument("--gateway", help="Specify gateway", choices=ladders)
+    parser.add_argument("--gateway", help="Specify gateway", choices=ladders,
+                        required=True)
     parser.add_argument("--init-id", help="Initial game_id", type=int,
                         default=-1)
 
@@ -387,7 +389,12 @@ def main() -> None:
 
     if args.debug:
         LOG.setLevel(logging.DEBUG)
-    GPManager(args.gateway, not args.old, args.init_id).start()
+
+    GPManager(
+        BNetRealm(args.gateway),
+        not args.old,
+        args.init_id
+    ).start()
 
 
 if __name__ == "__main__":
