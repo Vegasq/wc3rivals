@@ -1,3 +1,6 @@
+# Collection of mapReduce functions to collect various statistics
+
+
 # db.getCollection('lordaeron_games').mapReduce(
 #     function(){
 #         this.players_data.forEach(function(z){
@@ -63,9 +66,11 @@ class RacesStats(object):
 class PlayerTopGamesStats(object):
     map_fn = Code("""
         function(){
-            this.players.forEach(function(z){
-                emit(z, 1);
-            });
+            if (this.players.length === 2){
+                this.players.forEach(function(z){
+                    emit(z, 1);
+                });
+            };
         }
     """)
 
@@ -89,9 +94,56 @@ class PlayerTopGamesStats(object):
                                            l.lower() + "_players")
 
 
+class MapsStats(object):
+    map_fn = Code("""
+        function(){
+            var o = {
+                total_games: 1,
+                players: this.players.length,
+                map_name: this.map
+            };
+            emit(this.map+'#'+this.players.length, o);
+        }
+    """)
+
+    reduce_fn = Code("""
+        function(k, v){
+            var total_games = 0;
+            var avg = 2; // Assume most popular value
+            var map_name = '';
+
+            for (var i = 0; i < v.length; i++) {
+                total_games += v[i].total_games;
+                avg = (v[i].players + avg) / 2;
+                map_name = v[i].map_name
+            };
+
+            var o = {
+                total_games: total_games,
+                players: avg,
+                map_name: map_name
+            };
+            return o;
+        }
+    """)
+
+    @classmethod
+    def build(cls):
+        ladders = ["Lordaeron", "Azeroth", "Northrend"]
+        conn = db.DB("")
+        for l in ladders:
+            LOG.info(f"Creating per-map stats for ladder {l}.")
+            conn.set_gateway(l)
+            conn.collection.map_reduce(
+                cls.map_fn,
+                cls.reduce_fn,
+                l.lower()+"_maps")
+
+
 def main():
     PlayerTopGamesStats.build()
     RacesStats.build()
+    MapsStats.build()
 
 
 if __name__ == "__main__":
