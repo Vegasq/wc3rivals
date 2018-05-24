@@ -29,6 +29,12 @@ class RacesStats(object):
     map_fn = Code("""
     function(){
         this.players_data.forEach(function(z){
+            if (z.race.indexOf("Rand") !== -1) {
+                emit("TotalRandom", 1);            
+            }
+            
+            // Execute emit for all races including random to collect info
+            // how fair it get splitted in ladder.
             emit(z.race, 1);
         });
     }
@@ -51,7 +57,7 @@ class RacesStats(object):
         for l in ladders:
             LOG.info(f"Creating race stats for ladder {l}.")
             db.DB(l).collection.map_reduce(cls.map_fn, cls.reduce_fn,
-                                           "races_"+l.lower())
+                                           l.lower()+"_races")
 
 
 def main():
