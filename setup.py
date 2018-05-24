@@ -22,7 +22,7 @@ setuptools.setup(
             'wc3inside-parser=wc3inside.spider.gamesparser:main',
             'wc3inside-parser-ladder=wc3inside.spider.ladderparser:main',
             'wc3inside-server=wc3inside.web.serv:main',
-            'wc3inside-races-stats=wc3inside.utils.races_stats:main',
+            'wc3inside-races-stats=wc3inside.utils.stats_calc:main',
         ],
     }
 )
