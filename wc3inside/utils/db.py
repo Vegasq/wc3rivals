@@ -25,8 +25,8 @@ __email__ = "vegasq@gmail.com"
 __status__ = "Production"
 
 
-class DB(object):
-    def __init__(self, gateway: str) -> None:
+class DBConnection(object):
+    def __init__(self):
         if settings.username and settings.password:
             uri = "mongodb://%s:%s@%s" % (quote_plus(settings.username),
                                           quote_plus(settings.password),
@@ -35,6 +35,11 @@ class DB(object):
             uri = "mongodb://%s" % settings.hostname
 
         self._db = MongoClient(uri).battle
+
+
+class DB(DBConnection):
+    def __init__(self, gateway: str) -> None:
+        super().__init__()
         self._gateway = gateway.lower()+"_games"
 
     def set_gateway(self, gateway: str):

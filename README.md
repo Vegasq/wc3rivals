@@ -1,7 +1,7 @@
 # WC3Inside
 
 ## Content
-`wc3inside/spider` - collection of web spider that collect information about played games.
+`wc3inside/spider` - collection of web spiders that collect information about played games.
 
 `wc3inside/web` - webui to display collected data.
 
