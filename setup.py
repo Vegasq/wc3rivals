@@ -14,7 +14,8 @@ setuptools.setup(
     data_files=[("wc3inside", ["wc3inside/web/templates/app.js",
                                "wc3inside/web/templates/solo_stats.html"])],
     classifiers=(
-        "Programming Language :: Python :: 3",
+        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3.6',
         "Operating System :: OS Independent",
     ),
     entry_points={
@@ -24,5 +25,15 @@ setuptools.setup(
             'wc3inside-server=wc3inside.web.serv:main',
             'wc3inside-races-stats=wc3inside.utils.stats_calc:main',
         ],
-    }
+    },
+    install_requires=[
+        "beautifulsoup4==4.6.0",
+        "certifi==2018.4.16",
+        "chardet==3.0.4",
+        "idna==2.6",
+        "pymongo==3.6.1",
+        "requests==2.18.4",
+        "urllib3==1.22",
+        "web.py==0.40.dev1"
+    ]
 )
