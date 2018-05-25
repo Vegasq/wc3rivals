@@ -132,7 +132,6 @@ class DBHistory(DB):
 class DBState(DB):
     def __init__(self):
         super(DBState, self).__init__("?")
-        self.envs = ["Lordaeron", "Azeroth", "Northrend"]
 
     def get_entries_count(self):
         data = {
@@ -141,7 +140,7 @@ class DBState(DB):
             "Northrend": 0,
             # "Kalimdor": 0
         }
-        for e in self.envs:
+        for e in data.keys():
             self.set_gateway(e)
             data[e] = self.collection.count()
         return [(k, v) for k, v in data.items()]
@@ -149,7 +148,8 @@ class DBState(DB):
 
 class DBGamesStats(DB):
     def extract_top_players(self, limit: int=10):
-        return self.collection_players.find({}).sort({"value": -1}).limit(10)
+        return self.collection_players.find(
+            {}).sort({"value": -1}).limit(limit)
 
     def extract_maps(self):
         return self.collection_maps.find({}).sort({"value.total_games": -1})

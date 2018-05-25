@@ -36,7 +36,7 @@ class MatchObject(object):
 class TopOpponentsView(object):
     def __init__(self, gateway: str):
         self.gateway = gateway
-        self.db = EnemiesDB(gateway)
+        self.db = DBTopOpponents(gateway)
 
     def _extract_stats(
             self, enemies: List, player: str) -> Dict:
