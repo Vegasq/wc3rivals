@@ -4,7 +4,7 @@ display. Here we request information from DB and preformat it to be used by
 client.
 """
 
-from wc3inside.utils.db import EnemiesDB, DBHistory, DBState, DBGamesStats
+from wc3inside.utils.db import DBTopOpponents, DBHistory, DBState, DBGamesStats
 
 from typing import List, Dict
 import copy
@@ -33,7 +33,7 @@ class MatchObject(object):
         return enemies
 
 
-class MyEnemiesView(object):
+class TopOpponentsView(object):
     def __init__(self, gateway: str):
         self.gateway = gateway
         self.db = EnemiesDB(gateway)

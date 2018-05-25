@@ -83,7 +83,7 @@ class DB(DBConnection):
         }).sort("game_id", 1)
 
 
-class EnemiesDB(DB):
+class DBTopOpponents(DB):
     def get_solo_games_by_user(self, username: str):
         return self.collection.find(
             {"players": username, "type": "Solo", "length": {"$gt": 3}})
