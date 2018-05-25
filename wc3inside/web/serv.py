@@ -3,7 +3,7 @@ import os
 import web
 import json
 
-from wc3inside.web.views import MyEnemiesView, MyStatsView, MyHistoryView, \
+from wc3inside.web.views import MyEnemiesView, MyHistoryView, GamesPlayedView,\
     DBStateView, GamesStatsView
 
 
