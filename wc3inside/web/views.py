@@ -133,8 +133,8 @@ class DBStateView(object):
 
 
 class GamesStatsView(object):
-    def __init__(self):
-        self.db = DBGamesStats()
+    def __init__(self, gateway: str):
+        self.db = DBGamesStats(gateway)
 
     def _get_maps(self):
         maps = self.db.extract_maps()

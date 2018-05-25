@@ -19,6 +19,13 @@ urls = (
 )
 
 
+def check_args(inp, args):
+    for a in args:
+        if not getattr(inp, a, None):
+            return False
+    return
+
+
 class Router(metaclass=abc.ABCMeta):
     """
 
@@ -110,7 +117,11 @@ class GamesStatsRouter(Router):
     GamesStats - information about races/maps and players. 
     """
     def _get(self):
-        return GamesStatsView().get()
+        inp = web.input(gateway="")
+        if not check_args(inp, ["gateway"]):
+            return json.dumps({"error": "Malformed request."})
+
+        return GamesStatsView(inp.gateway).get()
 
 
 class GamesPlayedRouter(Router):
