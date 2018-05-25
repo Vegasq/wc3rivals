@@ -100,7 +100,7 @@ class GamesStatistic {
 
     start() {
         do_get(
-            "/stats?username="+this.username+"&gateway="+this.gateway,
+            "/game_played_stats?username="+this.username+"&gateway="+this.gateway,
             this.parse
         );
     }

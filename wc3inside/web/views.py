@@ -4,7 +4,7 @@ display. Here we request information from DB and preformat it to be used by
 client.
 """
 
-from wc3inside.utils.db import EnemiesDB, HistoryDB, DBState
+from wc3inside.utils.db import EnemiesDB, DBHistory, DBState, DBGamesStats
 
 from typing import List, Dict
 import copy
@@ -100,7 +100,7 @@ class MyHistoryView(object):
         self.username = username
         self.gateway = gateway
 
-        self.db = HistoryDB(self.gateway)
+        self.db = DBHistory(self.gateway)
 
     def get(self, limit: int=-1):
         if limit == -1:
@@ -112,7 +112,7 @@ class MyHistoryView(object):
         return self.db.get_solo_history(self.username)
 
 
-class MyStatsView(MyHistoryView):
+class GamesPlayedView(MyHistoryView):
     def get(self):
         data = self.db.get_history(self.username)
 
@@ -130,3 +130,42 @@ class DBStateView(object):
 
     def get(self):
         return self.db.get_entries_count()
+
+
+class GamesStatsView(object):
+    def __init__(self):
+        self.db = DBGamesStats()
+
+    def _get_maps(self):
+        maps = self.db.extract_maps()
+        maps_info = {
+            2: [],
+            4: [],
+            6: [],
+            8: []
+        }
+        for m in maps:
+            maps_info[m.value.players].append(m)
+        return maps_info
+
+    def _get_races(self):
+        races_stats = self.db.extract_races()
+        races_names = ["Human", "Orc", "Night Elf", "Undead"]
+        races_repr = []
+        for r in races_stats:
+            if r["_id"] in races_names:
+                races_repr.append((r["_id"], r["value"]))
+        return races_repr
+
+    def _get_players(self):
+        players = self.db.extract_top_players()
+        for p in players:
+            p.pop("_id")
+        return players
+
+    def get(self):
+        return {
+            "maps": self._get_maps(),
+            "players": self._get_players(),
+            "races": self.get_maps()
+        }

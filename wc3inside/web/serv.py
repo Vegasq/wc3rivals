@@ -1,20 +1,34 @@
+import abc
 import os
 import web
 import json
 
-from wc3inside.web.views import MyEnemiesView, MyStatsView, MyHistoryView, \
-    DBStateView
+from wc3inside.web.views import MyEnemiesView, MyHistoryView, GamesPlayedView,\
+    DBStateView, GamesStatsView
 
 
 urls = (
     '/', 'index',
     '/u/(.*)/(.*)', 'index',
     '/opponents', 'opponents',
-    '/stats', 'stats',
     '/history', 'history',
     '/xp', 'xp',
-    '/dbstate', 'dbstate'
+    '/dbstate', 'dbstate',
+    '/game_played_stats', 'GamesPlayedRouter',
+    '/games_stats', 'GamesStatsRouter'
 )
+
+
+class Router(metaclass=abc.ABCMeta):
+    """
+
+    """
+    def GET(self) -> str:
+        return self._get()
+
+    @abc.abstractmethod
+    def _get(self) -> str:
+        pass
 
 
 class dbstate(object):
@@ -57,13 +71,6 @@ class history(object):
         return json.dumps(games)
 
 
-class stats(object):
-    def GET(self):
-        inp = web.input(username=None, gateway=None)
-        msv = MyStatsView(inp.username, inp.gateway)
-        return json.dumps(list(msv.get().items()))
-
-
 class index(object):
     def GET(self, gateway: str="", username: str=""):
         path = os.path.dirname(os.path.abspath(__file__))
@@ -96,6 +103,21 @@ class opponents(object):
             }
 
         return json.dumps(data)
+
+
+class GamesStatsRouter(Router):
+    """
+    GamesStats - information about races/maps and players. 
+    """
+    def _get(self):
+        return GamesStatsView().get()
+
+
+class GamesPlayedRouter(Router):
+    def _get(self):
+        inp = web.input(username=None, gateway=None)
+        msv = GamesPlayedView(inp.username, inp.gateway)
+        return json.dumps(list(msv.get().items()))
 
 
 def main():
