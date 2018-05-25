@@ -40,14 +40,31 @@ class DBConnection(object):
 class DB(DBConnection):
     def __init__(self, gateway: str) -> None:
         super().__init__()
-        self._gateway = gateway.lower()+"_games"
+        self.set_gateway(gateway)
 
     def set_gateway(self, gateway: str):
-        self._gateway = gateway.lower()+"_games"
+        self._gateway = gateway.lower()
+
+        self._games_table = gateway.lower()+"_games"
+        self._maps_table = gateway.lower()+"_maps"
+        self._players_table = gateway.lower()+"_players"
+        self._races_table = gateway.lower()+"_races"
 
     @property
     def collection(self):
-        return self._db[self._gateway]
+        return self._db[self._games_table]
+
+    @property
+    def collection_maps(self):
+        return self._db[self._maps_table]
+
+    @property
+    def collection_players(self):
+        return self._db[self._players_table]
+
+    @property
+    def collection_races(self):
+        return self._db[self._races_table]
 
     def get_by_id(self, game_id) -> Dict:
         return self.collection.find_one({"game_id": game_id})
@@ -83,7 +100,7 @@ class EnemiesDB(DB):
         )
 
 
-class HistoryDB(DB):
+class DBHistory(DB):
     def get_history(self, username: str):
         d = datetime.today() - timedelta(days=90)
 
@@ -128,3 +145,14 @@ class DBState(DB):
             self.set_gateway(e)
             data[e] = self.collection.count()
         return [(k, v) for k, v in data.items()]
+
+
+class DBGamesStats(DB):
+    def extract_top_players(self, limit: int=10):
+        return self.collection_players.find({}).sort({"value": -1}).limit(10)
+
+    def extract_maps(self):
+        return self.collection_maps.find({}).sort({"value.total_games": -1})
+
+    def extract_races(self):
+        return self.collection_races.find()
