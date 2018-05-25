@@ -139,13 +139,18 @@ class GamesStatsView(object):
     def _get_maps(self):
         maps = self.db.extract_maps()
         maps_info = {
+            1: [],  # ...
             2: [],
+            3: [],  # ...
             4: [],
+            5: [],  # ...
             6: [],
+            7: [],  # ...
             8: []
         }
+        # TODO round correctly
         for m in maps:
-            maps_info[m.value.players].append(m)
+            maps_info[int(round(m["value"]["players"], 0))].append(m)
         return maps_info
 
     def _get_races(self):
@@ -159,13 +164,15 @@ class GamesStatsView(object):
 
     def _get_players(self):
         players = self.db.extract_top_players()
+        l = []
         for p in players:
-            p.pop("_id")
-        return players
+            p["name"] = p.pop("_id")
+            l.append(p)
+        return l
 
     def get(self):
         return {
             "maps": self._get_maps(),
             "players": self._get_players(),
-            "races": self.get_maps()
+            "races": self._get_races()
         }

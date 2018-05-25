@@ -148,11 +148,10 @@ class DBState(DB):
 
 class DBGamesStats(DB):
     def extract_top_players(self, limit: int=10):
-        return self.collection_players.find(
-            {}).sort({"value": -1}).limit(limit)
+        return self.collection_players.find().sort("value", -1).limit(limit)
 
     def extract_maps(self):
-        return self.collection_maps.find({}).sort({"value.total_games": -1})
+        return self.collection_maps.find({}).sort("value.total_games", -1)
 
     def extract_races(self):
         return self.collection_races.find()

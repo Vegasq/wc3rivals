@@ -23,7 +23,7 @@ def check_args(inp, args):
     for a in args:
         if not getattr(inp, a, None):
             return False
-    return
+    return True
 
 
 class Router(metaclass=abc.ABCMeta):
