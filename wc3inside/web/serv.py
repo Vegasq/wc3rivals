@@ -3,14 +3,14 @@ import os
 import web
 import json
 
-from wc3inside.web.views import MyEnemiesView, MyHistoryView, GamesPlayedView,\
+from wc3inside.web.views import TopOpponentsView, MyHistoryView, GamesPlayedView,\
     DBStateView, GamesStatsView
 
 
 urls = (
     '/', 'index',
     '/u/(.*)/(.*)', 'index',
-    '/opponents', 'opponents',
+    '/opponents', 'TopOpponentsRouter',
     '/history', 'history',
     '/xp', 'xp',
     '/dbstate', 'dbstate',
@@ -88,27 +88,10 @@ class index(object):
             return fl.read().replace("{{ app.js }}", js)
 
 
-class opponents(object):
-    def GET(self):
-        inp = web.input(username=None, gateway=None)
-
-        data = {
-            "error": "not enough data in request",
-            "request": {
-                "name": inp.username,
-                "gateway": inp.gateway
-            }
-        }
-
-        if inp.username and inp.gateway:
-            mew = MyEnemiesView(inp.gateway)
-            data = mew.get_stats(inp.username)
-
-        if len(data) == 0:
-            data = {
-                "info": "User not found."
-            }
-
+class TopOpponentsRouter(Router):
+    def _get(self):
+        inp = web.input(username="", gateway="")
+        data = TopOpponentsView(inp.gateway).get_stats(inp.username)
         return json.dumps(data)
 
 
@@ -126,7 +109,7 @@ class GamesStatsRouter(Router):
 
 class GamesPlayedRouter(Router):
     def _get(self):
-        inp = web.input(username=None, gateway=None)
+        inp = web.input(username="", gateway="")
         msv = GamesPlayedView(inp.username, inp.gateway)
         return json.dumps(list(msv.get().items()))
 

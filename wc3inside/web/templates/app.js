@@ -293,6 +293,11 @@ class GameHistory {
         game_history_body.innerHTML = "";
         data = JSON.parse(data);
 
+        if (data.length === 0){
+            console.error("Empty response in GameHistory.");
+            return;
+        }
+
         let tpl = "" +
                   "            <tr>\n" +
                   "                <td>%date%</td>\n" +
