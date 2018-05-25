@@ -164,11 +164,11 @@ class GamesStatsView(object):
 
     def _get_players(self):
         players = self.db.extract_top_players()
-        l = []
+        p_list = []
         for p in players:
             p["name"] = p.pop("_id")
-            l.append(p)
-        return l
+            p_list.append(p)
+        return p_list
 
     def get(self):
         return {

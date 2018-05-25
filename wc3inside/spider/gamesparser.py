@@ -247,7 +247,7 @@ class GamePageParser(object):
 
         timer = time()
         data = requests.get(url)
-        LOG.debug('HTTP request towards Battle.Net took: %f' % (time() - timer))
+        LOG.debug('HTTP request to Battle.Net took: %f' % (time() - timer))
 
         timer = time()
         self.soup = BeautifulSoup(data.text, 'html.parser')

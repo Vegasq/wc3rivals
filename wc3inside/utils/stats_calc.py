@@ -33,9 +33,8 @@ class RacesStats(object):
         function(){
             this.players_data.forEach(function(z){
                 if (z.race.indexOf("Rand") !== -1) {
-                    emit("TotalRandom", 1);            
+                    emit("TotalRandom", 1);
                 }
-                
                 // Execute emit for all races including random to collect info
                 // how fair it get splitted in ladder.
                 emit(z.race, 1);
@@ -49,7 +48,6 @@ class RacesStats(object):
             for (var i = 0; i < v.length; i++) {
                 total += v[i];
             }
-        
             return total;
         }
     """)

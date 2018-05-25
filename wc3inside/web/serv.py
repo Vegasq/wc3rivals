@@ -3,8 +3,8 @@ import os
 import web
 import json
 
-from wc3inside.web.views import TopOpponentsView, MyHistoryView, GamesPlayedView,\
-    DBStateView, GamesStatsView
+from wc3inside.web.views import TopOpponentsView, MyHistoryView,\
+    GamesPlayedView, DBStateView, GamesStatsView
 
 
 urls = (
@@ -97,7 +97,7 @@ class TopOpponentsRouter(Router):
 
 class GamesStatsRouter(Router):
     """
-    GamesStats - information about races/maps and players. 
+    GamesStats - information about races/maps and players.
     """
     def _get(self):
         inp = web.input(gateway="")
@@ -116,10 +116,6 @@ class GamesPlayedRouter(Router):
 
 def main():
     app = web.application(urls, globals())
-    # try:
-    #     web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
-    # except (ImportError, ModuleNotFoundError, Exception):
-    #     LOG.error("Do you have spawn-fcgi?")
     app.run()
 
 
