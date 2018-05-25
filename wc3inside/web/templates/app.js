@@ -253,27 +253,6 @@ class XpStatistic {
 }
 
 
-class DBState {
-    constructor() {}
-
-    start() {
-        do_get(
-            "/dbstate",
-            this.parse
-        );
-    }
-
-    parse(data) {
-        data = JSON.parse(data);
-        var html = "";
-        for (let e of data) {
-            html += "<div>" + e[0] + ": " + e[1] + "</div>";
-        }
-        document.getElementById("db_state").innerHTML = html;
-    }
-}
-
-
 class GameHistory {
     constructor(username, gateway) {
         this.username = username;
@@ -395,6 +374,95 @@ class DynamicSearchPage {
     }
 }
 
+
+class DBState {
+    constructor() {}
+
+    start() {
+        do_get(
+            "/dbstate",
+            this.parse
+        );
+    }
+
+    parse(data) {
+        data = JSON.parse(data);
+        var html = "";
+        for (let e of data) {
+            html += "<div>" + e[0] + ": " + e[1] + "</div>";
+        }
+        document.getElementById("db_state").innerHTML = html;
+    }
+}
+
+
+class GamesStats {
+    constructor() {}
+
+    start() {
+        var that = this;
+        do_get(
+            "/games_stats?gateway="+current_gateway(),
+            function(d){
+                that.parse(d);
+            }
+        );
+    }
+
+    gen_maps_html(maps){
+        let html = "";
+        let tpl = "<tr><td>%map_name%</td><td>%games_played%</td></tr>";
+        for (let m of maps){
+            let r = "";
+            r = tpl.replace("%map_name%", m.value.map_name);
+            r = r.replace("%games_played%", m.value.total_games);
+
+            html += r;
+        }
+        return html;
+    }
+
+    gen_players_html(players){
+        let html = "";
+        let tpl = "<tr><td>%name%</td><td>%games_played%</td></tr>";
+        for (let p of players){
+            let r = "";
+            r = tpl.replace("%name%", p.name);
+            r = r.replace("%games_played%", p.value);
+
+            html += r;
+        }
+        return html;
+    }
+
+    gen_races_html(races){
+        let html = "";
+        let tpl = "<tr><td>%race%</td><td>%games_played%</td></tr>";
+        for (let race of races){
+            let r = "";
+            r = tpl.replace("%race%", race[0]);
+            r = r.replace("%games_played%", race[1]);
+
+            html += r;
+        }
+        return html;
+    }
+
+    parse(data) {
+        data = JSON.parse(data);
+
+        document.getElementById("games_stats_2").innerHTML = this.gen_maps_html(data.maps[2]);
+        document.getElementById("games_stats_4").innerHTML = this.gen_maps_html(data.maps[4]);
+        document.getElementById("games_stats_6").innerHTML = this.gen_maps_html(data.maps[6]);
+        document.getElementById("games_stats_8").innerHTML = this.gen_maps_html(data.maps[8]);
+
+        document.getElementById("games_stats_players").innerHTML = this.gen_players_html(data.players);
+
+        document.getElementById("games_stats_races").innerHTML = this.gen_races_html(data.races);
+    }
+}
+
+
 function send_request(username, gateway){
     // for (let i=0;i<document.getElementsByClassName("show_on_search").length;i++){
     //     document.getElementsByClassName("show_on_search")[i].style.display = "none";
@@ -444,6 +512,14 @@ function send_request(username, gateway){
 }
 
 
+function ShowMaps(){
+    document.getElementById("games_stats_row").style.display = "flex";
+    document.getElementById("games_stats_row2").style.display = "flex";
+    let gs = new GamesStats();
+    gs.start();
+}
+
+
 // INIT START
 (function(){
     let dsp = new DynamicSearchPage();
@@ -468,7 +544,7 @@ function send_request(username, gateway){
 
     // DB state
     let dbs = new DBState();
-    dbs.start()
+    dbs.start();
 
     // Once page loaded - check href if it requests some user START
     window.onload = function () {

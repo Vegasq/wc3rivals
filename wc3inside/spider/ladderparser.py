@@ -42,8 +42,9 @@ class ProfileHistoryParser(object):
     by specified user.
     """
 
-    def __init__(self, args: argparse.Namespace, username: str,
-                 gateway: BNetRealm) -> None:
+    def __init__(
+        self, args: argparse.Namespace, username: str, gateway: BNetRealm
+    ) -> None:
         """
         :param args: Settings
         :param username: Battle.Net username
@@ -60,20 +61,21 @@ class ProfileHistoryParser(object):
     def _get_history_page_count(self) -> int:
         """Returns total count of pages with games"""
         page = 1
-        url = (f"http://classic.battle.net/war3/ladder/"
-               f"w3xp-player-logged-games.aspx"
-               f"?Gateway={self.gateway}&"
-               f"PlayerName={self.username}&"
-               f"SortField=game_date&"
-               f"SortDir=Desc&PageNo={page}")
+        url = (
+            f"http://classic.battle.net/war3/ladder/"
+            f"w3xp-player-logged-games.aspx"
+            f"?Gateway={self.gateway}&"
+            f"PlayerName={self.username}&"
+            f"SortField=game_date&"
+            f"SortDir=Desc&PageNo={page}"
+        )
         LOG.debug(f"Read page count from {url}")
         data = requests.get(url)
-        soup = BeautifulSoup(data.text, 'html.parser')
+        soup = BeautifulSoup(data.text, "html.parser")
 
         if soup.find("title"):
             if "Player Full Game Listings" not in soup.find("title").text:
-                raise UserNotFound(
-                    "Title: %s, url %s" % (soup.find("title").text, url))
+                raise UserNotFound("Title: %s, url %s" % (soup.find("title").text, url))
 
         pages = soup.find_all("td", class_="rankingFiller")
         if pages and pages[0].find_all("a"):
@@ -90,8 +92,9 @@ class ProfileHistoryParser(object):
 
         game_match_id = int(parsed_query["GameID"][0])
 
-        GamePageParser(gateway=self.gateway, game_id=game_match_id,
-                       db=self.database).fetch()
+        GamePageParser(
+            gateway=self.gateway, game_id=game_match_id, db=self.database
+        ).fetch()
 
     def fetch_page(self, page: int) -> None:
         """
@@ -99,14 +102,16 @@ class ProfileHistoryParser(object):
 
         :param page: page number to request.
         """
-        url = (f"http://classic.battle.net/war3/ladder/"
-               f"w3xp-player-logged-games.aspx"
-               f"?Gateway={self.gateway}&"
-               f"PlayerName={self.username}&"
-               f"SortField=game_date&"
-               f"SortDir=Desc&PageNo={page}")
+        url = (
+            f"http://classic.battle.net/war3/ladder/"
+            f"w3xp-player-logged-games.aspx"
+            f"?Gateway={self.gateway}&"
+            f"PlayerName={self.username}&"
+            f"SortField=game_date&"
+            f"SortDir=Desc&PageNo={page}"
+        )
         data = requests.get(url)
-        soup = BeautifulSoup(data.text, 'html.parser')
+        soup = BeautifulSoup(data.text, "html.parser")
         games_on_page = soup.find_all("tr", class_="rankingRow")
         for game in games_on_page:
             self._parse_game_tr(game)
@@ -126,7 +131,7 @@ class ProfileHistoryParser(object):
             if total_pages > new_total_pages:
                 total_pages = new_total_pages
 
-        for i in range(1, total_pages+1):
+        for i in range(1, total_pages + 1):
             LOG.info(f"Read page {i} from {total_pages+1}.")
 
             exit_now = False
@@ -178,6 +183,7 @@ class ProfileHistoryParser(object):
 
 
 class Ladder(object):
+
     def __init__(self, args: argparse.Namespace, gateway: BNetRealm) -> None:
         """
         :param args: Settings
@@ -189,10 +195,12 @@ class Ladder(object):
 
     def _get_ladder_page_count(self) -> int:
         """Returns count of pages with games"""
-        url = (f"http://classic.battle.net/war3/ladder/w3xp-ladder-solo.aspx"
-               f"?Gateway={self.gateway}")
+        url = (
+            f"http://classic.battle.net/war3/ladder/w3xp-ladder-solo.aspx"
+            f"?Gateway={self.gateway}"
+        )
         data = requests.get(url)
-        soup = BeautifulSoup(data.text, 'html.parser')
+        soup = BeautifulSoup(data.text, "html.parser")
 
         pages = soup.find_all("td", class_="rankingFiller")
         last_page = int(pages[0].find_all("a")[-1].text)
@@ -203,17 +211,19 @@ class Ladder(object):
         LOG.info(f"Fetch ladder for {self.gateway}.")
         total_pages = self._get_ladder_page_count()
 
-        for i in range(1, total_pages+1):
+        for i in range(1, total_pages + 1):
             LOG.info(f"Fetch ladder page {i} from {total_pages}")
             self.fetch_page(i)
 
     def fetch_page(self, page: int) -> None:
         """Read single page from battle.net."""
-        url = (f"http://classic.battle.net/war3/ladder/w3xp-ladder-solo.aspx"
-               f"?Gateway={self.gateway}&"
-               f"PageNo={page}")
+        url = (
+            f"http://classic.battle.net/war3/ladder/w3xp-ladder-solo.aspx"
+            f"?Gateway={self.gateway}&"
+            f"PageNo={page}"
+        )
         data = requests.get(url)
-        soup = BeautifulSoup(data.text, 'html.parser')
+        soup = BeautifulSoup(data.text, "html.parser")
         names = soup.find_all("span", class_="rankingName")
         for name in names:
             n = name.find("a")
@@ -225,7 +235,8 @@ class Ladder(object):
             p = ProfileHistoryParser(
                 self.args,
                 username=urllib.parse.quote(parsed_query["PlayerName"][0]),
-                gateway=self.gateway)
+                gateway=self.gateway,
+            )
             p.fetch()
 
 
@@ -233,10 +244,12 @@ def main():
     parser = argparse.ArgumentParser()
 
     ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
-    parser.add_argument("--gateway", help="Specify gateway", choices=ladders,
-                        required=True)
-    parser.add_argument("--max-per-user", help="Total games to parse",
-                        type=int, default=-1)
+    parser.add_argument(
+        "--gateway", help="Specify gateway", choices=ladders, required=True
+    )
+    parser.add_argument(
+        "--max-per-user", help="Total games to parse", type=int, default=-1
+    )
     args = parser.parse_args()
 
     Ladder(args, args.gateway).fetch()

@@ -42,6 +42,7 @@ class Player(dict):
     Inherit dict since we need some base class that can be serialized by
     pymongo.
     """
+
     @property
     def username(self) -> str:
         return self["username"]
@@ -67,13 +68,12 @@ class Player(dict):
         self["result"] = value
 
     def __str__(self) -> str:
-        return (f"User: {self.username}\nRace: {self.race}\n"
-                f"Result: {self.result}")
+        return f"User: {self.username}\nRace: {self.race}\n" f"Result: {self.result}"
 
     def __repr__(self) -> str:
-        return json.dumps({"username": self.username,
-                           "race": self.race,
-                           "result": self.result})
+        return json.dumps(
+            {"username": self.username, "race": self.race, "result": self.result}
+        )
 
 
 class LastSavedGameSelector(object):
@@ -92,13 +92,11 @@ class LastSavedGameSelector(object):
 
     def last(self) -> int:
         # Return game with biggest game_id
-        return self.db.collection.find_one(
-            sort=[("game_id", pymongo.DESCENDING)])
+        return self.db.collection.find_one(sort=[("game_id", pymongo.DESCENDING)])
 
     def first(self) -> int:
         # Return game with smallest game_id
-        return self.db.collection.find_one(
-            sort=[("game_id", pymongo.ASCENDING)])
+        return self.db.collection.find_one(sort=[("game_id", pymongo.ASCENDING)])
 
 
 class GamePageParser(object):
@@ -140,7 +138,7 @@ class GamePageParser(object):
 
         players = []
         for i in range(0, len(ranking_row_left), 3):
-            player = ranking_row_left[i:i+3]
+            player = ranking_row_left[i : i + 3]
 
             p = Player()
             p.username = player[0].text
@@ -163,7 +161,7 @@ class GamePageParser(object):
         levels = []
         levels_row = self.soup.find_all(class_="rankingRow")
         for i in range(0, len(levels_row), 4):
-            player = levels_row[i:i+4]
+            player = levels_row[i : i + 4]
 
             if player[1].text:
                 level = int(player[1].text)
@@ -194,15 +192,14 @@ class GamePageParser(object):
         }
         """
         timer = time()
-        player_stats_data_left = self.soup.find_all(
-            "td", class_="playerStatsDataLeft")
-        LOG.debug('Get playerStatsDataLeft: %f' % (time() - timer))
+        player_stats_data_left = self.soup.find_all("td", class_="playerStatsDataLeft")
+        LOG.debug("Get playerStatsDataLeft: %f" % (time() - timer))
 
         # START date
         timer = time()
         match_date = " ".join(player_stats_data_left[0].text.split()[:-1])
         match_date = datetime.strptime(match_date, "%m/%d/%Y %I:%M:%S %p")
-        LOG.debug('Extract date: %f' % (time() - timer))
+        LOG.debug("Extract date: %f" % (time() - timer))
         # END date
 
         # START map
@@ -227,7 +224,7 @@ class GamePageParser(object):
             "map": match_map,
             "date": match_date,
             "type": match_type,
-            "length": match_len
+            "length": match_len,
         }
 
     def fetch(self) -> bool:
@@ -240,49 +237,49 @@ class GamePageParser(object):
         if self.db.get_by_id(self.game_id):
             LOG.info(f"Game {self.gateway}#{self.game_id} exists.")
             return True
-        LOG.debug('Check if game exists in DB took: %f' % (time() - timer))
+        LOG.debug("Check if game exists in DB took: %f" % (time() - timer))
 
-        url = (f"http://classic.battle.net/war3/ladder/w3xp-game-detail.aspx"
-               f"?Gateway={self.gateway}&GameID={self.game_id}")
+        url = (
+            f"http://classic.battle.net/war3/ladder/w3xp-game-detail.aspx"
+            f"?Gateway={self.gateway}&GameID={self.game_id}"
+        )
 
         timer = time()
         data = requests.get(url)
-        LOG.debug('HTTP request to Battle.Net took: %f' % (time() - timer))
+        LOG.debug("HTTP request to Battle.Net took: %f" % (time() - timer))
 
         timer = time()
-        self.soup = BeautifulSoup(data.text, 'html.parser')
-        LOG.debug('BeautifulSoup init: %f' % (time() - timer))
+        self.soup = BeautifulSoup(data.text, "html.parser")
+        LOG.debug("BeautifulSoup init: %f" % (time() - timer))
 
-        if not self.soup.find("b") or "error" in self.soup.find(
-                "b").text.lower():
+        if not self.soup.find("b") or "error" in self.soup.find("b").text.lower():
             LOG.error("Failed to parse page.")
             return False
 
         timer = time()
         self.stats = self._parse_stats()
-        LOG.debug('Parse stats: %f' % (time() - timer))
+        LOG.debug("Parse stats: %f" % (time() - timer))
 
         timer = time()
         self.stats["players_data"] = self._parse_players()
-        LOG.debug('Parse players: %f' % (time() - timer))
+        LOG.debug("Parse players: %f" % (time() - timer))
 
-        self.stats["players"] = [p.username
-                                 for p in self.stats["players_data"]]
+        self.stats["players"] = [p.username for p in self.stats["players_data"]]
 
         timer = time()
         levels = self._parse_levels()
-        LOG.debug('Parse levels: %f' % (time() - timer))
+        LOG.debug("Parse levels: %f" % (time() - timer))
 
         for i, p in enumerate(self.stats["players_data"]):
             self.stats["players_data"][i].update(levels[i])
 
         self.stats["game_id"] = self.game_id
         self.stats["gateway"] = self.gateway
-        LOG.debug('Game parsing took: %f' % (time() - timer))
+        LOG.debug("Game parsing took: %f" % (time() - timer))
 
         timer = time()
         self.db.insert(self.stats)
-        LOG.debug('Save game in DB took: %f' % (time() - timer))
+        LOG.debug("Save game in DB took: %f" % (time() - timer))
         LOG.info(f"Game {self.gateway}#{self.game_id} saved.")
 
         return True
@@ -300,7 +297,7 @@ class GPManager(object):
       before assume we at the end.
     """
 
-    def __init__(self, gateway: BNetRealm, new: bool=True, init: int=0):
+    def __init__(self, gateway: BNetRealm, new: bool = True, init: int = 0):
         """
         :param gateway: Battle.Net classic Realm
         :param new: If True increase GameID each iteration.
@@ -361,8 +358,7 @@ class GPManager(object):
                 ids = unused.unused(self.db, self.game_id)
                 LOG.info(f"Found {len(ids)} not parsed games.")
                 for i in ids:
-                    gpp = GamePageParser(
-                        BNetRealm(self.gateway), i, db=self.db)
+                    gpp = GamePageParser(BNetRealm(self.gateway), i, db=self.db)
                     gpp.fetch()
                 self.game_id -= unused.chunk_size
 
@@ -380,21 +376,17 @@ def main() -> None:
     parser.add_argument("--debug", action="store_true", help="Debug")
     parser.add_argument("--old", action="store_true", help="Parse backwards.")
     ladders = ["Lordaeron", "Azeroth", "Northrend", "Kalimdor"]
-    parser.add_argument("--gateway", help="Specify gateway", choices=ladders,
-                        required=True)
-    parser.add_argument("--init-id", help="Initial game_id", type=int,
-                        default=-1)
+    parser.add_argument(
+        "--gateway", help="Specify gateway", choices=ladders, required=True
+    )
+    parser.add_argument("--init-id", help="Initial game_id", type=int, default=-1)
 
     args = parser.parse_args()
 
     if args.debug:
         LOG.setLevel(logging.DEBUG)
 
-    GPManager(
-        BNetRealm(args.gateway),
-        not args.old,
-        args.init_id
-    ).start()
+    GPManager(BNetRealm(args.gateway), not args.old, args.init_id).start()
 
 
 if __name__ == "__main__":

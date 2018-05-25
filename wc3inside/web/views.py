@@ -11,6 +11,7 @@ import copy
 
 
 class MatchObject(object):
+
     def __init__(self, game_dict: dict, player: str) -> None:
         self._game_dict = game_dict
         self._player = player
@@ -34,12 +35,12 @@ class MatchObject(object):
 
 
 class TopOpponentsView(object):
+
     def __init__(self, gateway: str):
         self.gateway = gateway
         self.db = DBTopOpponents(gateway)
 
-    def _extract_stats(
-            self, enemies: List, player: str) -> Dict:
+    def _extract_stats(self, enemies: List, player: str) -> Dict:
         stats = {}
         for enemy, result in enemies:
             if enemy not in stats:
@@ -49,7 +50,7 @@ class TopOpponentsView(object):
                     "win": 0,
                     "loss": 0,
                     "state": 0,
-                    "history": []
+                    "history": [],
                 }
 
             if result:
@@ -66,16 +67,18 @@ class TopOpponentsView(object):
         return stats
 
     def get_stats(self, username: str) -> str:
-        all_games = [MatchObject(g, username)
-                     for g in self.db.get_solo_games_by_user(username)]
+        all_games = [
+            MatchObject(g, username) for g in self.db.get_solo_games_by_user(username)
+        ]
         enemies = []
         for game in all_games:
             enemies += game.get_enemies()
 
         stats = self._extract_stats(enemies, username)
 
-        ordered_stats = sorted(stats.items(),
-                               key=lambda x: -1 * (x[1]["win"] + x[1]["loss"]))
+        ordered_stats = sorted(
+            stats.items(), key=lambda x: -1 * (x[1]["win"] + x[1]["loss"])
+        )
 
         stats = ordered_stats[0:20]
         only_enemies_to_display = [s[0] for s in stats]
@@ -96,13 +99,14 @@ class TopOpponentsView(object):
 
 
 class MyHistoryView(object):
+
     def __init__(self, username: str, gateway: str):
         self.username = username
         self.gateway = gateway
 
         self.db = DBHistory(self.gateway)
 
-    def get(self, limit: int=-1):
+    def get(self, limit: int = -1):
         if limit == -1:
             return self.db.get_history(self.username)
         else:
@@ -113,6 +117,7 @@ class MyHistoryView(object):
 
 
 class GamesPlayedView(MyHistoryView):
+
     def get(self):
         data = self.db.get_history(self.username)
 
@@ -125,6 +130,7 @@ class GamesPlayedView(MyHistoryView):
 
 
 class DBStateView(object):
+
     def __init__(self):
         self.db = DBState()
 
@@ -133,6 +139,7 @@ class DBStateView(object):
 
 
 class GamesStatsView(object):
+
     def __init__(self, gateway: str):
         self.db = DBGamesStats(gateway)
 
@@ -146,11 +153,12 @@ class GamesStatsView(object):
             5: [],  # ...
             6: [],
             7: [],  # ...
-            8: []
+            8: [],
         }
         # TODO round correctly
         for m in maps:
-            maps_info[int(round(m["value"]["players"], 0))].append(m)
+            if len(maps_info[int(round(m["value"]["players"], 0))]) < 10:
+                maps_info[int(round(m["value"]["players"], 0))].append(m)
         return maps_info
 
     def _get_races(self):
@@ -174,5 +182,5 @@ class GamesStatsView(object):
         return {
             "maps": self._get_maps(),
             "players": self._get_players(),
-            "races": self._get_races()
+            "races": self._get_races(),
         }

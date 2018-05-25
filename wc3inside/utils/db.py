@@ -9,6 +9,7 @@ from wc3inside.utils.log import LOG
 try:
     from wc3inside.settings import settings
 except ImportError:
+
     class settings(object):
         hostname = "localhost"
         username = ""
@@ -26,11 +27,14 @@ __status__ = "Production"
 
 
 class DBConnection(object):
+
     def __init__(self):
         if settings.username and settings.password:
-            uri = "mongodb://%s:%s@%s" % (quote_plus(settings.username),
-                                          quote_plus(settings.password),
-                                          settings.hostname)
+            uri = "mongodb://%s:%s@%s" % (
+                quote_plus(settings.username),
+                quote_plus(settings.password),
+                settings.hostname,
+            )
         else:
             uri = "mongodb://%s" % settings.hostname
 
@@ -38,6 +42,7 @@ class DBConnection(object):
 
 
 class DB(DBConnection):
+
     def __init__(self, gateway: str) -> None:
         super().__init__()
         self.set_gateway(gateway)
@@ -45,10 +50,10 @@ class DB(DBConnection):
     def set_gateway(self, gateway: str):
         self._gateway = gateway.lower()
 
-        self._games_table = gateway.lower()+"_games"
-        self._maps_table = gateway.lower()+"_maps"
-        self._players_table = gateway.lower()+"_players"
-        self._races_table = gateway.lower()+"_races"
+        self._games_table = gateway.lower() + "_games"
+        self._maps_table = gateway.lower() + "_maps"
+        self._players_table = gateway.lower() + "_players"
+        self._races_table = gateway.lower() + "_races"
 
     @property
     def collection(self):
@@ -75,61 +80,61 @@ class DB(DBConnection):
 
     def get_by_range(self, low, high):
         LOG.info(f"Collect entries between {low} and {high}")
-        return self.collection.find({
-            "$and": [
-                {"game_id": {"$gte": low}},
-                {"game_id": {"$lte": high}}
-            ]
-        }).sort("game_id", 1)
+        return self.collection.find(
+            {"$and": [{"game_id": {"$gte": low}}, {"game_id": {"$lte": high}}]}
+        ).sort("game_id", 1)
 
 
 class DBTopOpponents(DB):
+
     def get_solo_games_by_user(self, username: str):
         return self.collection.find(
-            {"players": username, "type": "Solo", "length": {"$gt": 3}})
+            {"players": username, "type": "Solo", "length": {"$gt": 3}}
+        )
 
     def get_solo_games_with_users(self, usernames: List[str]):
         return self.collection.find(
             {
-                "$and": [
-                    {"players": usernames[0]},
-                    {"players": usernames[1]}
-                ],
-                "type": "Solo", "length": {"$gt": 3}
+                "$and": [{"players": usernames[0]}, {"players": usernames[1]}],
+                "type": "Solo",
+                "length": {"$gt": 3},
             }
         )
 
 
 class DBHistory(DB):
+
     def get_history(self, username: str):
         d = datetime.today() - timedelta(days=90)
 
-        return self.collection.find({
-            "players": username,
-            "length": {"$gt": 3},
-            "date": {"$gt": d}
-        }).sort("date", -1)
+        return self.collection.find(
+            {"players": username, "length": {"$gt": 3}, "date": {"$gt": d}}
+        ).sort("date", -1)
 
     def get_solo_history(self, username: str):
         d = datetime.today() - timedelta(days=90)
 
-        return self.collection.find({
-            "type": "Solo",
-            "players": username,
-            "length": {"$gt": 3},
-            "date": {"$gt": d}
-        }).sort("date", -1)
+        return self.collection.find(
+            {
+                "type": "Solo",
+                "players": username,
+                "length": {"$gt": 3},
+                "date": {"$gt": d},
+            }
+        ).sort("date", -1)
 
-    def get_history_last(self, username: str, limit: int=5):
+    def get_history_last(self, username: str, limit: int = 5):
         if limit > 50:
             limit = 50
-        return self.collection.find({
-            "players": username,
-            "length": {"$gt": 3}
-        }).sort("date", -1).limit(limit)
+        return (
+            self.collection.find({"players": username, "length": {"$gt": 3}})
+            .sort("date", -1)
+            .limit(limit)
+        )
 
 
 class DBState(DB):
+
     def __init__(self):
         super(DBState, self).__init__("?")
 
@@ -147,7 +152,8 @@ class DBState(DB):
 
 
 class DBGamesStats(DB):
-    def extract_top_players(self, limit: int=10):
+
+    def extract_top_players(self, limit: int = 10):
         return self.collection_players.find().sort("value", -1).limit(limit)
 
     def extract_maps(self):

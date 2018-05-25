@@ -3,19 +3,24 @@ import os
 import web
 import json
 
-from wc3inside.web.views import TopOpponentsView, MyHistoryView,\
-    GamesPlayedView, DBStateView, GamesStatsView
+from wc3inside.web.views import (
+    TopOpponentsView,
+    MyHistoryView,
+    GamesPlayedView,
+    DBStateView,
+    GamesStatsView,
+)
 
 
 urls = (
-    '/', 'index',
-    '/u/(.*)/(.*)', 'index',
-    '/opponents', 'TopOpponentsRouter',
-    '/history', 'history',
-    '/xp', 'xp',
-    '/dbstate', 'dbstate',
-    '/game_played_stats', 'GamesPlayedRouter',
-    '/games_stats', 'GamesStatsRouter'
+    ("/", "index")
+    + ("/u/(.*)/(.*)", "index")
+    + ("/opponents", "TopOpponentsRouter")
+    + ("/history", "history")
+    + ("/xp", "xp")
+    + ("/dbstate", "dbstate")
+    + ("/game_played_stats", "GamesPlayedRouter")
+    + ("/games_stats", "GamesStatsRouter")
 )
 
 
@@ -30,8 +35,10 @@ class Router(metaclass=abc.ABCMeta):
     """
 
     """
+
     def GET(self) -> str:
-        return self._get()
+        ret = self._get()
+        return ret if type(ret) == str else json.dumps(ret)
 
     @abc.abstractmethod
     def _get(self) -> str:
@@ -39,12 +46,14 @@ class Router(metaclass=abc.ABCMeta):
 
 
 class dbstate(object):
+
     def GET(self):
         dbs = DBStateView()
         return json.dumps(dbs.get())
 
 
 class xp(object):
+
     def GET(self):
         inp = web.input(username=None, gateway=None)
         msv = MyHistoryView(inp.username, inp.gateway)
@@ -57,6 +66,7 @@ class xp(object):
 
 
 class history(object):
+
     def GET(self):
         inp = web.input(username=None, gateway=None, limit=-1)
         msv = MyHistoryView(inp.username, inp.gateway)
@@ -67,19 +77,22 @@ class history(object):
             games_resp = msv.get(int(inp.limit))
 
         for g in games_resp:
-            games.append({
-                "primary_player": inp.username,
-                "map": g["map"],
-                "date": str(g["date"]),
-                "type": g["type"],
-                "length": g["length"],
-                "players_data": g["players_data"]
-            })
+            games.append(
+                {
+                    "primary_player": inp.username,
+                    "map": g["map"],
+                    "date": str(g["date"]),
+                    "type": g["type"],
+                    "length": g["length"],
+                    "players_data": g["players_data"],
+                }
+            )
         return json.dumps(games)
 
 
 class index(object):
-    def GET(self, gateway: str="", username: str=""):
+
+    def GET(self, gateway: str = "", username: str = ""):
         path = os.path.dirname(os.path.abspath(__file__))
         with open(path + "/templates/app.js") as fl:
             js = fl.read()
@@ -89,6 +102,7 @@ class index(object):
 
 
 class TopOpponentsRouter(Router):
+
     def _get(self):
         inp = web.input(username="", gateway="")
         data = TopOpponentsView(inp.gateway).get_stats(inp.username)
@@ -99,6 +113,7 @@ class GamesStatsRouter(Router):
     """
     GamesStats - information about races/maps and players.
     """
+
     def _get(self):
         inp = web.input(gateway="")
         if not check_args(inp, ["gateway"]):
@@ -108,6 +123,7 @@ class GamesStatsRouter(Router):
 
 
 class GamesPlayedRouter(Router):
+
     def _get(self):
         inp = web.input(username="", gateway="")
         msv = GamesPlayedView(inp.username, inp.gateway)

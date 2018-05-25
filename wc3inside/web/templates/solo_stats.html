@@ -182,20 +182,52 @@
 
     </div>
 
-    <div class="row justify-content-md-center show_on_search">
+    <div class="row justify-content-md-center" id="games_stats_row"
+         style="display: none">
+        <div class="col-3">
+            <h5>Top 10 1v1 maps</h5>
+            <table class="table" id="games_stats_2"></table>
+        </div>
+        <div class="col-3">
+            <h5>Top 10 2v2 maps</h5>
+            <table class="table" id="games_stats_4"></table>
+        </div>
+        <div class="col-3">
+            <h5>Top 10 3v3 maps</h5>
+            <table class="table" id="games_stats_6"></table>
+        </div>
+        <div class="col-3">
+            <h5>Top 10 4v4 maps</h5>
+            <table class="table" id="games_stats_8"></table>
+        </div>
     </div>
 
+    <div class="row justify-content-md-center" id="games_stats_row2"
+         style="display: none">
+        <div class="col-6">
+            <h5>Top 10 active players</h5>
+            <table class="table" id="games_stats_players"></table>
+        </div>
+        <div class="col-6">
+            <h5>Race statistic</h5>
+            <table class="table" id="games_stats_races"></table>
+        </div>
+    </div>
+
+
+
+
     <div class="row justify-content-md-center header_block " id="row_footer_block">
-        <div class="col-4">
+        <div class="col-3">
             <h5>Records in database</h5>
             <span id="db_state"></span>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             This product includes GeoLite2 data created by MaxMind, available from
             <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
 
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <h5>Credits</h5>
             <span>2018, Mykola Yakovliev</span>
         </div>

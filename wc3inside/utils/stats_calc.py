@@ -29,7 +29,8 @@ from bson.code import Code
 
 
 class RacesStats(object):
-    map_fn = Code("""
+    map_fn = Code(
+        """
         function(){
             this.players_data.forEach(function(z){
                 if (z.race.indexOf("Rand") !== -1) {
@@ -40,9 +41,11 @@ class RacesStats(object):
                 emit(z.race, 1);
             });
         }
-    """)
+    """
+    )
 
-    reduce_fn = Code("""
+    reduce_fn = Code(
+        """
         function(k, v){
             var total = 0;
             for (var i = 0; i < v.length; i++) {
@@ -50,19 +53,22 @@ class RacesStats(object):
             }
             return total;
         }
-    """)
+    """
+    )
 
     @classmethod
     def build(cls):
         ladders = ["Lordaeron", "Azeroth", "Northrend"]
         for l in ladders:
             LOG.info(f"Creating race stats for ladder {l}.")
-            db.DB(l).collection.map_reduce(cls.map_fn, cls.reduce_fn,
-                                           l.lower()+"_races")
+            db.DB(l).collection.map_reduce(
+                cls.map_fn, cls.reduce_fn, l.lower() + "_races"
+            )
 
 
 class PlayerTopGamesStats(object):
-    map_fn = Code("""
+    map_fn = Code(
+        """
         function(){
             if (this.players.length === 2){
                 this.players.forEach(function(z){
@@ -70,9 +76,11 @@ class PlayerTopGamesStats(object):
                 });
             };
         }
-    """)
+    """
+    )
 
-    reduce_fn = Code("""
+    reduce_fn = Code(
+        """
         function(k, v){
             var total = 0;
             for (var i = 0; i < v.length; i++) {
@@ -81,19 +89,22 @@ class PlayerTopGamesStats(object):
 
             return total;
         }
-    """)
+    """
+    )
 
     @classmethod
     def build(cls):
         ladders = ["Lordaeron", "Azeroth", "Northrend"]
         for l in ladders:
             LOG.info(f"Creating per-player stats for ladder {l}.")
-            db.DB(l).collection.map_reduce(cls.map_fn, cls.reduce_fn,
-                                           l.lower() + "_players")
+            db.DB(l).collection.map_reduce(
+                cls.map_fn, cls.reduce_fn, l.lower() + "_players"
+            )
 
 
 class MapsStats(object):
-    map_fn = Code("""
+    map_fn = Code(
+        """
         function(){
             var o = {
                 total_games: 1,
@@ -102,9 +113,11 @@ class MapsStats(object):
             };
             emit(this.map+'#'+this.players.length, o);
         }
-    """)
+    """
+    )
 
-    reduce_fn = Code("""
+    reduce_fn = Code(
+        """
         function(k, v){
             var total_games = 0;
             var avg = 2; // Assume most popular value
@@ -123,7 +136,8 @@ class MapsStats(object):
             };
             return o;
         }
-    """)
+    """
+    )
 
     @classmethod
     def build(cls):
@@ -132,10 +146,7 @@ class MapsStats(object):
         for l in ladders:
             LOG.info(f"Creating per-map stats for ladder {l}.")
             conn.set_gateway(l)
-            conn.collection.map_reduce(
-                cls.map_fn,
-                cls.reduce_fn,
-                l.lower()+"_maps")
+            conn.collection.map_reduce(cls.map_fn, cls.reduce_fn, l.lower() + "_maps")
 
 
 def main():
