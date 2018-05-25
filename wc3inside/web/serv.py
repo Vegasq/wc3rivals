@@ -13,14 +13,14 @@ from wc3inside.web.views import (
 
 
 urls = (
-    ("/", "index")
-    + ("/u/(.*)/(.*)", "index")
+    ("/", "IndexRouter")
+    + ("/u/(.*)/(.*)", "IndexRouter")
     + ("/opponents", "TopOpponentsRouter")
-    + ("/history", "history")
-    + ("/xp", "xp")
-    + ("/dbstate", "dbstate")
+    + ("/xp", "XPRouter")
+    + ("/dbstate", "DBStateRouter")
     + ("/game_played_stats", "GamesPlayedRouter")
     + ("/games_stats", "GamesStatsRouter")
+    + ("/history", "GameHistoryRouter")
 )
 
 
@@ -45,52 +45,13 @@ class Router(metaclass=abc.ABCMeta):
         pass
 
 
-class dbstate(object):
+class IndexRouter(Router):
+    """
+    Not a router, just return WebAPP.
+    """
 
-    def GET(self):
-        dbs = DBStateView()
-        return json.dumps(dbs.get())
-
-
-class xp(object):
-
-    def GET(self):
-        inp = web.input(username=None, gateway=None)
-        msv = MyHistoryView(inp.username, inp.gateway)
-        xp = []
-        for game in msv.get_solo():
-            for p in game["players_data"]:
-                if p["username"] == inp.username:
-                    xp.append([str(game["date"]), p["xp"]])
-        return json.dumps(xp)
-
-
-class history(object):
-
-    def GET(self):
-        inp = web.input(username=None, gateway=None, limit=-1)
-        msv = MyHistoryView(inp.username, inp.gateway)
-        games = []
-        if inp.limit == -1:
-            games_resp = msv.get()
-        else:
-            games_resp = msv.get(int(inp.limit))
-
-        for g in games_resp:
-            games.append(
-                {
-                    "primary_player": inp.username,
-                    "map": g["map"],
-                    "date": str(g["date"]),
-                    "type": g["type"],
-                    "length": g["length"],
-                    "players_data": g["players_data"],
-                }
-            )
-        return json.dumps(games)
-
-
-class index(object):
+    def _get(self):
+        pass
 
     def GET(self, gateway: str = "", username: str = ""):
         path = os.path.dirname(os.path.abspath(__file__))
@@ -101,12 +62,39 @@ class index(object):
             return fl.read().replace("{{ app.js }}", js)
 
 
+class DBStateRouter(Router):
+
+    def _get(self):
+        return DBStateView().get()
+
+
+class XPRouter(Router):
+
+    def _get(self):
+        inp = web.input(username=None, gateway=None)
+        if not check_args(inp, ["username", "gateway"]):
+            return {"error": "Malformed request."}
+
+        return MyHistoryView(inp.username, inp.gateway).get_solo_xp()
+
+
+class GameHistoryRouter(Router):
+
+    def _get(self):
+        inp = web.input(username=None, gateway=None, limit=-1)
+        if not check_args(inp, ["username", "gateway"]):
+            return {"error": "Malformed request."}
+
+        return MyHistoryView(inp.username, inp.gateway).get(int(inp.limit))
+
+
 class TopOpponentsRouter(Router):
 
     def _get(self):
         inp = web.input(username="", gateway="")
-        data = TopOpponentsView(inp.gateway).get_stats(inp.username)
-        return json.dumps(data)
+        if not check_args(inp, ["username", "gateway"]):
+            return {"error": "Malformed request."}
+        return TopOpponentsView(inp.gateway).get_stats(inp.username)
 
 
 class GamesStatsRouter(Router):
@@ -117,7 +105,7 @@ class GamesStatsRouter(Router):
     def _get(self):
         inp = web.input(gateway="")
         if not check_args(inp, ["gateway"]):
-            return json.dumps({"error": "Malformed request."})
+            return {"error": "Malformed request."}
 
         return GamesStatsView(inp.gateway).get()
 
@@ -126,8 +114,9 @@ class GamesPlayedRouter(Router):
 
     def _get(self):
         inp = web.input(username="", gateway="")
-        msv = GamesPlayedView(inp.username, inp.gateway)
-        return json.dumps(list(msv.get().items()))
+        if not check_args(inp, ["username", "gateway"]):
+            return {"error": "Malformed request."}
+        return list(GamesPlayedView(inp.username, inp.gateway).get().items())
 
 
 def main():

@@ -108,12 +108,32 @@ class MyHistoryView(object):
 
     def get(self, limit: int = -1):
         if limit == -1:
-            return self.db.get_history(self.username)
+            games_resp = self.db.get_history(self.username)
         else:
-            return self.db.get_history_last(self.username, limit)
+            games_resp = self.db.get_history_last(self.username, limit)
 
-    def get_solo(self):
-        return self.db.get_solo_history(self.username)
+        games = []
+        for g in games_resp:
+            games.append(
+                {
+                    "primary_player": self.username,
+                    "map": g["map"],
+                    "date": str(g["date"]),
+                    "type": g["type"],
+                    "length": g["length"],
+                    "players_data": g["players_data"],
+                }
+            )
+        return games
+
+    def get_solo_xp(self):
+        data = self.db.get_solo_history(self.username)
+        xp = []
+        for game in data:
+            for p in game["players_data"]:
+                if p["username"] == self.username:
+                    xp.append([str(game["date"]), p["xp"]])
+        return xp
 
 
 class GamesPlayedView(MyHistoryView):
