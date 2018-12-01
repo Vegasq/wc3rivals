@@ -1,0 +1,35 @@
+version: '3'
+services:
+  us_west:
+    build: ./wc3inside/
+    environment:
+      WC3I_GATEWAY: Lordaeron
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-parser --debug
+  us_east:
+    build: ./wc3inside/
+    environment:
+      WC3I_GATEWAY: Azeroth
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-parser --debug
+#  europe:
+#    build: ./wc3inside/
+#    environment:
+#      WC3I_GATEWAY: Northrend
+#      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+#      WC3I_USERNAME: ${WC3I_USERNAME}
+#      WC3I_PASSWORD: ${WC3I_PASSWORD}
+#      CMD: wc3inside-parser --debug
+  webui:
+    build: ./wc3inside/
+    environment:
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-server
+    ports:
+      - "8080:8080"

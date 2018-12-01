@@ -9,13 +9,28 @@
 
 ## Install
 
+Create `.env` file in root folder with next content:
+
 ```
-python3 setup.py sdist bdist_wheel && pip install dist/wc3inside-0.0.1-py3-none-any.whl
+# MongoDB settings:
+WC3I_HOSTNAME=mongo_ip
+WC3I_USERNAME=mongo_user
+WC3I_PASSWORD=mongo_password
 ```
 
-## Usage
-
-Parse game on Azeroth (USEast), starting from game 23191968 and below.
+To generate whl:
 ```
-wc3inside-parser --gateway Azeroth --debug --init-id 23191968 --old
+./build.sh
+```
+
+Now build and start containers:
+
+```
+docker-compose up --build
+```
+
+Dump was taken with:
+
+```
+mongodump -d battle --gzip  --host=... -u ... --password="..." --authenticationDatabase=admin
 ```

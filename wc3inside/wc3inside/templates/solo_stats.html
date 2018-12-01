@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solo Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <style>
+        .stats_table {
+            width: 100%;
+        }
+        .search_form > input, select {
+            height: 40px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .hidden {
+            display: none;
+        }
+        #search_box {
+            height: 2em;
+            border: 1px solid gray;
+            border-radius: 0;
+            padding: 0.1em;
+        }
+        #search_gateway {
+            background-color: aliceblue;
+            height: 2em;
+            border: 1px solid gray;
+            border-radius: 0;
+            padding: 0.1em;
+            padding-right: 2em;
+        }
+        #search_gateway_drop {
+            display: inline;
+            position: relative;
+            left: -1.3em;
+        }
+        #search_btn{
+            background-color: aliceblue;
+            height: 2em;
+            border: 1px solid gray;
+            border-radius: 0;
+            padding: 0.1em;
+            position: relative;
+            left: -1em;
+        }
+        .show_on_search{
+            display: none;
+        }
+        .user_info_block {
+            padding: 1em 0em;
+        }
+        #search_block {
+            padding-top: 0.6em;
+        }
+        .user_badge {
+            padding-top: 0.2em;
+        }
+        .header_block {
+            padding: 2em 0;
+        }
+        .logo_header_block {
+            max-width: 14em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+
+
+    <div class="row justify-content-md-center " >
+        <div class="alert alert-success hidden" role="alert" id="info_msg">
+          A simple success alert—check it out!
+        </div>
+        <div class="alert alert-danger hidden" role="alert" id="error_msg">
+          A simple danger alert—check it out!
+        </div>
+    </div>
+
+
+    <div class="row header_block" id="row_header_block">
+        <div class="col-2 logo_header_block">
+            <h1> <b>WC3</b>INSIDE</h1>
+        </div>
+        <div class="col-7">
+            <div id="search_block">
+                <input class="search_box" id="search_box" placeholder="Grubby">
+
+                <select id="search_gateway">
+                    <option value="Northrend">Europe</option>
+                    <option value="Lordaeron">US West</option>
+                    <option value="Azeroth" disabled>US East</option>
+                    <!--<option value="Kalimdor" disabled>Kalimdor (Asia)</option>-->
+                </select>
+                <div id="search_gateway_drop">▿</div>
+
+                <input class="submit" type="button" value="Search" id="search_btn">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-9">
+        </div>
+        <div class="col-3">
+          <h2 class="user_badge show_on_search">
+              <span id="username_block"></span>
+              <small class="badge badge-secondary" id="level_block">
+
+              </small>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row show_on_search">
+        <div class="col-6" id="score_against_table">
+
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col" colspan="3">Score against</th></tr>
+                    <tr>
+                        <th scope="col" width=""></th>
+                        <th scope="col">Score</th>
+                        <th scope="col" width="80%">Opponent</th>
+                    </tr>
+                </thead>
+                <tbody id="stats_body">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6" id="game_history_table">
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col" colspan="4">Last played</th></tr>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Map</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Looser</th>
+                    </tr>
+                </thead>
+                <tbody id="game_history_body">
+
+                </tbody>
+            </table>
+
+
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col">Played games per day</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>
+                    <div id="games_per_day_chart"
+                         style="width: 100%; height: 300px;"></div>
+
+                </td></tr>
+                </tbody>
+            </table>
+
+            <table class="stats_table table table-sm table-hover text-center">
+                <thead class="thead-light">
+                    <tr><th scope="col">Solo XP earnings</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>
+                    <div id="xp_chart"
+                         style="width: 100%; height: 300px;"></div>
+                </td></tr>
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    <div class="row justify-content-md-center" id="games_stats_row"
+         style="display: none">
+        <div class="col-3">
+            <h5>Top 10 1v1 maps</h5>
+            <table class="table" id="games_stats_2"></table>
+        </div>
+        <div class="col-3">
+            <h5>Top 10 2v2 maps</h5>
+            <table class="table" id="games_stats_4"></table>
+        </div>
+        <div class="col-3">
+            <h5>Top 10 3v3 maps</h5>
+            <table class="table" id="games_stats_6"></table>
+        </div>
+        <div class="col-3">
+            <h5>Top 10 4v4 maps</h5>
+            <table class="table" id="games_stats_8"></table>
+        </div>
+    </div>
+
+    <div class="row justify-content-md-center" id="games_stats_row2"
+         style="display: none">
+        <div class="col-6">
+            <h5>Top 10 active players</h5>
+            <table class="table" id="games_stats_players"></table>
+        </div>
+        <div class="col-6">
+            <h5>Race statistic</h5>
+            <table class="table" id="games_stats_races"></table>
+        </div>
+    </div>
+
+
+
+
+    <div class="row justify-content-md-center header_block " id="row_footer_block">
+        <div class="col-3">
+            <h5>Records in database</h5>
+            <span id="db_state"></span>
+        </div>
+        <div class="col-3">
+            This product includes GeoLite2 data created by MaxMind, available from
+            <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
+
+        </div>
+        <div class="col-3">
+            <h5>Credits</h5>
+            <span>2018, Mykola Yakovliev</span>
+        </div>
+    </div>
+
+</div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        {{ app_js }}
+    </script>
+</body>
+</html>
