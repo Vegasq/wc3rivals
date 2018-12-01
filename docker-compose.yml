@@ -16,14 +16,14 @@ services:
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-parser --debug
-#  europe:
-#    build: ./wc3inside/
-#    environment:
-#      WC3I_GATEWAY: Northrend
-#      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-#      WC3I_USERNAME: ${WC3I_USERNAME}
-#      WC3I_PASSWORD: ${WC3I_PASSWORD}
-#      CMD: wc3inside-parser --debug
+  europe:
+    build: ./wc3inside/
+    environment:
+      WC3I_GATEWAY: Northrend
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-parser --debug
   webui:
     build: ./wc3inside/
     environment:
@@ -32,4 +32,4 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-server
     ports:
-      - "8080:8080"
+      - "8080:80"
