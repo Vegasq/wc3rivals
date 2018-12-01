@@ -1,6 +1,5 @@
 # Collection of mapReduce functions to collect various statistics
 
-
 # db.getCollection('lordaeron_games').mapReduce(
 #     function(){
 #         this.players_data.forEach(function(z){
@@ -21,6 +20,7 @@
 #     }
 # )
 
+import time
 
 from wc3inside.utils import db
 from wc3inside.utils.log import LOG
@@ -146,13 +146,19 @@ class MapsStats(object):
         for l in ladders:
             LOG.info(f"Creating per-map stats for ladder {l}.")
             conn.set_gateway(l)
-            conn.collection.map_reduce(cls.map_fn, cls.reduce_fn, l.lower() + "_maps")
+            conn.collection.map_reduce(
+                cls.map_fn, cls.reduce_fn, l.lower() + "_maps")
 
 
 def main():
-    PlayerTopGamesStats.build()
-    RacesStats.build()
-    MapsStats.build()
+    while True:
+        timer = time.time()
+        PlayerTopGamesStats.build()
+        RacesStats.build()
+        MapsStats.build()
+        LOG.debug(
+            "MapReduce took: %f. Sleep for an hour." % (time.time() - timer))
+        time.sleep(60 * 60)
 
 
 if __name__ == "__main__":

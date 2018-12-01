@@ -33,3 +33,10 @@ services:
       CMD: wc3inside-server
     ports:
       - "80:8080"
+  stats:
+    build: ./wc3inside/
+    environment:
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-stats
