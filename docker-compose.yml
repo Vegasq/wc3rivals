@@ -3,6 +3,7 @@ services:
   us_west:
     image: registry.gitlab.com/vegasq/wc3inside:us_west
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_GATEWAY: Lordaeron
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -12,6 +13,7 @@ services:
   us_east:
     image: registry.gitlab.com/vegasq/wc3inside:us_east
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_GATEWAY: Azeroth
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -21,6 +23,7 @@ services:
   europe:
     image: registry.gitlab.com/vegasq/wc3inside:europe
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_GATEWAY: Northrend
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -30,6 +33,7 @@ services:
   webui:
     image: registry.gitlab.com/vegasq/wc3inside:webui
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
@@ -40,6 +44,7 @@ services:
   stats:
     image: registry.gitlab.com/vegasq/wc3inside:stats
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
@@ -48,6 +53,7 @@ services:
   us_west_old:
     image: registry.gitlab.com/vegasq/wc3inside:us_west_old
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_GATEWAY: Lordaeron
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -57,6 +63,7 @@ services:
   us_east_old:
     image: registry.gitlab.com/vegasq/wc3inside:us_east_old
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_GATEWAY: Azeroth
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -66,6 +73,7 @@ services:
   europe_old:
     image: registry.gitlab.com/vegasq/wc3inside:europe_old
     build: ./wc3inside/
+    restart: always
     environment:
       WC3I_GATEWAY: Northrend
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
