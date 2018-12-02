@@ -1,6 +1,7 @@
 version: '3'
 services:
   us_west:
+    image: registry.gitlab.com/vegasq/wc3inside:us_west
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Lordaeron
@@ -9,6 +10,7 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-parser
   us_east:
+    image: registry.gitlab.com/vegasq/wc3inside:us_east
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Azeroth
@@ -17,6 +19,7 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-parser
   europe:
+    image: registry.gitlab.com/vegasq/wc3inside:europe
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Northrend
@@ -25,6 +28,7 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-parser
   webui:
+    image: registry.gitlab.com/vegasq/wc3inside:webui
     build: ./wc3inside/
     environment:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -34,6 +38,7 @@ services:
     ports:
       - "80:8080"
   stats:
+    image: registry.gitlab.com/vegasq/wc3inside:stats
     build: ./wc3inside/
     environment:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
@@ -41,6 +46,7 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-stats
   us_west_old:
+    image: registry.gitlab.com/vegasq/wc3inside:us_west_old
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Lordaeron
@@ -49,6 +55,7 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-parser --old
   us_east_old:
+    image: registry.gitlab.com/vegasq/wc3inside:us_east_old
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Azeroth
@@ -57,6 +64,7 @@ services:
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-parser --old
   europe_old:
+    image: registry.gitlab.com/vegasq/wc3inside:europe_old
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Northrend
