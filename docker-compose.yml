@@ -40,10 +40,26 @@ services:
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
       CMD: wc3inside-stats
+  us_west_old:
+    build: ./wc3inside/
+    environment:
+      WC3I_GATEWAY: Lordaeron
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-parser --old
   us_east_old:
     build: ./wc3inside/
     environment:
       WC3I_GATEWAY: Azeroth
+      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
+      WC3I_USERNAME: ${WC3I_USERNAME}
+      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      CMD: wc3inside-parser --old
+  europe_old:
+    build: ./wc3inside/
+    environment:
+      WC3I_GATEWAY: Northrend
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}

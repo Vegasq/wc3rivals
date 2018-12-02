@@ -361,7 +361,7 @@ class GPManager(object):
                     self.errors_pool -= 1
 
                 if self.errors_pool >= 10:
-                    LOG.error("More than 10 errors in a row. Exit.")
+                    LOG.info("More than 10 errors in a row.")
                     self.exit = True
 
                 if self.new:
@@ -410,7 +410,7 @@ def main() -> None:
 
     while True:
         GPManager(BNetRealm(gateway), not args.old, args.init_id).start()
-        LOG.debug("All games fetched. Sleep for 10 minutes.")
+        LOG.info("All games fetched. Sleep for 10 minutes.")
         time.sleep(60 * 10)
 
 
