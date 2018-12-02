@@ -28,9 +28,3 @@ Now build and start containers:
 ```
 docker-compose up --build
 ```
-
-Dump was taken with:
-
-```
-mongodump -d battle --gzip  --host=... -u ... --password="..." --authenticationDatabase=admin
-```
