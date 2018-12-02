@@ -142,6 +142,7 @@ class GamePageParser(object):
             result
         )
         """
+        LOG.debug(f"Parse players for {self.game_id}.")
         ranking_row_left = self.soup.find_all("td", class_="rankingRowLeft")
 
         players = []
@@ -166,6 +167,7 @@ class GamePageParser(object):
             xp_diff
         )
         """
+        LOG.debug(f"Parse levels for {self.game_id}.")
         levels = []
         levels_row = self.soup.find_all(class_="rankingRow")
         for i in range(0, len(levels_row), 4):
@@ -199,6 +201,7 @@ class GamePageParser(object):
             length
         }
         """
+        LOG.debug(f"Parse stats for {self.game_id}.")
         timer = time.time()
         player_stats_data_left = self.soup.find_all(
             "td", class_="playerStatsDataLeft")
@@ -242,6 +245,7 @@ class GamePageParser(object):
 
         :return: True if success and False if other case.
         """
+        LOG.debug(f"Fetch game {self.game_id}.")
         timer = time.time()
         if self.db.get_by_id(self.game_id):
             LOG.info(f"Game {self.gateway}#{self.game_id} exists.")
@@ -261,7 +265,7 @@ class GamePageParser(object):
                 data = requests.get(url)
                 break
             except requests.exceptions.ConnectionError as err:
-                LOG.error(f"Conection error {err} for {url} %s."
+                LOG.error(f"Conection error {err} for {url}."
                            "Sleep for 10 seconds and retry.")
                 time.sleep(10)
 

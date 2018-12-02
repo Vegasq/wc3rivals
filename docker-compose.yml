@@ -9,7 +9,7 @@ services:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-parser
+      CMD: wc3inside-parser --debug
   us_east:
     image: registry.gitlab.com/vegasq/wc3inside:us_east
     build: ./wc3inside/
@@ -19,7 +19,7 @@ services:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-parser
+      CMD: wc3inside-parser --debug
   europe:
     image: registry.gitlab.com/vegasq/wc3inside:europe
     build: ./wc3inside/
@@ -29,7 +29,7 @@ services:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-parser
+      CMD: wc3inside-parser --debug
   webui:
     image: registry.gitlab.com/vegasq/wc3inside:webui
     build: ./wc3inside/
@@ -59,7 +59,7 @@ services:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-parser --old
+      CMD: wc3inside-parser --debug --old
   us_east_old:
     image: registry.gitlab.com/vegasq/wc3inside:us_east_old
     build: ./wc3inside/
@@ -69,7 +69,7 @@ services:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-parser --old
+      CMD: wc3inside-parser --debug --old
   europe_old:
     image: registry.gitlab.com/vegasq/wc3inside:europe_old
     build: ./wc3inside/
@@ -79,4 +79,4 @@ services:
       WC3I_HOSTNAME: ${WC3I_HOSTNAME}
       WC3I_USERNAME: ${WC3I_USERNAME}
       WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-parser --old
+      CMD: wc3inside-parser --debug --old

@@ -29,7 +29,6 @@ __status__ = "Production"
 
 
 class DBConnection(object):
-
     def __init__(self):
         LOG.debug("Connecting to %s as %s." % (settings.hostname,
                                                settings.username))
@@ -42,7 +41,9 @@ class DBConnection(object):
         else:
             uri = "mongodb://%s" % settings.hostname
 
+        LOG.debug(f"Create MongoClient for {uri}.")
         self._db = MongoClient(uri).battle
+        LOG.debug(f"Connected to db {self._db}.")
 
 
 class DB(DBConnection):
@@ -52,6 +53,7 @@ class DB(DBConnection):
         self.set_gateway(gateway)
 
     def set_gateway(self, gateway: str):
+        LOG.debug(f"Set gateway {gateway}.")
         self._gateway = gateway.lower()
 
         self._games_table = gateway.lower() + "_games"
@@ -61,21 +63,26 @@ class DB(DBConnection):
 
     @property
     def collection(self):
+        LOG.debug(f"Get collection {self._games_table}.")
         return self._db[self._games_table]
 
     @property
     def collection_maps(self):
+        LOG.debug(f"Get collection {self._maps_table}.")
         return self._db[self._maps_table]
 
     @property
     def collection_players(self):
+        LOG.debug(f"Get collection {self._players_table}.")
         return self._db[self._players_table]
 
     @property
     def collection_races(self):
+        LOG.debug(f"Get collection {self._races_table}.")
         return self._db[self._races_table]
 
     def get_by_id(self, game_id) -> Dict:
+        LOG.debug(f"Get by ID {game_id}.")
         return self.collection.find_one({"game_id": game_id})
 
     def insert(self, data) -> None:
@@ -90,13 +97,14 @@ class DB(DBConnection):
 
 
 class DBTopOpponents(DB):
-
     def get_solo_games_by_user(self, username: str):
+        LOG.debug(f"Collect solo games for {username}.")
         return self.collection.find(
             {"players": username, "type": "Solo", "length": {"$gt": 3}}
         )
 
     def get_solo_games_with_users(self, usernames: List[str]):
+        LOG.debug(f"Collect solo games for {usernames}.")
         return self.collection.find(
             {
                 "$and": [{"players": usernames[0]}, {"players": usernames[1]}],
@@ -107,15 +115,16 @@ class DBTopOpponents(DB):
 
 
 class DBHistory(DB):
-
     def get_history(self, username: str):
-        d = datetime.today() - timedelta(days=90)
+        LOG.debug(f"Collect history for {username}.")
 
+        d = datetime.today() - timedelta(days=90)
         return self.collection.find(
             {"players": username, "length": {"$gt": 3}, "date": {"$gt": d}}
         ).sort("date", -1)
 
     def get_solo_history(self, username: str):
+        LOG.debug(f"Collect solo history for {username}.")
         d = datetime.today() - timedelta(days=90)
 
         return self.collection.find(
@@ -128,6 +137,7 @@ class DBHistory(DB):
         ).sort("date", -1)
 
     def get_history_last(self, username: str, limit: int = 5):
+        LOG.debug(f"Collect last history for {username}.")
         if limit > 50:
             limit = 50
         return (
@@ -143,6 +153,7 @@ class DBState(DB):
         super(DBState, self).__init__("?")
 
     def get_entries_count(self):
+        LOG.debug(f"Collect entry count.")
         data = {
             "Lordaeron": 0,
             "Azeroth": 0,
