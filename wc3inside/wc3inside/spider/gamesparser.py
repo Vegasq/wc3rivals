@@ -262,12 +262,15 @@ class GamePageParser(object):
 
         while True:
             try:
+                LOG.debug(f"GET {url}")
                 data = requests.get(url)
                 break
             except requests.exceptions.ConnectionError as err:
-                LOG.error(f"Conection error {err} for {url}."
+                LOG.error(f"Conection error for {url}. "
                            "Sleep for 10 seconds and retry.")
+                LOG debug("Sleep start.")
                 time.sleep(10)
+                LOG debug("Sleep end.")
 
         LOG.debug(
             "HTTP request to Battle.Net took: %f" % (time.time() - timer))
