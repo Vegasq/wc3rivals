@@ -38,6 +38,10 @@ Race = NewType("Race", str)
 BNetRealm = NewType("BNetRealm", str)
 
 
+class UrlUnavailable(Exception):
+    pass
+
+
 class Player(dict):
     """
     Player representation.
@@ -239,6 +243,32 @@ class GamePageParser(object):
             "length": match_len,
         }
 
+    def get(self, url: str) -> str:
+        timer = time.time()
+
+        retry = 5
+        while retry > 0:
+            try:
+                LOG.debug(f"GET {url}, #{retry}.")
+                data = requests.get(url, timeout=(5, 5))
+                LOG.debug(f"GET successful for {url}.")
+
+                LOG.debug("HTTP request to Battle.Net took: "
+                          "%f" % (time.time() - timer))
+                return data.text
+
+            except requests.exceptions.ConnectionError as err:
+                retry -= 1
+                LOG.error(f"Conection error for {url}. "
+                           "Sleep for 1 second and retry.")
+                time.sleep(1)
+            except Exception as err:
+                retry -= 1
+                LOG.error(f"Unknown error {err}."
+                           "Sleep for 1 second and retry.")
+                time.sleep(1)
+        raise UrlUnavailable(url)
+
     def fetch(self) -> bool:
         """
         Parse game page.
@@ -260,23 +290,10 @@ class GamePageParser(object):
 
         timer = time.time()
 
-        while True:
-            try:
-                LOG.debug(f"GET {url}")
-                data = requests.get(url)
-                break
-            except requests.exceptions.ConnectionError as err:
-                LOG.error(f"Conection error for {url}. "
-                           "Sleep for 10 seconds and retry.")
-                LOG.debug("Sleep start.")
-                time.sleep(10)
-                LOG.debug("Sleep end.")
-
-        LOG.debug(
-            "HTTP request to Battle.Net took: %f" % (time.time() - timer))
+        output = self.get(url)
 
         timer = time.time()
-        self.soup = BeautifulSoup(data.text, "html.parser")
+        self.soup = BeautifulSoup(output, "html.parser")
         LOG.debug("BeautifulSoup init: %f" % (time.time() - timer))
 
         if (
