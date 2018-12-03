@@ -290,7 +290,11 @@ class GamePageParser(object):
 
         timer = time.time()
 
-        output = self.get(url)
+        try:
+            output = self.get(url)
+        except UrlUnavailable as err:
+            LOG.error(f"Skip {url} due to {err}.")
+            return
 
         timer = time.time()
         self.soup = BeautifulSoup(output, "html.parser")
