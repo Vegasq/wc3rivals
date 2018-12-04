@@ -8,14 +8,10 @@ from datetime import datetime, timedelta
 from wc3inside.utils.log import LOG
 
 
-try:
-    from wc3inside.settings import settings
-except ImportError:
-
-    class settings(object):
-        hostname = os.environ['WC3I_HOSTNAME']
-        username = os.environ['WC3I_USERNAME']
-        password = os.environ['WC3I_PASSWORD']
+class settings(object):
+    hostname = os.environ['WC3IMONGOHOSTNAME']
+    username = os.environ['WC3IMONGOUSERNAME']
+    password = os.environ['WC3IMONGOPASSWORD']
 
 
 __author__ = "Mykola Yakovliev"

@@ -5,78 +5,90 @@ services:
     build: ./wc3inside/
     restart: always
     environment:
-      WC3I_GATEWAY: Lordaeron
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      WC3IMONGOGATEWAY: Lordaeron
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3inside-parser --debug
   us_east:
     image: registry.gitlab.com/vegasq/wc3inside:us_east
     build: ./wc3inside/
     restart: always
     environment:
-      WC3I_GATEWAY: Azeroth
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      WC3IMONGOGATEWAY: Azeroth
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3inside-parser --debug
   europe:
     image: registry.gitlab.com/vegasq/wc3inside:europe
     build: ./wc3inside/
     restart: always
     environment:
-      WC3I_GATEWAY: Northrend
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      WC3IMONGOGATEWAY: Northrend
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3inside-parser --debug
-  webui:
-    image: registry.gitlab.com/vegasq/wc3inside:webui
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-server
-    ports:
-      - "80:8080"
-  stats:
-    image: registry.gitlab.com/vegasq/wc3inside:stats
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
-      CMD: wc3inside-stats
   us_west_old:
     image: registry.gitlab.com/vegasq/wc3inside:us_west_old
     build: ./wc3inside/
     restart: always
     environment:
-      WC3I_GATEWAY: Lordaeron
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      WC3IMONGOGATEWAY: Lordaeron
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3inside-parser --debug --old
   us_east_old:
     image: registry.gitlab.com/vegasq/wc3inside:us_east_old
     build: ./wc3inside/
     restart: always
     environment:
-      WC3I_GATEWAY: Azeroth
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      WC3IMONGOGATEWAY: Azeroth
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3inside-parser --debug --old
   europe_old:
     image: registry.gitlab.com/vegasq/wc3inside:europe_old
     build: ./wc3inside/
     restart: always
     environment:
-      WC3I_GATEWAY: Northrend
-      WC3I_HOSTNAME: ${WC3I_HOSTNAME}
-      WC3I_USERNAME: ${WC3I_USERNAME}
-      WC3I_PASSWORD: ${WC3I_PASSWORD}
+      WC3IMONGOGATEWAY: Northrend
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3inside-parser --debug --old
+  stats:
+    image: registry.gitlab.com/vegasq/wc3inside:stats
+    build: ./wc3inside/
+    restart: always
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3inside-stats
+  uwsgi:
+    image: registry.gitlab.com/vegasq/wc3inside:uwsgi
+    build:
+      context: ./wc3inside/
+      dockerfile: Dockerfile-uwsgi
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+  # webui:
+  #   image: registry.gitlab.com/vegasq/wc3inside:webui
+  #   build: ./wc3inside/
+  #   restart: always
+  #   environment:
+  #     WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+  #     WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+  #     WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+  #     CMD: wc3inside-server
+  #   ports:
+  #     - "8080:8080"

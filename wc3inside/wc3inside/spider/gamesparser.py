@@ -441,9 +441,11 @@ def main() -> None:
         LOG.setLevel(logging.DEBUG)
 
     if not args.gateway:
-        gateway = os.environ["WC3I_GATEWAY"]
+        gateway = os.environ["WC3IMONGOGATEWAY"]
+        LOG.debug(f"Select gateway {gateway} from env.WC3I_GATEWAY.")
     else:
         gateway = args.gateway
+        LOG.debug(f"Select gateway {gateway} from env.WC3I_GATEWAY.")
 
     while True:
         GPManager(BNetRealm(gateway), not args.old, args.init_id).start()

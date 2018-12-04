@@ -1,0 +1,8 @@
+FROM tiangolo/uwsgi-nginx-flask:python3.7
+
+ENV STATIC_INDEX 1
+
+COPY dist/wc3inside-0.0.1-py3-none-any.whl /tmp/
+RUN pip3 install /tmp/wc3inside-0.0.1-py3-none-any.whl
+
+COPY ./wc3inside/ /app

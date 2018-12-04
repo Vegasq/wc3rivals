@@ -1,7 +1,6 @@
 .idea
 .env
 build
-dist
 geoip
 wc3inside.egg-info
 wc3inside/settings.py

@@ -9,10 +9,9 @@ setuptools.setup(
     description="wc3inside",
     url="https://github.com/vegasq/wc3inside",
     packages=setuptools.find_packages(),
-    py_modules=["wc3inside/web/", "wc3inside/utils/", "wc3inside/spider/"],
+    py_modules=["wc3inside/srv/", "wc3inside/utils/", "wc3inside/spider/"],
     include_package_data=True,
-    data_files=[("wc3inside", ["wc3inside/templates/app.js",
-                               "wc3inside/templates/solo_stats.html"])],
+    data_files=[],
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3.6',
@@ -22,7 +21,6 @@ setuptools.setup(
         'console_scripts': [
             'wc3inside-parser=wc3inside.spider.gamesparser:main',
             'wc3inside-parser-ladder=wc3inside.spider.ladderparser:main',
-            'wc3inside-server=wc3inside.web.serv:main',
             'wc3inside-stats=wc3inside.utils.stats_calc:main',
         ],
     },
@@ -34,7 +32,6 @@ setuptools.setup(
         "pymongo==3.6.1",
         "requests==2.18.4",
         "urllib3==1.22",
-        "web.py==0.40.dev1",
-        "jinja2==2.10"
+        "flask==1.0.2"
     ]
 )

@@ -3,70 +3,71 @@
   <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&amp;subset=cyrillic,latin-ext" rel="stylesheet">
 
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Hello, world!</title>
+    <title>WC3INSIDE / ENEMIES</title>
 
     <style>
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
+        /* http://meyerweb.com/eric/tools/css/reset/ 
+           v2.0 | 20110126
+           License: none (public domain)
+        */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, embed, 
+        figure, figcaption, footer, header, hgroup, 
+        menu, nav, output, ruby, section, summary,
+        time, mark, audio, video {
+        	margin: 0;
+        	padding: 0;
+        	border: 0;
+        	font-size: 100%;
+        	font: inherit;
+        	vertical-align: baseline;
+        }
+        /* HTML5 display-role reset for older browsers */
+        article, aside, details, figcaption, figure, 
+        footer, header, hgroup, menu, nav, section {
+        	display: block;
+        }
+        body {
+        	line-height: 1;
+        }
+        ol, ul {
+        	list-style: none;
+        }
+        blockquote, q {
+        	quotes: none;
+        }
+        blockquote:before, blockquote:after,
+        q:before, q:after {
+        	content: '';
+        	content: none;
+        }
+        table {
+        	border-collapse: collapse;
+        	border-spacing: 0;
+        }
+
+/* General */
 body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
-
-body {
-    background-image: url(bg.png);
+    background-image: url(static/bg.png);
 }
 #top_container {
     width:800px;
     margin: 0 auto;
 }
+
+/* Enemies content */
 #enemies_table {
     width: 100%;
 }
@@ -84,7 +85,7 @@ body {
   border-bottom: 1px solid #6d6d6d;
 }
 
-.first_col {
+#enemies_table .first_col {
     padding-left: 20px;
 }
 #enemies_table thead tr th {
@@ -104,7 +105,7 @@ body {
     background-color: rgba(216, 216, 216, 0.15);
     cursor: pointer;
 }
-.user_col {
+#enemies_table .user_col {
     width: 260px;
     /* height: 19px; */
     font-family: Roboto;
@@ -116,14 +117,14 @@ body {
     letter-spacing: 0.4px;
     color: #f0f0f0;
 }
-.race_icon {
+#enemies_table .race_icon {
     position: relative;
     width: 30px;
     height: 30px;
     top:10px;
     padding-right: 10px;
 }
-.score_col {
+#enemies_table .score_col {
     width: 165px;
     height: 19px;
     font-family: Roboto;
@@ -134,21 +135,21 @@ body {
     line-height: normal;
     letter-spacing: 0.4px;
 }
-.score_col img {
+#enemies_table .score_col img {
     position: relative;
     top: 2px;
     padding-right: 10px;
 }
-.score_col_up {
+#enemies_table .score_col_up {
     color: #54ea7c;
 }
-.score_col_down {
+#enemies_table .score_col_down {
     color: #ea4335;
 }
-.score_col_even {
+#enemies_table .score_col_even {
     color: #f0f0f0;
 }
-.last_game_col {
+#enemies_table .last_game_col {
     width: 180px;
     height: 19px;
     font-family: Roboto;
@@ -160,7 +161,7 @@ body {
     letter-spacing: 0.4px;
     color: #f0f0f0;
 }
-.avg_col {
+#enemies_table .avg_col {
     width: 145px;
     height: 19px;
     font-family: Roboto;
@@ -172,7 +173,7 @@ body {
     letter-spacing: 0.4px;
     color: #f0f0f0;
 }
-.more_col > img {
+#enemies_table .more_col > img {
     position: relative;
     top: 3px;
     -webkit-transform: rotate(-90deg);
@@ -182,6 +183,8 @@ body {
     transform: rotate(-90deg);
 }
 
+
+/* Header */
 header {
     padding-top: 30px;
     padding-bottom: 50px;
@@ -292,6 +295,8 @@ table#footer {
     line-height: 14px;
 
 }
+
+/* Footer */
 #footer .credits {
     width: 85px;
 }
@@ -337,8 +342,8 @@ table#footer {
     <div id="top_container">
 
         <header>
-<img class="header_logo" src="logo-small-warcraft3.png"><span class="header_wc3">WC3</span><span class="header_inside">INSIDE</span><img class="glass_icon" src="glass.svg"><input id="search_input" placeholder="FollowGrubby">
-<button id="region_button">Europe <img src="down.svg"></button><button id="search_button" onclick="on_search()">Search</button>
+<img class="header_logo" src="static/logo-small-warcraft3.png"><span class="header_wc3">WC3</span><span class="header_inside">INSIDE</span><img class="glass_icon" src="static/glass.svg"><input id="search_input" placeholder="FollowGrubby">
+<button id="region_button">Europe <img src="static/down.svg"></button><button id="search_button" onclick="on_search()">Search</button>
         </header>
 
     <table id="enemies_table">
@@ -353,50 +358,50 @@ table#footer {
         </thead>
         <tbody>
             <tr>
-                <td class="user_col first_col"><img class="race_icon" src="human-male.png">FollowGrubby</td>
-                <td class="score_col score_col_up"><img src="up.svg">2 x 0</td>
+                <td class="user_col first_col"><img class="race_icon" src="static/human-male.png">FollowGrubby</td>
+                <td class="score_col score_col_up"><img src="static/up.svg">2 x 0</td>
                 <td class="last_game_col">2018/12/15</td>
                 <td class="avg_col">15 min</td>
-                <td class="more_col"><img src="more.svg"></td>
+                <td class="more_col"><img src="static/more.svg"></td>
             </tr>
 
             <tr>
-                <td class="user_col first_col"><img class="race_icon" src="nightelf-male.jpg">SumniyRobot</td>
-                <td class="score_col score_col_down"><img src="down.svg">0 x 2</td>
+                <td class="user_col first_col"><img class="race_icon" src="static/nightelf-male.jpg">SumniyRobot</td>
+                <td class="score_col score_col_down"><img src="static/down.svg">0 x 2</td>
                 <td class="last_game_col">2018/12/15</td>
                 <td class="avg_col">15 min</td>
-                <td class="more_col"><img src="more.svg"></td>
+                <td class="more_col"><img src="static/more.svg"></td>
             </tr>
 
             <tr>
-                <td class="user_col first_col"><img class="race_icon" src="orc-female.jpg">ToD</td>
-                <td class="score_col score_col_even"><img src="even.svg">2 x 2</td>
+                <td class="user_col first_col"><img class="race_icon" src="static/orc-female.jpg">ToD</td>
+                <td class="score_col score_col_even"><img src="static/even.svg">2 x 2</td>
                 <td class="last_game_col">2018/12/15</td>
                 <td class="avg_col">15 min</td>
-                <td class="more_col"><img src="more.svg"></td>
+                <td class="more_col"><img src="static/more.svg"></td>
             </tr>
             <tr>
-                <td class="user_col first_col"><img class="race_icon" src="human-male.png">FollowGrubby</td>
-                <td class="score_col score_col_up"><img src="up.svg">2 x 0</td>
+                <td class="user_col first_col"><img class="race_icon" src="static/human-male.png">FollowGrubby</td>
+                <td class="score_col score_col_up"><img src="static/up.svg">2 x 0</td>
                 <td class="last_game_col">2018/12/15</td>
                 <td class="avg_col">15 min</td>
-                <td class="more_col"><img src="more.svg"></td>
-            </tr>
-
-            <tr>
-                <td class="user_col first_col"><img class="race_icon" src="nightelf-male.jpg">SumniyRobot</td>
-                <td class="score_col score_col_down"><img src="down.svg">0 x 2</td>
-                <td class="last_game_col">2018/12/15</td>
-                <td class="avg_col">15 min</td>
-                <td class="more_col"><img src="more.svg"></td>
+                <td class="more_col"><img src="static/more.svg"></td>
             </tr>
 
             <tr>
-                <td class="user_col first_col"><img class="race_icon" src="orc-female.jpg">ToD</td>
-                <td class="score_col score_col_even"><img src="even.svg">2 x 2</td>
+                <td class="user_col first_col"><img class="race_icon" src="static/nightelf-male.jpg">SumniyRobot</td>
+                <td class="score_col score_col_down"><img src="static/down.svg">0 x 2</td>
                 <td class="last_game_col">2018/12/15</td>
                 <td class="avg_col">15 min</td>
-                <td class="more_col"><img src="more.svg"></td>
+                <td class="more_col"><img src="static/more.svg"></td>
+            </tr>
+
+            <tr>
+                <td class="user_col first_col"><img class="race_icon" src="static/orc-female.jpg">ToD</td>
+                <td class="score_col score_col_even"><img src="static/even.svg">2 x 2</td>
+                <td class="last_game_col">2018/12/15</td>
+                <td class="avg_col">15 min</td>
+                <td class="more_col"><img src="static/more.svg"></td>
             </tr>
     
     
@@ -417,12 +422,6 @@ table#footer {
     </table>
 
     </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
     <script>
         window.onload = on_load;
