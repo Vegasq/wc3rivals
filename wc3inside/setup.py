@@ -7,7 +7,7 @@ setuptools.setup(
     author="Mykola Yakovliev",
     author_email="vegasq@gmail.com",
     description="wc3inside",
-    url="https://github.com/vegasq/wc3inside",
+    url="https://gitlab.com/vegasq/wc3inside",
     packages=setuptools.find_packages(),
     py_modules=["wc3inside/srv/", "wc3inside/utils/", "wc3inside/spider/"],
     include_package_data=True,

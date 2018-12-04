@@ -336,6 +336,106 @@ table#footer {
             document.getElementById("footer").style.display = "none";
             centrate_header();
         }
+        function search_emenies(username, gateway){
+            var url = "";
+        }
+
+function do_get(url, report_to) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = 'text';
+
+    xhr.onload = function () {
+        if (xhr.readyState === xhr.DONE) {
+            if (xhr.status === 200) {
+                report_to(xhr.responseText);
+            }
+        }
+    };
+
+    xhr.send(null);
+}
+
+class Enemies {
+    constructor(username, gateway) {
+        this.username = username;
+        this.gateway = gateway;
+    }
+
+    start() {
+        var self = this;
+        do_get(
+            "/v1/enemies/"+this.username+"/"+this.gateway,
+            function(data){
+                console.log("let's parse")
+                self.parse(data);
+            }
+        );
+    }
+
+    detect_result(info) {
+        var result = "even";
+        if (info["win"] > info["loss"]) {
+            result = "up";
+        } else if (info["loss"] > info["win"]){
+            result = "down";
+        }
+        return result;
+    }
+
+    get_avg_game_len(history){
+        var avg = 0;
+        for (var z = history.length - 1; z >= 0; z--) {
+            avg += history[z]["length"];
+        }
+        avg = avg / history.length;
+        return avg;
+    }
+
+    parse(data) {
+        console.log("Start parse")
+        data = JSON.parse(data);
+
+        var tpl;
+        var rendered_table = "";
+
+        for (var i = data.length - 1; i >= 0; i--) {
+            console.log(this);
+            var result_icon = this.detect_result(data[i][1]);
+            var avg = this.get_avg_game_len(data[i][1]["history"]);
+            console.log("awde");
+
+            var opponent = data[i][0];
+            var players_data = data[i][1]["history"][0]["players_data"];
+            var race = "";
+            if (opponent == players_data[0]["username"]){
+                race = players_data[0]["race"];
+            } else {
+                race = players_data[1]["race"];                
+            }
+            var opponent_race = race.toLowerCase();
+
+            tpl = document.getElementById("opponent_row_template").innerHTML;
+            tpl = tpl.replace("{username}", data[i][0]);
+            tpl = tpl.replace("{won}", data[i][1]["win"]);
+            tpl = tpl.replace("{loss}", data[i][1]["loss"]);
+            tpl = tpl.replace("{last_game}", data[i][1]["history"][0]["date"]);
+            tpl = tpl.split("{result_icon}").join(result_icon);
+            tpl = tpl.split("{avg_game}").join(avg);
+            tpl = tpl.split("{race}").join(opponent_race);
+
+            rendered_table = rendered_table + tpl;
+        }
+        document.getElementById("enemies_table_body").innerHTML += rendered_table;
+        console.log("End parse")
+    }
+}
+
+(function(){
+    let os = new Enemies("SumniyRobot", "Lordaeron");
+    os.start();
+})();
+
     </script>
   </head>
   <body>
@@ -356,7 +456,7 @@ table#footer {
                 <th scope="col"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="enemies_table_body">
             <tr>
                 <td class="user_col first_col"><img class="race_icon" src="static/human-male.png">FollowGrubby</td>
                 <td class="score_col score_col_up"><img src="static/up.svg">2 x 0</td>
@@ -421,6 +521,16 @@ table#footer {
         </tr>
     </table>
 
+    </div>
+
+    <template id="opponent_row_template">
+        <tr>
+            <td class="user_col first_col"><img class="race_icon" src="static/{race}.jpg">{username}</td>
+            <td class="score_col score_col_{result_icon}"><img src="static/{result_icon}.svg">{won} x {loss}</td>
+            <td class="last_game_col">{last_game}</td>
+            <td class="avg_col">{avg_game} min</td>
+            <td class="more_col"><img src="static/more.svg"></td>
+        </tr>
     </div>
 
     <script>
