@@ -1,0 +1,254 @@
+/* General */
+body {
+    background-image: url(/static/images/bg.png);
+}
+#top_container {
+    width:800px;
+    margin: 0 auto;
+}
+
+/* Enemies content */
+#enemies_table {
+    width: 100%;
+    display: none;
+}
+
+#enemies_table thead {
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.4px;
+  color: #f0f0f0;
+
+  border-bottom: 1px solid #6d6d6d;
+}
+
+#enemies_table .first_col {
+    padding-left: 20px;
+}
+#enemies_table thead tr th {
+    /* margin-top: 11px; */
+    /* padding-top: 11px;
+    padding-bottom: 11px; */
+    text-align: left;
+
+}
+#enemies_table tr {
+    height: 49px;
+    line-height: 49px;
+    border-bottom: 1px solid #6d6d6d;
+}
+
+#enemies_table tr:hover {
+    background-color: rgba(216, 216, 216, 0.15);
+    cursor: pointer;
+}
+#enemies_table .user_col {
+    width: 260px;
+    /* height: 19px; */
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #f0f0f0;
+}
+#enemies_table .race_icon {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    top:10px;
+    padding-right: 10px;
+}
+#enemies_table .score_col {
+    width: 165px;
+    height: 19px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+}
+#enemies_table .score_col img {
+    position: relative;
+    top: 2px;
+    padding-right: 10px;
+}
+#enemies_table .score_col_up {
+    color: #54ea7c;
+}
+#enemies_table .score_col_down {
+    color: #ea4335;
+}
+#enemies_table .score_col_even {
+    color: #f0f0f0;
+}
+#enemies_table .last_game_col {
+    width: 180px;
+    height: 19px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #f0f0f0;
+}
+#enemies_table .avg_col {
+    width: 145px;
+    height: 19px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #f0f0f0;
+}
+#enemies_table .more_col > img {
+    position: relative;
+    top: 3px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
+
+/* Header */
+header {
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+header .header_logo {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    top: 7px;
+    padding-right: 10px;
+}
+header .header_wc3 {
+    font-weight: bold;
+    width: 208px;
+    height: 40px;
+    font-family: Roboto;
+    font-size: 40px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    color: #ffffff;
+}
+header .header_inside {
+    width: 208px;
+    height: 40px;
+    font-family: Roboto;
+    font-size: 40px;
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    color: #ffffff;
+}
+header #search_input {
+    width: 240px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: rgba(216, 216, 216, 0.15);
+    border: 0;
+    color: #f0f0f0;
+    font-size: 16px;
+    margin-left: 20px;
+    position: relative;
+    top: -8px;
+    padding-left: 45px;
+    outline: none;
+    left: -20px;
+}
+header .glass_icon {
+    position: relative;
+    left: 35px;
+    top: -4px;
+}
+header #search_button {
+    width: 100px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #ea760e;
+    outline: none;
+    position: relative;
+    top: -9px;
+    left: 3px;
+    cursor: pointer;
+}
+
+header #region_button {
+    width: 110px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #ea760e;
+    outline: none;
+    position: relative;
+    top: -9px;
+    right: 10px;
+    cursor: pointer;
+}
+header #region_button img {
+    position: relative;
+    top: 2px;
+}
+
+table#footer {
+    margin-top: 100px;
+    margin-bottom: 20px;
+    width: 100%;
+    font-family: Roboto;
+    font-size: 10px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    color: #9c9c9c;
+    line-height: 14px;
+
+}
+
+/* Footer */
+#footer .credits {
+    width: 85px;
+}
+#footer .left_footer {
+    width: 600px;
+}
+#footer .center_footer {
+    width: 115px;
+}
+#footer .credits b {
+    font-weight: bold;
+}
