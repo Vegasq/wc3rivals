@@ -70,6 +70,7 @@ body {
 /* Enemies content */
 #enemies_table {
     width: 100%;
+    display: none;
 }
 
 #enemies_table thead {
@@ -257,6 +258,7 @@ header #search_button {
     position: relative;
     top: -9px;
     left: 3px;
+    cursor: pointer;
 }
 
 header #region_button {
@@ -276,6 +278,7 @@ header #region_button {
     position: relative;
     top: -9px;
     right: 10px;
+    cursor: pointer;
 }
 header #region_button img {
     position: relative;
@@ -311,34 +314,52 @@ table#footer {
 }
     </style>
     <script>
-        function centrate_header (){
-            var w = window,
-                d = document,
-                e = d.documentElement,
-                g = d.getElementsByTagName('body')[0],
-                x = w.innerWidth || e.clientWidth || g.clientWidth,
-                y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-            var headerHeight = document.getElementsByTagName("header")[0].offsetHeight;
+function centrate_header (){
+    var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    var headerHeight = document.getElementsByTagName("header")[0].offsetHeight;
 
-            var middleOfTheScreen = y/2;
-            var headerPosition = middleOfTheScreen - (headerHeight/2);
-            document.getElementsByTagName("header")[0].style.paddingTop = headerPosition+"px";
-        }
+    var middleOfTheScreen = y/2;
+    var headerPosition = middleOfTheScreen - (headerHeight/2);
+    document.getElementsByTagName("header")[0].style.paddingTop = headerPosition+"px";
+}
 
-        function on_search() {
-            document.getElementById("enemies_table").style.display = "table";
-            document.getElementById("footer").style.display = "table";
-            document.getElementsByTagName("header")[0].style.paddingTop = "30px";
+function on_search() {
+    document.getElementById("enemies_table").style.display = "table";
+    document.getElementById("footer").style.display = "table";
+    document.getElementsByTagName("header")[0].style.paddingTop = "30px";
 
+}
+function on_load() {
+    document.getElementById("enemies_table").style.display = "none";
+    document.getElementById("footer").style.display = "none";
+    centrate_header();
+
+    var inp = document.getElementById("search_input");
+    var region = document.getElementById("region_button");
+    var search_btn = document.getElementById("search_button");
+   
+    inp.addEventListener("keypress", function(e){
+        console.log(e);
+        var key = e.which || e.keyCode;
+        if (key === 13) {
+            search_emenies(inp.value, region.value);
         }
-        function on_load() {
-            document.getElementById("enemies_table").style.display = "none";
-            document.getElementById("footer").style.display = "none";
-            centrate_header();
-        }
-        function search_emenies(username, gateway){
-            var url = "";
-        }
+    });
+    search_btn.addEventListener("click", function(e){
+        console.log(e);
+        search_emenies(inp.value, region.value);
+    });
+
+}
+function search_emenies(username, gateway){
+    let os = new Enemies(username, gateway);
+    os.start();
+}
 
 function do_get(url, report_to) {
     let xhr = new XMLHttpRequest();
@@ -392,49 +413,101 @@ class Enemies {
         return avg;
     }
 
+    get_random_sex(){
+        var sex_list = ['male', 'female'];  
+        return sex_list[Math.floor(Math.random() * sex_list.length)];
+    }
+
+    get_race(input_race) {
+        input_race = input_race.toLowerCase();
+        input_race = input_race.split(" ").join("");
+
+        if (input_race.indexOf("orc") !== -1) {
+            return "orc";
+        } else if (input_race.indexOf("nightelf") !== -1) {
+            return "nightelf";
+        } else if (input_race.indexOf("human") !== -1) {
+            return "human";
+        } else if (input_race.indexOf("undead") !== -1) {
+            return "undead";
+        }
+        return "dragon";
+    }
+
+    render_template(template_id, vars){
+        var tpl = document.getElementById(template_id).innerHTML;
+        var tag_re = /{\s*[a-z_]*\s*}/gm;
+        var we_have_tag = true;
+
+        var max_errors = 10;
+
+        for (var i = 0; we_have_tag == true; i--) {
+            var some_tag = tag_re.exec(tpl);
+
+            if (some_tag === null){
+                if (tpl.indexOf("{") === -1) {
+                    we_have_tag = false;
+                    break;
+                }
+                max_errors -= 1;
+                if (max_errors === 0) {
+                    break;
+                }
+                continue;
+            }
+            var key_name = some_tag[0].split(" ").join();
+            key_name = key_name.replace("{", "");
+            key_name = key_name.replace("}", "");
+
+            tpl = tpl.split(some_tag[0]).join(vars[key_name]);
+        }
+        return tpl;
+    }
+
     parse(data) {
-        console.log("Start parse")
         data = JSON.parse(data);
 
         var tpl;
         var rendered_table = "";
 
         for (var i = data.length - 1; i >= 0; i--) {
-            console.log(this);
             var result_icon = this.detect_result(data[i][1]);
             var avg = this.get_avg_game_len(data[i][1]["history"]);
-            console.log("awde");
-
             var opponent = data[i][0];
             var players_data = data[i][1]["history"][0]["players_data"];
+            var last_game = data[i][1]["history"][0]["date"].split(" ")[0];
             var race = "";
             if (opponent == players_data[0]["username"]){
                 race = players_data[0]["race"];
             } else {
                 race = players_data[1]["race"];                
             }
-            var opponent_race = race.toLowerCase();
 
-            tpl = document.getElementById("opponent_row_template").innerHTML;
-            tpl = tpl.replace("{username}", data[i][0]);
-            tpl = tpl.replace("{won}", data[i][1]["win"]);
-            tpl = tpl.replace("{loss}", data[i][1]["loss"]);
-            tpl = tpl.replace("{last_game}", data[i][1]["history"][0]["date"]);
-            tpl = tpl.split("{result_icon}").join(result_icon);
-            tpl = tpl.split("{avg_game}").join(avg);
-            tpl = tpl.split("{race}").join(opponent_race);
+            tpl = this.render_template(
+                "opponent_row_template",
+                {
+                    "username": data[i][0],
+                    "won": data[i][1]["win"],
+                    "loss": data[i][1]["loss"],
+                    "last_game": last_game,
+                    "result_icon": result_icon,
+                    "avg_game": avg,
+                    "race": this.get_race(race),
+                    "sex": this.get_random_sex()
+                }
+            );
 
             rendered_table = rendered_table + tpl;
         }
         document.getElementById("enemies_table_body").innerHTML += rendered_table;
-        console.log("End parse")
+        on_search();
     }
 }
 
-(function(){
-    let os = new Enemies("SumniyRobot", "Lordaeron");
-    os.start();
-})();
+        (function(){
+            window.onload = on_load;
+        })();
+
 
     </script>
   </head>
@@ -443,7 +516,7 @@ class Enemies {
 
         <header>
 <img class="header_logo" src="static/logo-small-warcraft3.png"><span class="header_wc3">WC3</span><span class="header_inside">INSIDE</span><img class="glass_icon" src="static/glass.svg"><input id="search_input" placeholder="FollowGrubby">
-<button id="region_button">Europe <img src="static/down.svg"></button><button id="search_button" onclick="on_search()">Search</button>
+<button id="region_button" value="Lordaeron">Europe <img src="static/down.svg"></button><button id="search_button">Search</button>
         </header>
 
     <table id="enemies_table">
@@ -457,7 +530,9 @@ class Enemies {
             </tr>
         </thead>
         <tbody id="enemies_table_body">
-            <tr>
+
+
+<!--             <tr>
                 <td class="user_col first_col"><img class="race_icon" src="static/human-male.png">FollowGrubby</td>
                 <td class="score_col score_col_up"><img src="static/up.svg">2 x 0</td>
                 <td class="last_game_col">2018/12/15</td>
@@ -503,8 +578,8 @@ class Enemies {
                 <td class="avg_col">15 min</td>
                 <td class="more_col"><img src="static/more.svg"></td>
             </tr>
-    
-    
+ -->
+
         </tbody>
 
     </table>
@@ -525,7 +600,7 @@ class Enemies {
 
     <template id="opponent_row_template">
         <tr>
-            <td class="user_col first_col"><img class="race_icon" src="static/{race}.jpg">{username}</td>
+            <td class="user_col first_col"><img class="race_icon" src="static/{race}_{sex}.png">{username}</td>
             <td class="score_col score_col_{result_icon}"><img src="static/{result_icon}.svg">{won} x {loss}</td>
             <td class="last_game_col">{last_game}</td>
             <td class="avg_col">{avg_game} min</td>
@@ -533,8 +608,5 @@ class Enemies {
         </tr>
     </div>
 
-    <script>
-        window.onload = on_load;
-    </script>
   </body>
 </html>
