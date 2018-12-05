@@ -57,6 +57,19 @@ class DB(DBConnection):
         self._players_table = gateway.lower() + "_players"
         self._races_table = gateway.lower() + "_races"
 
+    def mark_game_as_failed(self, id: int, reason="": str) -> None:
+        LOG.debug(f"Report game {self._gateway}#{id} as failed.")
+        self._db["failed"].insert({
+            "gateway": self._gateway,
+            "game_id": id,
+            "report_date": datetime.now(),
+            "reason": reason
+        })
+
+    def get_failed_by_id(self, game_id: int) -> Dict:
+        LOG.debug(f"Get failed by ID {game_id}.")
+        return self._db["failed"].find_one({"game_id": game_id})
+
     @property
     def collection(self):
         LOG.debug(f"Get collection {self._games_table}.")

@@ -38,6 +38,10 @@ Race = NewType("Race", str)
 BNetRealm = NewType("BNetRealm", str)
 
 
+CONNECTION_ERROR = "CONNECTION_ERROR"
+PARSING_ERROR = "PARSING_ERROR"
+
+
 class UrlUnavailable(Exception):
     pass
 
@@ -248,6 +252,7 @@ class GamePageParser(object):
 
         retry = 5
         while retry > 0:
+            retry -= 1
             try:
                 LOG.debug(f"GET {url}, #{retry}.")
                 data = requests.get(url, timeout=(5, 5))
@@ -258,12 +263,10 @@ class GamePageParser(object):
                 return data.text
 
             except requests.exceptions.ConnectionError as err:
-                retry -= 1
                 LOG.error(f"Conection error for {url}. "
                            "Sleep for 1 second and retry.")
                 time.sleep(1)
             except Exception as err:
-                retry -= 1
                 LOG.error(f"Unknown error {err}."
                            "Sleep for 1 second and retry.")
                 time.sleep(1)
@@ -280,6 +283,10 @@ class GamePageParser(object):
         if self.db.get_by_id(self.game_id):
             LOG.info(f"Game {self.gateway}#{self.game_id} exists.")
             return True
+        if self.db.get_failed_by_id(self.game_id):
+            LOG.info(f"Game {self.gateway}#{self.game_id} found in failed db.")
+            return True
+
         LOG.debug(
             "Check if game exists in DB took: %f" % (time.time() - timer))
 
@@ -294,6 +301,7 @@ class GamePageParser(object):
             output = self.get(url)
         except UrlUnavailable as err:
             LOG.error(f"Skip {url} due to {err}.")
+            self.db.mark_game_as_failed(self.game_id, reason=CONNECTION_ERROR)
             return
 
         timer = time.time()
@@ -305,6 +313,7 @@ class GamePageParser(object):
             "error" in self.soup.find("b").text.lower()
         ):
             LOG.error("Failed to parse page.")
+            self.db.mark_game_as_failed(self.game_id, reason=PARSING_ERROR)
             return False
 
         timer = time.time()
