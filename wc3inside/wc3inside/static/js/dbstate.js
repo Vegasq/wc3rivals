@@ -29,7 +29,7 @@ class DBState {
         }
 
         var tpl = render_template(
-            "db_stats",
+            "db_state",
             {
                 "euro": euro,
                 "west": west,
