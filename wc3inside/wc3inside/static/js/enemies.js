@@ -87,9 +87,9 @@ class Enemies {
                 }
             );
 
-            rendered_table = rendered_table + tpl;
+            rendered_table = tpl + rendered_table;
         }
-        document.getElementById("enemies_table_body").innerHTML = rendered_table + document.getElementById("enemies_table_body").innerHTML;
+        document.getElementById("enemies_table_body").innerHTML = rendered_table;
         on_search();
     }
 }
