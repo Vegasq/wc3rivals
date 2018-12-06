@@ -83,7 +83,8 @@ class Enemies {
                     "result_icon": result_icon,
                     "avg_game": avg,
                     "race": this.get_race(race),
-                    "sex": this.get_random_sex()
+                    "sex": this.get_random_sex(),
+                    "gateway": this.gateway
                 }
             );
 

@@ -62,7 +62,11 @@
 
     <template id="opponent_row_template">
         <tr>
-            <td class="user_col first_col"><img class="race_icon" src="/static/images/{race}_{sex}.png">{username}</td>
+            <td class="user_col first_col">
+                <a href="/#/u/{gateway}/{username}">
+                    <img class="race_icon" src="/static/images/{race}_{sex}.png">{username}
+                </a>
+            </td>
             <td class="score_col score_col_{result_icon}"><img src="/static/images/{result_icon}.svg">{won} x {loss}</td>
             <td class="last_game_col">{last_game}</td>
             <td class="avg_col">{avg_game} min</td>
