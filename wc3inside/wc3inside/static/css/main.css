@@ -46,7 +46,7 @@ body {
     background-color: rgba(216, 216, 216, 0.15);
     cursor: pointer;
 }
-#enemies_table .user_col {
+#enemies_table .user_col, #enemies_table .user_col a {
     width: 260px;
     /* height: 19px; */
     font-family: Roboto;
@@ -57,6 +57,10 @@ body {
     line-height: normal;
     letter-spacing: 0.4px;
     color: #f0f0f0;
+    text-decoration: none;
+}
+#enemies_table .user_col a:hover {
+    color: #ea760e;;
 }
 #enemies_table .race_icon {
     position: relative;
