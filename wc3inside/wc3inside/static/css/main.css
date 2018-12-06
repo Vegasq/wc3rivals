@@ -219,6 +219,8 @@ header #region_button {
     top: -9px;
     right: 10px;
     cursor: pointer;
+    text-align: left;
+    padding: 0 10px;
 }
 header #region_button img {
     position: relative;
@@ -251,4 +253,42 @@ table#footer {
 }
 #footer .credits b {
     font-weight: bold;
+}
+
+#region_select_menu {
+    width: 70px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #4a4a4a;
+    outline: none;
+    position: relative;
+    right: 10px;
+    cursor: pointer;
+    padding: 0px 20px 10px 20px;
+    margin-top: 10px;
+}
+
+#region_select_menu::before {
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    content: "";
+    top: -4px;
+    position: relative;
+    left: 67px;
+    transform: rotate(45deg);
+}
+#region_select_menu div {
+    line-height: 25px;
+}
+#region_select_menu div:hover {
+    color: #ea760e;
 }

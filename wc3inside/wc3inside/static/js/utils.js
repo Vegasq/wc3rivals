@@ -21,6 +21,7 @@ function on_search() {
 function on_load() {
     document.getElementById("enemies_table").style.display = "none";
     document.getElementById("footer").style.display = "none";
+    new RegionSelector("region_button");
     centrate_header();
 
     let dbstate = new DBState();
