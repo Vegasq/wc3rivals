@@ -23,6 +23,10 @@ function on_load() {
     document.getElementById("footer").style.display = "none";
     centrate_header();
 
+    let dbstate = new DBState();
+    dbstate.start();
+
+
     var inp = document.getElementById("search_input");
     var region = document.getElementById("region_button");
     var search_btn = document.getElementById("search_button");

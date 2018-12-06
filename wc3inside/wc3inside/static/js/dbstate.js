@@ -12,15 +12,28 @@ class DBState {
     }
 
     parse(data) {
-        var data2 = JSON.parse(data);
-        console.log(data2);
+        var data = JSON.parse(data);
+
+        var eu = "";
+        var west = "";
+        var east = "";
+
+        for (let e of data) {
+            if (e[0] === "Lordaeron") {
+                west = e[1];
+            } else if (e[0] === "Azeroth") {
+                east = e[1];
+            } else if (e[0] === "Northrend") {
+                euro = e[1];
+            }
+        }
 
         var tpl = render_template(
             "db_stats",
             {
-                "eu": 123,
-                "west": 321,
-                "east": 532
+                "euro": euro,
+                "west": west,
+                "east": east
             }
         );
 
