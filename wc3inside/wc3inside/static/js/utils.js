@@ -42,6 +42,19 @@ function on_load() {
         search_emenies(inp.value, region.value);
     });
 
+    window.addEventListener('hashchange', function() {
+        if (window.location.href.indexOf("/u/") !== -1){
+            var q = window.location.href.split("/u/")[1].split("/");
+            var username = q[1];
+            var gateway = q[0];
+
+            document.getElementById("search_input").value = username;
+            document.getElementById("region_button").value = gateway;
+
+            search_emenies(username, gateway);
+        }
+    });
+
 
     if (window.location.href.indexOf("/u/") !== -1){
         var q = window.location.href.split("/u/")[1].split("/");
