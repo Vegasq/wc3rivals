@@ -32,14 +32,12 @@ function on_load() {
     var search_btn = document.getElementById("search_button");
    
     inp.addEventListener("keypress", function(e){
-        console.log(e);
         var key = e.which || e.keyCode;
         if (key === 13) {
             search_emenies(inp.value, region.value);
         }
     });
     search_btn.addEventListener("click", function(e){
-        console.log(e);
         search_emenies(inp.value, region.value);
     });
 

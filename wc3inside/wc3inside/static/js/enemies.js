@@ -9,7 +9,6 @@ class Enemies {
         do_get(
             "/v1/enemies/"+this.username+"/"+this.gateway,
             function(data){
-                console.log("let's parse")
                 self.parse(data);
             }
         );

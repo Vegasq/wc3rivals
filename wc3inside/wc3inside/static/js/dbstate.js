@@ -14,7 +14,7 @@ class DBState {
     parse(data) {
         var data = JSON.parse(data);
 
-        var eu = "";
+        var euro = "";
         var west = "";
         var east = "";
 
