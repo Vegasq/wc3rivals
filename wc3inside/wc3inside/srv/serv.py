@@ -100,8 +100,19 @@ LOG.setLevel(logging.DEBUG)
 #         return MyHistoryView(inp.username, inp.gateway).get(int(inp.limit))
 
 
+GATEWAY_MAP = {
+    "us_west": "Lordaeron",
+    "us_east": "Azeroth",
+    "europe": "Northrend",
+    "Lordaeron": "Lordaeron",
+    "Azeroth": "Azeroth",
+    "Northrend": "Northrend"
+}
+
+
 @app.route("/v1/enemies/<username>/<gateway>")
 def top_opponents(username, gateway):
+    gateway = GATEWAY_MAP[gateway]
     return json.dumps(TopOpponentsView(gateway).get_stats(username))
 
 
