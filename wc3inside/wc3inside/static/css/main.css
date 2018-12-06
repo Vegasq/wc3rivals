@@ -225,6 +225,7 @@ header #region_button {
 header #region_button img {
     position: relative;
     top: 2px;
+    float: right;
 }
 
 table#footer {
@@ -268,11 +269,13 @@ table#footer {
     letter-spacing: 0.4px;
     color: #4a4a4a;
     outline: none;
-    position: relative;
     right: 10px;
     cursor: pointer;
     padding: 0px 20px 10px 20px;
     margin-top: 10px;
+
+    position: absolute;
+    top: 18px;
 }
 
 #region_select_menu::before {

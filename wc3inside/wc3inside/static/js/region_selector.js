@@ -31,7 +31,11 @@ class RegionSelector {
         this.vals = ["Europe", "US West", "US East"];
         this.ids = ["europe", "us_west", "us_east"];
 
+        var parent_div = document.createElement("div");
+        parent_div.style.position = "relative";
+        parent_div.style.display = "inline";
         this.menu_div = document.createElement("div");
+        parent_div.appendChild(this.menu_div);
         this.menu_div.style.display = "none";
         this.menu_div.style.position = "absolute";
         this.menu_div.setAttribute('id', 'region_select_menu');
@@ -43,7 +47,9 @@ class RegionSelector {
             opt.addEventListener("click", function(d){self.select_region(d);}, false);
             this.menu_div.appendChild(opt);
         }
-        document.body.appendChild(this.menu_div);
+        // document.body.appendChild(parent_div);
+        var region_button = document.getElementById('region_button');
+        region_button.parentNode.insertBefore(parent_div, region_button.nextSibling);
 
         this.btn_text.innerHTML = this.vals[0];
         this.btn.value = this.ids[0];
@@ -56,8 +62,8 @@ class RegionSelector {
         this.open_menu();
     }
     open_menu(e){
-        this.menu_div.style.top = (this.btn.offsetTop + this.btn.clientHeight) + "px";
-        this.menu_div.style.left = this.btn.offsetLeft + "px";
+        // this.menu_div.style.top = (this.btn.offsetTop + this.btn.clientHeight) + "px";
+        // this.menu_div.style.left = this.btn.offsetLeft + "px";
 
         if (this.state === this.closed_state){
             document.getElementById("region_select_menu").style.display = "block";
