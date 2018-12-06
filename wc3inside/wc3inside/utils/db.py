@@ -68,7 +68,9 @@ class DB(DBConnection):
 
     def get_failed_by_id(self, game_id: int) -> Dict:
         LOG.debug(f"Get failed by ID {game_id}.")
-        return self._db["failed"].find_one({"game_id": game_id})
+        return self._db["failed"].find_one({
+            "game_id": game_id,
+            "gateway": self._gateway})
 
     @property
     def collection(self):
