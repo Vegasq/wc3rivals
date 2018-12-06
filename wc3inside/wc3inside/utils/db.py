@@ -57,7 +57,7 @@ class DB(DBConnection):
         self._players_table = gateway.lower() + "_players"
         self._races_table = gateway.lower() + "_races"
 
-    def mark_game_as_failed(self, id: int, reason="": str) -> None:
+    def mark_game_as_failed(self, id: int, reason: str = "") -> None:
         LOG.debug(f"Report game {self._gateway}#{id} as failed.")
         self._db["failed"].insert({
             "gateway": self._gateway,
