@@ -62,7 +62,7 @@ class Enemies {
 
         for (var i = data.length - 1; i >= 0; i--) {
             var result_icon = this.detect_result(data[i][1]);
-            var avg = this.get_avg_game_len(data[i][1]["history"]);
+            var avg = Math.floor(this.get_avg_game_len(data[i][1]["history"]));
             var opponent = data[i][0];
             var players_data = data[i][1]["history"][0]["players_data"];
             var last_game = data[i][1]["history"][0]["date"].split(" ")[0];
@@ -89,7 +89,7 @@ class Enemies {
 
             rendered_table = rendered_table + tpl;
         }
-        document.getElementById("enemies_table_body").innerHTML += rendered_table;
+        document.getElementById("enemies_table_body").innerHTML = rendered_table + document.getElementById("enemies_table_body").innerHTML;
         on_search();
     }
 }

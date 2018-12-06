@@ -37,6 +37,6 @@ class DBState {
             }
         );
 
-        document.getElementById("db_stats_view").innerHTML = tpl + data;
+        document.getElementById("db_stats_view").innerHTML = tpl;
     }
 }
