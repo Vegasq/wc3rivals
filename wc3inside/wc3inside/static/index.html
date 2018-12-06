@@ -13,6 +13,7 @@
 
     <script type="text/javascript" async="" src="/static/js/utils.js"></script>
     <script type="text/javascript" async="" src="/static/js/enemies.js"></script>
+    <script type="text/javascript" async="" src="/static/js/dbstate.js"></script>
 
     <script>
         window.onload = on_load;
@@ -43,7 +44,9 @@
     <table id="footer">
         <tr>
             <td class="left_footer"></td>
-            <td class="center_footer"></td>
+            <td class="center_footer" id="db_stats_view">
+                
+            </td>
             <td class="credits">
                     <b>CREDITS:</b><br>
                     Alona Vinnyk,<br>
@@ -62,7 +65,14 @@
             <td class="avg_col">{avg_game} min</td>
             <td class="more_col"><img src="/static/images/more.svg"></td>
         </tr>
-    </div>
+    </template>
+    <template db="db_stats">
+        <div>
+            Europe: {eu}<br>
+            US West: {west}<br>
+            US East: {east}
+        </div>
+    </template>
 
   </body>
 </html>

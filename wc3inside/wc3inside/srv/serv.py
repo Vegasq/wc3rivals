@@ -105,6 +105,11 @@ def top_opponents(username, gateway):
     return json.dumps(TopOpponentsView(gateway).get_stats(username))
 
 
+@app.route("/v1/db/stats")
+def stats():
+    return json.dumps(DBStateView().get())
+
+
 # https://hub.docker.com/r/tiangolo/uwsgi-nginx-flask/
 @app.route("/")
 def main():

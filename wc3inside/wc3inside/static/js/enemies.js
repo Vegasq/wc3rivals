@@ -1,5 +1,3 @@
-
-
 class Enemies {
     constructor(username, gateway) {
         this.username = username;
@@ -57,36 +55,6 @@ class Enemies {
         return "dragon";
     }
 
-    render_template(template_id, vars){
-        var tpl = document.getElementById(template_id).innerHTML;
-        var tag_re = /{\s*[a-z_]*\s*}/gm;
-        var we_have_tag = true;
-
-        var max_errors = 10;
-
-        for (var i = 0; we_have_tag == true; i--) {
-            var some_tag = tag_re.exec(tpl);
-
-            if (some_tag === null){
-                if (tpl.indexOf("{") === -1) {
-                    we_have_tag = false;
-                    break;
-                }
-                max_errors -= 1;
-                if (max_errors === 0) {
-                    break;
-                }
-                continue;
-            }
-            var key_name = some_tag[0].split(" ").join();
-            key_name = key_name.replace("{", "");
-            key_name = key_name.replace("}", "");
-
-            tpl = tpl.split(some_tag[0]).join(vars[key_name]);
-        }
-        return tpl;
-    }
-
     parse(data) {
         data = JSON.parse(data);
 
@@ -106,7 +74,7 @@ class Enemies {
                 race = players_data[1]["race"];                
             }
 
-            tpl = this.render_template(
+            tpl = render_template(
                 "opponent_row_template",
                 {
                     "username": data[i][0],
