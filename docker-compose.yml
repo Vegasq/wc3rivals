@@ -1,74 +1,74 @@
 version: '3'
 services:
-  us_west:
-    image: registry.gitlab.com/vegasq/wc3inside:us_west
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOGATEWAY: Lordaeron
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-parser --debug
-  us_east:
-    image: registry.gitlab.com/vegasq/wc3inside:us_east
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOGATEWAY: Azeroth
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-parser --debug
-  europe:
-    image: registry.gitlab.com/vegasq/wc3inside:europe
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOGATEWAY: Northrend
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-parser --debug
-  us_west_old:
-    image: registry.gitlab.com/vegasq/wc3inside:us_west_old
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOGATEWAY: Lordaeron
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-parser --debug --old
-  us_east_old:
-    image: registry.gitlab.com/vegasq/wc3inside:us_east_old
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOGATEWAY: Azeroth
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-parser --debug --old
-  europe_old:
-    image: registry.gitlab.com/vegasq/wc3inside:europe_old
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOGATEWAY: Northrend
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-parser --debug --old
-  stats:
-    image: registry.gitlab.com/vegasq/wc3inside:stats
-    build: ./wc3inside/
-    restart: always
-    environment:
-      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-      CMD: wc3inside-stats
+#  us_west:
+#    image: registry.gitlab.com/vegasq/wc3inside:us_west
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOGATEWAY: Lordaeron
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-parser --debug
+#  us_east:
+#    image: registry.gitlab.com/vegasq/wc3inside:us_east
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOGATEWAY: Azeroth
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-parser --debug
+#  europe:
+#    image: registry.gitlab.com/vegasq/wc3inside:europe
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOGATEWAY: Northrend
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-parser --debug
+#  us_west_old:
+#    image: registry.gitlab.com/vegasq/wc3inside:us_west_old
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOGATEWAY: Lordaeron
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-parser --debug --old
+#  us_east_old:
+#    image: registry.gitlab.com/vegasq/wc3inside:us_east_old
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOGATEWAY: Azeroth
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-parser --debug --old
+#  europe_old:
+#    image: registry.gitlab.com/vegasq/wc3inside:europe_old
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOGATEWAY: Northrend
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-parser --debug --old
+#  stats:
+#    image: registry.gitlab.com/vegasq/wc3inside:stats
+#    build: ./wc3inside/
+#    restart: always
+#    environment:
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3inside-stats
   uwsgi:
     image: registry.gitlab.com/vegasq/wc3inside:uwsgi
     build:

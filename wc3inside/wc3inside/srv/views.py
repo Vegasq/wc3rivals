@@ -67,6 +67,7 @@ class TopOpponentsView(object):
         return stats
 
     def get_stats(self, username: str) -> str:
+        username = self.db.real_username(username)
         all_games = [
             MatchObject(g, username)
             for g in self.db.get_solo_games_by_user(username)

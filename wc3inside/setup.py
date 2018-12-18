@@ -22,7 +22,7 @@ setuptools.setup(
             'wc3inside-parser=wc3inside.spider.gamesparser:main',
             'wc3inside-parser-ladder=wc3inside.spider.ladderparser:main',
             'wc3inside-stats=wc3inside.utils.stats_calc:main',
-            'wc3inside-db-magic=wc3inside.utils.001_create_lower_players:up',
+            'wc3inside-db-magic=wc3inside.utils.create_lower_players:up',
         ],
     },
     install_requires=[

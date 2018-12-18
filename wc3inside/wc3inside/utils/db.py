@@ -106,12 +106,20 @@ class DB(DBConnection):
             {"$and": [{"game_id": {"$gte": low}}, {"game_id": {"$lte": high}}]}
         ).sort("game_id", 1)
 
+    def real_username(self, username: str):
+        game = self.collection.find_one({"players_lower": username.lower()})
+        for player in game['players']:
+            if player.lower() == username.lower():
+                return player
+        LOG.error(f"Can't find real username for {username}")
+        return username
+
 
 class DBTopOpponents(DB):
     def get_solo_games_by_user(self, username: str):
         LOG.debug(f"Collect solo games for {username}.")
         return self.collection.find(
-            {"players_lower": username.lower(),
+            {"players": username,
              "type": "Solo", "length": {"$gt": 3}}
         )
 
@@ -119,8 +127,8 @@ class DBTopOpponents(DB):
         LOG.debug(f"Collect solo games for {usernames}.")
         return self.collection.find(
             {
-                "$and": [{"players_lower": usernames[0].lower()},
-                         {"players_lower": usernames[1].lower()}],
+                "$and": [{"players": usernames[0]},
+                         {"players": usernames[1]}],
                 "type": "Solo",
                 "length": {"$gt": 3},
             }
@@ -133,7 +141,7 @@ class DBHistory(DB):
 
         d = datetime.today() - timedelta(days=90)
         return self.collection.find(
-            {"players_lower": username.lower(),
+            {"players": username,
              "length": {"$gt": 3}, "date": {"$gt": d}}
         ).sort("date", -1)
 
@@ -144,7 +152,7 @@ class DBHistory(DB):
         return self.collection.find(
             {
                 "type": "Solo",
-                "players_lower": username.lower(),
+                "players": username,
                 "length": {"$gt": 3},
                 "date": {"$gt": d},
             }
@@ -155,7 +163,7 @@ class DBHistory(DB):
         if limit > 50:
             limit = 50
         return (
-            self.collection.find({"players_lower": username.lower(),
+            self.collection.find({"players": username,
                                   "length": {"$gt": 3}})
             .sort("date", -1)
             .limit(limit)
