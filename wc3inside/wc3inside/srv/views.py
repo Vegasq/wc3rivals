@@ -68,7 +68,8 @@ class TopOpponentsView(object):
 
     def get_stats(self, username: str) -> str:
         all_games = [
-            MatchObject(g, username) for g in self.db.get_solo_games_by_user(username)
+            MatchObject(g, username)
+            for g in self.db.get_solo_games_by_user(username)
         ]
         enemies = []
         for game in all_games:

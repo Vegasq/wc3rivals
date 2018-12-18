@@ -111,14 +111,16 @@ class DBTopOpponents(DB):
     def get_solo_games_by_user(self, username: str):
         LOG.debug(f"Collect solo games for {username}.")
         return self.collection.find(
-            {"players": username, "type": "Solo", "length": {"$gt": 3}}
+            {"players_lower": username.lower(),
+             "type": "Solo", "length": {"$gt": 3}}
         )
 
     def get_solo_games_with_users(self, usernames: List[str]):
         LOG.debug(f"Collect solo games for {usernames}.")
         return self.collection.find(
             {
-                "$and": [{"players": usernames[0]}, {"players": usernames[1]}],
+                "$and": [{"players_lower": usernames[0].lower()},
+                         {"players_lower": usernames[1].lower()}],
                 "type": "Solo",
                 "length": {"$gt": 3},
             }
@@ -131,7 +133,8 @@ class DBHistory(DB):
 
         d = datetime.today() - timedelta(days=90)
         return self.collection.find(
-            {"players": username, "length": {"$gt": 3}, "date": {"$gt": d}}
+            {"players_lower": username.lower(),
+             "length": {"$gt": 3}, "date": {"$gt": d}}
         ).sort("date", -1)
 
     def get_solo_history(self, username: str):
@@ -141,7 +144,7 @@ class DBHistory(DB):
         return self.collection.find(
             {
                 "type": "Solo",
-                "players": username,
+                "players_lower": username.lower(),
                 "length": {"$gt": 3},
                 "date": {"$gt": d},
             }
@@ -152,7 +155,8 @@ class DBHistory(DB):
         if limit > 50:
             limit = 50
         return (
-            self.collection.find({"players": username, "length": {"$gt": 3}})
+            self.collection.find({"players_lower": username.lower(),
+                                  "length": {"$gt": 3}})
             .sort("date", -1)
             .limit(limit)
         )

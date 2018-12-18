@@ -326,6 +326,8 @@ class GamePageParser(object):
 
         self.stats["players"] = [p.username
                                  for p in self.stats["players_data"]]
+        self.stats["players_lower"] = [p.username.lower()
+                                       for p in self.stats["players_data"]]
 
         timer = time.time()
         levels = self._parse_levels()

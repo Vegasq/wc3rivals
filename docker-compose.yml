@@ -81,6 +81,14 @@ services:
       WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
       WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
       WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+  create_lowercase_names:
+    build: ./wc3inside/
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3inside-db-magic
+
   # webui:
   #   image: registry.gitlab.com/vegasq/wc3inside:webui
   #   build: ./wc3inside/
