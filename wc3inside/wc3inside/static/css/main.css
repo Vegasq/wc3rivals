@@ -299,3 +299,47 @@ table#footer {
 #region_select_menu div:hover {
     color: #ea760e;
 }
+
+
+#search_drop_down {
+    width: 235px;
+    border-radius: 0 0 4px 4px;
+    background-color: #ffffff;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.4px;
+    color: #4a4a4a;
+    outline: none;
+    right: 25px;
+    cursor: pointer;
+    padding: 10px 20px 10px 20px;
+    margin-top: -7px;
+    position: absolute;
+    z-index: 1;
+}
+
+/*#search_drop_down::before {*/
+    /*display: block;*/
+    /*width: 10px;*/
+    /*height: 10px;*/
+    /*background-color: white;*/
+    /*content: "";*/
+    /*top: -4px;*/
+    /*position: relative;*/
+    /*left: 67px;*/
+    /*transform: rotate(45deg);*/
+/*}*/
+#search_drop_down div {
+    line-height: 25px;
+}
+#search_drop_down a {
+    text-decoration: none;
+    color: #4a4a4a;
+}
+#search_drop_down a:hover {
+    color: #ea760e;
+}

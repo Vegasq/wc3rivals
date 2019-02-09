@@ -16,10 +16,11 @@ from wc3inside.srv.views import (
     DBStateView,
     GamesStatsView,
 )
+from wc3inside.srv import views as Views
 
 
 app = Flask(__name__)
-
+app.static_folder = "/app/static"
 # urls = (
 #     ("/", "IndexRouter") +
 #     ("/u/(.*)/(.*)", "IndexRouter") +
@@ -122,10 +123,18 @@ def stats():
 
 
 # https://hub.docker.com/r/tiangolo/uwsgi-nginx-flask/
-@app.route("/")
-def main():
-    index_path = os.path.join(app.static_folder, 'index.html')
-    return send_file(index_path)
+# @app.route("/")
+# def main():
+#     index_path = os.path.join(app.static_folder, 'index.html')
+#     return send_file(index_path)
+
+
+@app.route('/v1/usernames/<string:gateway>/<string:username>')
+def search(gateway: str, username: str):
+    gateway = GATEWAY_MAP[gateway]
+    if len(username) <= 3:
+        return "[]"
+    return json.dumps(Views.username_search(gateway, username))
 
 
 @app.route('/<path:path>')
@@ -139,6 +148,11 @@ def route_frontend(path):
     else:
         index_path = os.path.join(app.static_folder, 'index.html')
         return send_file(index_path)
+
+
+@app.route('/u/<string:gateway>/<string:username>')
+def show(gateway: str, username: str):
+    return route_frontend(path="/")
 
 
 # class GamesStatsRouter(Router):

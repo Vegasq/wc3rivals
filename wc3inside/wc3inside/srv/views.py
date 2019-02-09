@@ -6,6 +6,8 @@ client.
 
 from wc3inside.utils.db import DBTopOpponents, DBHistory, DBState, DBGamesStats
 
+from wc3inside.utils import db as DBView
+
 from typing import List, Dict
 import copy
 
@@ -206,3 +208,7 @@ class GamesStatsView(object):
             "players": self._get_players(),
             "races": self._get_races(),
         }
+
+
+def username_search(gateway: str, username: str):
+    return DBView.UserNameSearch(gateway).search(username)

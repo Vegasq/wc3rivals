@@ -1,3 +1,9 @@
+var region_hash = {
+    "us_west": "US West",
+    "us_east": "US East",
+    "europe": "Europe"
+};
+
 function centrate_header (){
     var w = window,
         d = document,
@@ -21,7 +27,8 @@ function on_search() {
 function on_load() {
     document.getElementById("enemies_table").style.display = "none";
     document.getElementById("footer").style.display = "none";
-    new RegionSelector("region_button");
+    var rs = new RegionSelector("region_button");
+    var sd = new SearchDropdown("search_input");
     centrate_header();
 
     let dbstate = new DBState();
@@ -50,6 +57,7 @@ function on_load() {
 
             document.getElementById("search_input").value = username;
             document.getElementById("region_button").value = gateway;
+            rs.select_region(region_hash[gateway], gateway);
 
             search_emenies(username, gateway);
         }
@@ -63,6 +71,8 @@ function on_load() {
 
         document.getElementById("search_input").value = username;
         document.getElementById("region_button").value = gateway;
+        rs.select_region(region_hash[gateway], gateway);
+        // document.getElementById("region_button").innerHTML = region_hash[gateway];
 
         search_emenies(username, gateway);
     }
@@ -119,3 +129,7 @@ function render_template(template_id, vars){
     return tpl;
 }
 
+
+function get_current_gateway() {
+    return document.getElementById("region_button").value;
+}

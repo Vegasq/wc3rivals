@@ -44,7 +44,7 @@ class RegionSelector {
             let opt = document.createElement("div");
             opt.setAttribute('id', this.vals[i].split(" ").join("_").toLowerCase());
             opt.innerHTML = this.vals[i];
-            opt.addEventListener("click", function(d){self.select_region(d);}, false);
+            opt.addEventListener("click", function(d){self.select_region_event(d);}, false);
             this.menu_div.appendChild(opt);
         }
         // document.body.appendChild(parent_div);
@@ -53,24 +53,28 @@ class RegionSelector {
 
         this.btn_text.innerHTML = this.vals[0];
         this.btn.value = this.ids[0];
-        this.btn.addEventListener("click", function(d){self.open_menu(d);}, false);
+        this.btn.addEventListener("click", function(){self.toggle_menu();}, false);
 
     }
-    select_region(e){
-        this.btn_text.innerHTML = e.target.innerHTML;
-        this.btn.value = e.target.id;
-        this.open_menu();
+    select_region(name, value){
+        this.btn_text.innerHTML = name;
+        this.btn.value = value;
+        this.close_menu();
     }
-    open_menu(e){
-        // this.menu_div.style.top = (this.btn.offsetTop + this.btn.clientHeight) + "px";
-        // this.menu_div.style.left = this.btn.offsetLeft + "px";
-
-        if (this.state === this.closed_state){
-            document.getElementById("region_select_menu").style.display = "block";
-            this.state = this.open_state;
-        } else if (this.state === this.open_state) {
-            document.getElementById("region_select_menu").style.display = "none";
-            this.state = this.closed_state;
+    select_region_event(e){
+        this.select_region(e.target.innerHTML, e.target.id);
+    }
+    open_menu(){
+        document.getElementById("region_select_menu").style.display = "block";
+    }
+    close_menu(){
+        document.getElementById("region_select_menu").style.display = "none";
+    }
+    toggle_menu(){
+        if (document.getElementById("region_select_menu").style.display == "block") {
+            this.close_menu();
+        } else {
+            this.open_menu();
         }
     }
 

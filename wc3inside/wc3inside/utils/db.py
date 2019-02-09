@@ -1,4 +1,5 @@
 import os
+import re
 
 from urllib.parse import quote_plus
 from pymongo import MongoClient
@@ -199,3 +200,18 @@ class DBGamesStats(DB):
 
     def extract_races(self):
         return self.collection_races.find()
+
+
+class UserNameSearch(DB):
+    def search(self, username: str):
+        # db.getCollection('azeroth_players').find(
+        #     {"_id": {"$regex": /. * Robot. * /, '$options': 'i'}}).sort(
+        #     {"value": -1})
+
+        regx = re.compile(".*" + username + ".*", re.IGNORECASE)
+        players = self.collection_players.find(
+            {
+                "_id": regx
+            }
+        ).sort("value", -1).limit(5)
+        return [p['_id'] for p in players]
