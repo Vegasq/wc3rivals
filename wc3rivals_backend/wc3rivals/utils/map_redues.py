@@ -152,6 +152,37 @@ class MapsStats(object):
                 cls.map_fn, cls.reduce_fn, l.lower() + "_maps")
 
 
+class PlayerUsernamesStats(object):
+    map_fn = Code(
+        """
+        function(){
+            if (this.players.length === 2){
+                this.players.forEach(function(z){
+                    emit(z, z.toLowerCase());
+                });
+            };
+        }
+    """
+    )
+
+    reduce_fn = Code(
+        """
+        function(k, v){
+            return v;
+        }
+    """
+    )
+
+    @classmethod
+    def build(cls):
+        ladders = ["Lordaeron", "Azeroth", "Northrend"]
+        for l in ladders:
+            db.DB(l).collection.map_reduce(
+                cls.map_fn, cls.reduce_fn, l.lower() + "_usernames"
+            )
+
+
+
 def main():
     while True:
         timer = time.time()

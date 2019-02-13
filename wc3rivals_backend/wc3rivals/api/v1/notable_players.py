@@ -8,11 +8,11 @@ class NotablePlayers:
         # Read list of predefined players
         self.players = db.NotablePlayersDB().get_players()
         # Access to all games in DB (do not specify gateway)
-        self.history_db = db.DBHistory('')
-    
+        self.history_db = db.HistoryDB('')
+
     def _get_all_games_played(self, player):
         return [g for g in self.history_db.get_solo_history_all_time(player)]
-    
+
     def _get_total_wins(self, player, games):
         wins = 0
         for game in games:
@@ -23,10 +23,10 @@ class NotablePlayers:
             if user_data['result'].lower() == 'win':
                 wins += 1
         return wins
-    
+
     def _get_kdr(self, wins, loses):
             if loses != 0:
-                return round(wins/loses, 1)
+                return round(wins / loses, 1)
             else:
                 return '100% WINRATE'
 

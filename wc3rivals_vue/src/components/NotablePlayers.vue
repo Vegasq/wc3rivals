@@ -158,6 +158,7 @@ export default {
     position: relative;
     width: 20px;
     top: 4px;
+    padding-right: 10px;
 }
 
 #notable_players_table > thead > tr:nth-child(2) > th:nth-child(1) {

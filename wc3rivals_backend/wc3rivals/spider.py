@@ -15,11 +15,10 @@ import time
 import argparse
 from datetime import datetime
 import logging
-import subprocess
 from typing import List, Dict, NewType
 import json
 
-from wc3rivals.utils.db import DB
+from wc3rivals.utils import db
 from wc3rivals.utils.log import LOG
 from wc3rivals.utils import unused
 
@@ -102,7 +101,7 @@ class LastSavedGameSelector(object):
         """
         :param gateway: Battle.Net classic Realm
         """
-        self.db = DB(gateway)
+        self.db = db.DB(gateway)
 
     def last(self) -> int:
         # Return game with biggest game_id
@@ -123,20 +122,21 @@ class GamePageParser(object):
     Smart enough to ignore duplicates.
     """
 
-    def __init__(self, gateway: BNetRealm, game_id: int, db: DB) -> None:
+    def __init__(self, gateway: BNetRealm, game_id: int, dbinst: db.DB) -> None:
         """
         :param gateway: Battle.Net classic Realm
         :param game_id: Uniq BNet game ID
-        :param db: Instance of DB
+        :param dbinst: Instance of DB
         """
         LOG.info(f"Parse game {gateway}#{game_id}.")
         self.gateway = gateway
         self.game_id = game_id
 
-        if db:
-            self.db = db
+        if dbinst:
+            self.db = dbinst
         else:
-            self.db = DB(gateway)
+            self.db = db.DB(gateway)
+        self.udb = db.UsernamesDB(self.gateway)
 
         self.soup = None
         self.stats = None
@@ -326,8 +326,8 @@ class GamePageParser(object):
 
         self.stats["players"] = [p.username
                                  for p in self.stats["players_data"]]
-        self.stats["players_lower"] = [p.username.lower()
-                                       for p in self.stats["players_data"]]
+        for user in self.stats["players_data"]:
+            self.udb.insert_if_not_exist(user.username)
 
         timer = time.time()
         levels = self._parse_levels()
@@ -372,7 +372,7 @@ class GPManager(object):
         self.game_id = init
         self.errors_pool = 0
 
-        self.db = DB(gateway)
+        self.db = db.DB(gateway)
         self.exit = False
 
     def _start(self) -> None:
@@ -389,7 +389,8 @@ class GPManager(object):
                 self.game_id = lsgs.last()["game_id"]
             except TypeError:
                 LOG.error("Database is empty. Use --init-id to bootstrap.")
-                exit()
+                self.game_id = 2000000
+                # exit()
 
         while True:
             if self.exit:
@@ -400,7 +401,8 @@ class GPManager(object):
                 return
 
             if self.new:
-                gpp = GamePageParser(self.gateway, self.game_id, db=self.db)
+                gpp = GamePageParser(self.gateway, self.game_id,
+                                     dbinst=self.db)
                 success = gpp.fetch()
 
                 if not success:
@@ -422,7 +424,7 @@ class GPManager(object):
                 LOG.info(f"Found {len(ids)} not parsed games.")
                 for i in ids:
                     gpp = GamePageParser(BNetRealm(self.gateway), i,
-                                         db=self.db)
+                                         dbinst=self.db)
                     gpp.fetch()
                 self.game_id -= unused.chunk_size
 

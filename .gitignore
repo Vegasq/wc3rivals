@@ -1,6 +1,7 @@
 .env
 wc3rivals_vue/.DS_Store
 wc3rivals_vue/node_modules
+wc3rivals_backend/build/lib
 
 # local env files
 wc3rivals_vue/.env.local

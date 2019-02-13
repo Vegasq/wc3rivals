@@ -1,1 +1,0 @@
-name = "wc3rivals"

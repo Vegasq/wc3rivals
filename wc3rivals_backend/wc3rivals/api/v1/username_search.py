@@ -10,7 +10,7 @@ class UserNameSearch:
 
     def generate_response(self):
         resp = []
-        if len(self.username) >=3:
-            resp = db.UserNameSearchDB(self.gateway).search(self.username)
+        if len(self.username) >= 3:
+            resp = db.UsernamesDB(self.gateway).search(self.username)
 
         return json.dumps(resp)

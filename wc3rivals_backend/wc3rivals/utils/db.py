@@ -43,8 +43,6 @@ class DBConnection(object):
         LOG.debug(f"Connected to db {self._db}.")
 
 
-
-
 class DB(DBConnection):
 
     def __init__(self, gateway: str) -> None:
@@ -59,6 +57,7 @@ class DB(DBConnection):
         self._maps_table = gateway.lower() + "_maps"
         self._players_table = gateway.lower() + "_players"
         self._races_table = gateway.lower() + "_races"
+        self._usernames_table = gateway.lower() + "_usernames"
 
     def mark_game_as_failed(self, id: int, reason: str = "") -> None:
         LOG.debug(f"Report game {self._gateway}#{id} as failed.")
@@ -95,6 +94,11 @@ class DB(DBConnection):
         LOG.debug(f"Get collection {self._races_table}.")
         return self._db[self._races_table]
 
+    @property
+    def collection_usernames(self):
+        LOG.debug(f"Get collection {self._usernames_table}.")
+        return self._db[self._usernames_table]
+
     def get_by_id(self, game_id) -> Dict:
         LOG.debug(f"Get by ID {game_id}.")
         return self.collection.find_one({"game_id": game_id})
@@ -120,7 +124,7 @@ class DB(DBConnection):
         return username
 
 
-class DBHistory(DB):
+class HistoryDB(DB):
     def get_history(self, username: str):
         LOG.debug(f"Collect history for {username}.")
 
@@ -145,7 +149,6 @@ class DBHistory(DB):
 
     def get_solo_history_all_time(self, username: str):
         LOG.debug(f"Collect solo history for {username}.")
-        d = datetime.today() - timedelta(days=90)
 
         return self.collection.find(
             {
@@ -165,18 +168,6 @@ class DBHistory(DB):
             .sort("date", -1)
             .limit(limit)
         )
-
-
-class DBGamesStats(DB):
-
-    def extract_top_players(self, limit: int = 10):
-        return self.collection_players.find().sort("value", -1).limit(limit)
-
-    def extract_maps(self):
-        return self.collection_maps.find({}).sort("value.total_games", -1)
-
-    def extract_races(self):
-        return self.collection_races.find()
 
 
 class OpponentsDB(DB):
@@ -224,9 +215,26 @@ class NotablePlayersDB(DBConnection):
         return players
 
 
-class UserNameSearchDB(DB):
-    def search(self, username: str):
-        regx = re.compile(".*" + username + ".*", re.IGNORECASE)
-        players = self.collection_players.find({"_id": regx}
-            ).sort("value", -1).limit(5)
-        return [p['_id'] for p in players]
+class UsernamesDB(DB):
+    def insert(self, username: str):
+        self.collection_usernames.insert({
+            '_id': username,
+            'value': username.lower()
+        })
+
+    def is_exist(self, username: str) -> str:
+        return self.collection_usernames.find_one({
+            'value': username.lower()
+        })
+
+    def search(self, username: str) -> List:
+        results = self.collection_usernames.find(
+            {'value': {
+                '$regex': username}}).limit(10)
+        if not results:
+            return []
+        return [str(u['_id']) for u in results]
+
+    def insert_if_not_exist(self, username: str):
+        if not self.is_exist(username):
+            self.insert(username)
