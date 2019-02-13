@@ -152,7 +152,7 @@ header .header_inside {
     color: #ffffff;
 }
 header #search_input {
-    width: 240px;
+    width: 235px;
     height: 40px;
     border-radius: 4px;
     background-color: rgba(216, 216, 216, 0.15);
