@@ -1,0 +1,100 @@
+version: '3'
+services:
+  nginx_proxy:
+    build: ./nginx_proxy/
+    restart: always
+    ports:
+      - "80:80"
+  uwsgi:
+    build:
+      context: ./wc3rivals_backend/
+      dockerfile: Dockerfile-uwsgi
+    restart: always
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+  webui:
+    build: ./wc3rivals_vue/
+    restart: always
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+
+  us_west:
+    build: ./wc3rivals_backend/
+    restart: always
+    environment:
+      WC3IMONGOGATEWAY: Lordaeron
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-parser --debug
+  us_east:
+    image: registry.gitlab.com/vegasq/wc3rivals:us_east
+    build: ./wc3rivals_backend/
+    restart: always
+    environment:
+      WC3IMONGOGATEWAY: Azeroth
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-parser --debug
+  europe:
+    image: registry.gitlab.com/vegasq/wc3rivals:europe
+    build: ./wc3rivals_backend/
+    restart: always
+    environment:
+      WC3IMONGOGATEWAY: Northrend
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-parser --debug
+  us_west_old:
+    image: registry.gitlab.com/vegasq/wc3rivals:us_west_old
+    build: ./wc3rivals_backend/
+    restart: always
+    environment:
+      WC3IMONGOGATEWAY: Lordaeron
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-parser --debug --old
+  us_east_old:
+    image: registry.gitlab.com/vegasq/wc3rivals:us_east_old
+    build: ./wc3rivals_backend/
+    restart: always
+    environment:
+      WC3IMONGOGATEWAY: Azeroth
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-parser --debug --old
+  europe_old:
+    image: registry.gitlab.com/vegasq/wc3rivals:europe_old
+    build: ./wc3rivals_backend/
+    restart: always
+    environment:
+      WC3IMONGOGATEWAY: Northrend
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-parser --debug --old
+
+  create_lowercase_names:
+    build: ./wc3rivals_backend/
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-check-lowercase
+#  stats:
+#    image: registry.gitlab.com/vegasq/wc3rivals:stats
+#    build: ./wc3rivals_backend/
+#    restart: always
+#    environment:
+#      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+#      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+#      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+#      CMD: wc3rivals-stats
