@@ -20,7 +20,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'wc3rivals-parser=wc3rivals.spider:main',
-            'wc3rivals-check-lowercase=wc3rivals.utils.create_lower_players:up'
+            'wc3rivals-db-manage=wc3rivals.utils.index_creation:up'
         ],
     },
     install_requires=[

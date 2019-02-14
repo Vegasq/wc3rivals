@@ -86,13 +86,14 @@ services:
       WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
       CMD: wc3rivals-parser --debug --old
 
-  # create_lowercase_names:
-  #   build: ./wc3rivals_backend/
-  #   environment:
-  #     WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
-  #     WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
-  #     WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
-  #     CMD: wc3rivals-check-lowercase
+  db_manage:
+    build: ./wc3rivals_backend/
+    image: registry.gitlab.com/vegasq/wc3inside:db_manage
+    environment:
+      WC3IMONGOHOSTNAME: ${WC3IMONGOHOSTNAME}
+      WC3IMONGOUSERNAME: ${WC3IMONGOUSERNAME}
+      WC3IMONGOPASSWORD: ${WC3IMONGOPASSWORD}
+      CMD: wc3rivals-db-manage
 #  stats:
 #    image: registry.gitlab.com/vegasq/wc3rivals:stats
 #    build: ./wc3rivals_backend/
