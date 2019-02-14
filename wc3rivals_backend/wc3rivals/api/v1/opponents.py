@@ -97,8 +97,11 @@ class Opponents:
         return stats
 
     def get_history_among(self):
-        username_a = self.db.real_username(self.username_a)
-        username_b = self.db.real_username(self.username_b)
+        # username_a = self.db.real_username(self.username_a)
+        # username_b = self.db.real_username(self.username_b)
+        username_a = self.username_a
+        username_b = self.username_b
+
         all_games = [
             g for g in self.db.get_solo_games_with_users([username_a,
                                                           username_b])
@@ -107,7 +110,7 @@ class Opponents:
             game["date"] = str(game["date"]),
             del game['_id']
         return all_games
-    
+
     def generate_response(self):
         resp = []
         if self.username_b:

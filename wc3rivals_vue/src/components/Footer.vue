@@ -43,11 +43,11 @@
 footer {
     font-family: Roboto;
     font-size: 10px;
-    font-weight: normal;
+    font-weight: 400;
     font-style: normal;
     font-stretch: normal;
     line-height: 1.4;
-    letter-spacing: 0.4px;
+    letter-spacing: .4px;
     color: #9c9c9c;
 }
 h3 {
@@ -55,7 +55,7 @@ h3 {
 }
 
 footer section {
-    margin-top: 3em;
+    margin-top: 100px;
     margin-bottom: 2em;
     float:left;
 }

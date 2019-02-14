@@ -26,7 +26,7 @@
 
                 <td>{{ player.total_games }}</td>
                 <td>{{ player.kdr }}</td>
-                <td>{{ player.gateway }}</td>
+                <td>{{ gw_id_to_name(player.gateway) }}</td>
                 <td>
                     <img class="twitch_icon" src="../assets/twitch.png"> 
                     <a class="twitch_link"
@@ -59,12 +59,21 @@ export default {
 
 },
     methods: {
-      playerIconURL: function(race){
-        var sex = ['male', 'female'];
-        var rand = sex[Math.floor(Math.random() * sex.length)];
+        playerIconURL: function(race){
+            var sex = ['male', 'female'];
+            var rand = sex[Math.floor(Math.random() * sex.length)];
 
-        return require('../assets/' + race + '_' + rand + '.png');
-      },
+            return require('../assets/' + race + '_' + rand + '.png');
+        },
+        gw_id_to_name: function(server){
+            var map = {
+                'europe': 'Europe',
+                'us_west': 'US West',
+                'us_east': 'US East'
+            };
+            return map[server];
+        },
+
     }
 }
 </script>

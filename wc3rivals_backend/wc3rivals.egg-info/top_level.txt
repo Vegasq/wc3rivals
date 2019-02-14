@@ -1,2 +1,0 @@
-wc3rivals
-wc3rivals/utils/

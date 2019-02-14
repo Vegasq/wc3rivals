@@ -36,6 +36,9 @@ export default {
             }, 300);
         },
         onsearchinput: function(event){
+            if (this.search_input.length < 3) {
+                return;
+            }
             if (event.which == 13) {
                 this.api_call(this.search_input, true);
             } else {
@@ -79,7 +82,7 @@ export default {
             <span class="header_wc3">WC3</span>
             <span class="header_inside">RIVALS</span>
         </router-link>
-        <img class="glass_icon" src="../assets/glass.svg"><input id="search_input" v-model="search_input" v-on:keyup="onsearchinput" v-on:focusout="close_search_dropdown" placeholder="f.e. FollowGrubby">
+        <img class="glass_icon" src="../assets/glass.svg"><input id="search_input" v-model="search_input" v-on:keyup="onsearchinput" v-on:focusout="close_search_dropdown" placeholder="e.g. FollowGrubby">
         <div id="search_dropdown" v-if="search_dropdown_active">
             <div id="search_drop_down">
                 <div v-for="player in found_players" :key="player">

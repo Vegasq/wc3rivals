@@ -7,6 +7,12 @@ export default {
             api_response: [],
             username: "",
             gateway: "",
+            race: "random",
+            gw_id_to_name: {
+                'europe': 'Europe',
+                'us_west': 'US West',
+                'us_east': 'US East'
+            }
         }
     },
     mounted: function(){
@@ -25,9 +31,9 @@ export default {
             axios
                 .get('/v1/enemies/'+this.$route.params.gateway+'/'+this.$route.params.username)
                 .then(response => (this.api_response = response.data));
-
-},
+        },
         playerIconURL: function(race){
+            race = this.get_race(race);
             var sex = ['male', 'female'];
             var rand = sex[Math.floor(Math.random() * sex.length)];
 
@@ -35,6 +41,21 @@ export default {
         },
         resultsIconURL: function(result){
             return require('../assets/' + result + '.svg');
+        },
+        get_race: function (input_race) {
+            input_race = input_race.toLowerCase();
+            input_race = input_race.split(" ").join("");
+
+            if (input_race.indexOf("orc") !== -1) {
+                return "orc";
+            } else if (input_race.indexOf("nightelf") !== -1) {
+                return "nightelf";
+            } else if (input_race.indexOf("human") !== -1) {
+                return "human";
+            } else if (input_race.indexOf("undead") !== -1) {
+                return "undead";
+            }
+            return "random";
         }
     },
     watch: {
@@ -68,22 +89,6 @@ export default {
                 return sex_list[Math.floor(Math.random() * sex_list.length)];
             }
 
-            function get_race(input_race) {
-                input_race = input_race.toLowerCase();
-                input_race = input_race.split(" ").join("");
-
-                if (input_race.indexOf("orc") !== -1) {
-                    return "orc";
-                } else if (input_race.indexOf("nightelf") !== -1) {
-                    return "nightelf";
-                } else if (input_race.indexOf("human") !== -1) {
-                    return "human";
-                } else if (input_race.indexOf("undead") !== -1) {
-                    return "undead";
-                }
-                return "random";
-            }
-
             var rows = [];
             for (var i = 0; i < val.length; i++) {
                 var result_icon = detect_result(val[i][1]);
@@ -94,8 +99,10 @@ export default {
                 var race = "";
                 if (opponent == players_data[0]["username"]){
                     race = players_data[0]["race"];
+                    this.race = players_data[1]["race"];
                 } else {
                     race = players_data[1]["race"];
+                    this.race = players_data[0]["race"];
                 }
 
                 rows.push({
@@ -105,12 +112,11 @@ export default {
                     "last_game": last_game,
                     "result_icon": result_icon,
                     "avg_game": avg,
-                    "race": get_race(race),
+                    "race": this.get_race(race),
                     "sex": get_random_sex(),
                     // "gateway": this.gateway
                 });
             }
-
             this.records = rows;
         }
     },
@@ -128,7 +134,10 @@ export default {
             <thead>
                 <tr>
                     <th colspan="5">
-                        {{ username }}#{{ gateway }}
+                        <img class="race_icon table_header_icon"
+                            v-bind:src="playerIconURL(this.race)">
+                        {{ username }}
+                        <span class="table_header_gateway">{{ gw_id_to_name[gateway] }}</span>
                     </th>
                 </tr>
                 <tr>
@@ -197,13 +206,28 @@ export default {
 
 }
 #enemies_table thead tr:nth-child(1) th {
-    text-align: center;
+    text-align: left;
     font-size: 20px;
     font-weight: bold;
     font-style: normal;
     font-stretch: normal;
     color: #f0f0f0;
 }
+#enemies_table thead tr:nth-child(1) th img.table_header_icon {
+    top: 8px;
+    padding-right: 5px;
+}
+#enemies_table thead tr:nth-child(1) th span.table_header_gateway {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
 #enemies_table thead tr:nth-child(1){
     border-bottom: 0;
 }

@@ -23,15 +23,6 @@ export default {
 </template>
 
 <style>
-body {
-  padding: 0;
-  margin: 0;
-  background-image: url('./assets/bg.png');
-}
-#top_container {
-    width:800px;
-    margin: 0 auto;
-}
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -79,5 +70,18 @@ q:before, q:after {
 table {
     border-collapse: collapse;
     border-spacing: 0;
+}
+
+/* end of null.css */
+
+body {
+  padding: 0;
+  margin: 0;
+  background-image: url('./assets/bg.png');
+}
+
+#top_container {
+    width:800px;
+    margin: 0 auto;
 }
 </style>
