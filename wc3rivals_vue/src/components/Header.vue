@@ -12,8 +12,8 @@ export default {
                 'us_west': 'US West',
                 'us_east': 'US East'
             },
-            found_players: [],
-            search_input: ""
+            search_input: "",
+            redirect_to_single: false
         }
     },
     methods: {
@@ -36,42 +36,44 @@ export default {
             }, 300);
         },
         onsearchinput: function(event){
-            if (this.search_input.length < 3) {
+            if (this.search_input.length <= 3) {
                 return;
             }
             if (event.which == 13) {
-                this.api_call(this.search_input, true);
+                this.redirect_to_single = true;
+                this.api_call();
             } else {
-                this.api_call(this.search_input, false);
+                this.redirect_to_single = false;
+                this.api_call(false);
                 this.search_dropdown_active = true;
             }
         },
         search_button_pressed: function(){
-            this.api_call(this.search_input, true);
+            this.redirect_to_single = true;
+            this.api_call();
             this.search_dropdown_active = true;
         },
-        api_call: function(name, redirect_to_single){
-            var self = this;
-
-            var callback = function(response){
-                self.found_players = response.data
-                if (redirect_to_single && self.found_players.length == 1) {
-                    self.search_dropdown_active = false;
-                    self.search_input = self.found_players[0];
-                    self.$router.push({'name': 'rivals', 'params': {'gateway': self.current_gateway, username: self.found_players[0]}});
-                }
+        api_call: function(){
+            this.$store.dispatch(
+                'getUsernames',
+                {'gateway': this.current_gateway,
+                 'username': this.search_input});
+        },
+    },
+    watch: {
+        usernames: function(){
+            if (this.redirect_to_single === true && this.usernames.length === 1){
+                this.search_dropdown_active = false;
+                this.$router.push({'name': 'rivals', 'params': {
+                    'gateway': this.current_gateway, username: this.usernames[0]}});
             }
-
-            // axios
-            //     .get('/v1/usernames/'+this.current_gateway+"/"+name)
-            //     .then(callback,
-            //           (error) => axios.get('http://127.0.0.1:5000/v1/usernames/'+this.current_gateway+"/"+name)
-            //                           .then(callback));
-            axios
-                .get('/v1/usernames/'+this.current_gateway+"/"+name)
-                .then(callback);
         }
-    }
+    },
+    computed: {
+        usernames: function(){
+            return this.$store.state.v1_usernames
+        }
+    },
 }
 </script>
 
@@ -85,12 +87,12 @@ export default {
         <img class="glass_icon" src="../assets/glass.svg"><input id="search_input" v-model="search_input" v-on:keyup="onsearchinput" v-on:focusout="close_search_dropdown" placeholder="e.g. FollowGrubby">
         <div id="search_dropdown" v-if="search_dropdown_active">
             <div id="search_drop_down">
-                <div v-for="player in found_players" :key="player">
+                <div v-for="player in usernames" :key="player">
                     <router-link :to="{ name: 'rivals', params: {gateway: current_gateway, username: player}}">
                         {{ player }}
                     </router-link>
                 </div>
-                <div v-if="found_players.length == 0">
+                <div v-if="usernames.length == 0">
                     Not found
                 </div>
             </div>

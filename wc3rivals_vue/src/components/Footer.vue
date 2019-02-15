@@ -1,21 +1,12 @@
 <script>
-    import axios from 'axios'
     export default {
-        data: function() {
-            return {
-                db_stats: []
+        computed: {
+            db_stats: function(){
+                return this.$store.state.v1_db_stats;
             }
         },
         mounted() {
-            // axios
-            //     .get('/v1/db/stats')
-            //     .then((response) => (this.db_stats = response.data),
-            //           (error) => axios.get('http://127.0.0.1:/v1/db/stats')
-            //                           .then(response => (this.db_stats = response.data)));
-
-            axios
-                .get('/v1/db/stats')
-                .then((response) => (this.db_stats = response.data));
+            this.$store.dispatch('getDBStats');
         }
     }
 </script>
