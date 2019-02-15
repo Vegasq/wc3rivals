@@ -1,7 +1,27 @@
-.idea
 .env
-build
-dist
-geoip
-wc3inside.egg-info
-wc3inside/settings.py
+wc3rivals_vue/.DS_Store
+wc3rivals_vue/node_modules
+wc3rivals_backend/build/lib
+wc3rivals_backend/wc3rivals.egg-info/
+wc3rivals_backend/wc3rivals/api/v1/__pycache__/
+
+# local env files
+wc3rivals_vue/.env.local
+wc3rivals_vue/.env.*.local
+
+# Log files
+wc3rivals_vue/npm-debug.log*
+wc3rivals_vue/yarn-debug.log*
+wc3rivals_vue/yarn-error.log*
+
+*.egg-info
+wc3rivals_backend/dist/wc3rivals-0.0.1/
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*

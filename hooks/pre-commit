@@ -1,3 +1,2 @@
 ./build.sh
-git add wc3inside/dist/*
 exit 0
