@@ -113,15 +113,15 @@ class DB(DBConnection):
             {"$and": [{"game_id": {"$gte": low}}, {"game_id": {"$lte": high}}]}
         ).sort("game_id", 1)
 
-    def real_username(self, username: str):
-        game = self.collection.find_one({"players_lower": username.lower()})
-        if not game:
-            raise Exception(f"User {username} not found in {self._gateway}.")
-        for player in game['players']:
-            if player.lower() == username.lower():
-                return player
-        LOG.error(f"Can't find real username for {username}")
-        return username
+    # def real_username(self, username: str):
+    #     game = self.collection.find_one({"players_lower": username.lower()})
+    #     if not game:
+    #         raise Exception(f"User {username} not found in {self._gateway}.")
+    #     for player in game['players']:
+    #         if player.lower() == username.lower():
+    #             return player
+    #     LOG.error(f"Can't find real username for {username}")
+    #     return username
 
 
 class HistoryDB(DB):
@@ -227,6 +227,11 @@ class UsernamesDB(DB):
             'value': username.lower()
         })
 
+    def search_one(self, username: str) -> str:
+        return str(self.collection_usernames.find_one({
+            'value': username.lower()
+        })["_id"])
+
     def search(self, username: str) -> List:
         results = self.collection_usernames.find(
             {'value': {
@@ -238,3 +243,13 @@ class UsernamesDB(DB):
     def insert_if_not_exist(self, username: str):
         if not self.is_exist(username):
             self.insert(username)
+
+    # def real_username(self, username: str):
+    #     game = self.collection.find_one({"players_lower": username.lower()})
+    #     if not game:
+    #         raise Exception(f"User {username} not found in {self._gateway}.")
+    #     for player in game['players']:
+    #         if player.lower() == username.lower():
+    #             return player
+    #     LOG.error(f"Can't find real username for {username}")
+    #     return username

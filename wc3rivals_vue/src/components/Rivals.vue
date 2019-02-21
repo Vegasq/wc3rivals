@@ -1,10 +1,9 @@
 <script>
-import axios from 'axios'
 export default {
     data() {
         return {
             records: [],
-            api_response: [],
+            // api_response: [],
             username: "",
             gateway: "",
             race: "random",
@@ -28,9 +27,13 @@ export default {
             //     .then(response => (this.api_response = response.data),
             //           error => axios.get('http://127.0.0.1:5000/v1/enemies/'+this.$route.params.gateway+'/'+this.$route.params.username)
             //                         .then(response => (this.api_response = response.data)));
-            axios
-                .get('/v1/enemies/'+this.$route.params.gateway+'/'+this.$route.params.username)
-                .then(response => (this.api_response = response.data));
+            // axios
+            //     .get('/v1/enemies/'+this.$route.params.gateway+'/'+this.$route.params.username)
+            //     .then(response => (this.api_response = response.data));
+            this.$store.dispatch(
+                'getEnemies',
+                {'gateway': this.gateway,
+                 'username': this.username});
         },
         playerIconURL: function(race){
             race = this.get_race(race);
@@ -64,7 +67,7 @@ export default {
             this.gateway = to.params.gateway;
             this.call_api();
         },
-        api_response: function(val) {
+        enemies: function(val) {
             function detect_result(info) {
                 var result = "even";
                 if (info["win"] > info["loss"]) {
@@ -121,23 +124,22 @@ export default {
         }
     },
     computed: {
-        is_rivals_page(){
-            return window.location.href.indexOf("/u/") !== -1 === true;
+        enemies: function(){
+            return this.$store.getters.getEnemies;
         }
     }
 }
 </script>
 
 <template>
-    <div id="rivals_vue" v-if="is_rivals_page">
+    <div id="rivals_vue">
         <table id="enemies_table">
             <thead>
                 <tr>
                     <th colspan="5">
                         <img class="race_icon table_header_icon"
                             v-bind:src="playerIconURL(this.race)">
-                        {{ username }}
-                        <span class="table_header_gateway">{{ gw_id_to_name[gateway] }}</span>
+                        {{ username }}<span class="table_header_gateway">@{{ gw_id_to_name[gateway] }}</span>
                     </th>
                 </tr>
                 <tr>
@@ -184,7 +186,7 @@ export default {
 
 #enemies_table thead {
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;

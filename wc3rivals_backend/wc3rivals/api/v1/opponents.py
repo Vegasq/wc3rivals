@@ -1,9 +1,12 @@
 import copy
+import time
 import json
 from typing import List, Dict
 
 from wc3rivals.utils.db import OpponentsDB
+from wc3rivals.utils.db import UsernamesDB
 from wc3rivals.utils import utils
+from wc3rivals.utils.log import LOG
 
 
 class MatchObject:
@@ -34,6 +37,7 @@ class Opponents:
     def __init__(self, gateway: str, username_a: str, username_b: str = None):
         self.gateway = utils.GATEWAY_MAP[gateway]
         self.db = OpponentsDB(self.gateway)
+        self.udb = UsernamesDB(self.gateway)
         self.username_a = username_a
         self.username_b = username_b
 
@@ -64,11 +68,12 @@ class Opponents:
         return stats
 
     def get_stats(self) -> List:
-        username = self.db.real_username(self.username_a)
+        username = self.udb.search_one(self.username_a)
         all_games = [
             MatchObject(g, username)
             for g in self.db.get_solo_games_by_user(username)
         ]
+
         enemies = []
         for game in all_games:
             enemies += game.get_enemies()

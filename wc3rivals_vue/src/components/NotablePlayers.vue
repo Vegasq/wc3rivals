@@ -92,7 +92,7 @@ export default {
 
 #notable_players_table thead {
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;

@@ -1,6 +1,4 @@
 <script>
-import axios from 'axios'
-
 export default {
     data: function() {
         return {
@@ -57,7 +55,7 @@ export default {
             this.$store.dispatch(
                 'getUsernames',
                 {'gateway': this.current_gateway,
-                 'username': this.search_input});
+                 'username': this.search_input.toLowerCase()});
         },
     },
     watch: {
@@ -71,7 +69,7 @@ export default {
     },
     computed: {
         usernames: function(){
-            return this.$store.state.v1_usernames
+            return this.$store.getters.getUsernames;
         }
     },
 }
@@ -89,7 +87,7 @@ export default {
             <div id="search_drop_down">
                 <div v-for="player in usernames" :key="player">
                     <router-link :to="{ name: 'rivals', params: {gateway: current_gateway, username: player}}">
-                        {{ player }}
+                        <div>{{ player }}</div>
                     </router-link>
                 </div>
                 <div v-if="usernames.length == 0">
@@ -170,6 +168,7 @@ header #search_input {
     padding-left: 45px;
     outline: none;
     left: -20px;
+    margin-right: 2px;
 }
 header .glass_icon {
     position: relative;
@@ -285,8 +284,14 @@ header #region_button img {
     z-index: 1;
 }
 
-#search_drop_down div {
-    line-height: 25px;
+#search_drop_down > div {
+    line-height: 30px;
+    height: 30px;
+    /* border: 1px solid red; */
+}
+#search_drop_down > div > div {
+    width: 100%;
+    height: 100%;
 }
 #search_drop_down a {
     text-decoration: none;
@@ -299,6 +304,7 @@ header #region_button img {
 div#select_region, div#search_dropdown {
     position: relative;
     display: inline;
+    z-index: 1;
 }
 div#select_region > div, div#search_dropdown > div {
     position: absolute;

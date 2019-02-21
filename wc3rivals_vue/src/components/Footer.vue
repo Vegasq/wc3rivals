@@ -2,7 +2,7 @@
     export default {
         computed: {
             db_stats: function(){
-                return this.$store.state.v1_db_stats;
+                return this.$store.getters.getDBStats;
             }
         },
         mounted() {

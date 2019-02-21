@@ -1,16 +1,19 @@
 <script>
-    import axios from 'axios'
     export default {
-        data: function() {
-            return {
-                gateway: "",
-                history: []
-            }
-        },
         mounted() {
-            var self = this;
-            var callback = function(response){
-                self.gateway = self.$route.params.gateway;
+            this.$store.dispatch('getHistory', {
+                'gateway': this.$route.params.gateway,
+                'username_a': this.$route.params.username_a,
+                'username_b': this.$route.params.username_b
+            });
+        },
+        computed: {
+            gateway: function(){
+                return this.$route.params.gateway;
+            },
+            history: function(){
+                var data = this.$store.getters.getHistory;
+
                 function compare(a, b) {
                     if (a.username < b.username)
                         return -1;
@@ -18,38 +21,30 @@
                         return 1;
                     return 0;
                 }
-                for (var i=0; i<response.data.length; i++){
+                for (var i=0; i<data.length; i++){
                     // Sort players within history
-                    response.data[i].players_data = response.data[i].players_data.sort(compare);
+                    data[i].players_data = data[i].players_data.sort(compare);
 
                     // Date without H:M:S
-                    response.data[i].date_short = response.data[i].date[0].split(" ")[0];
+                    data[i].date_short = data[i].date[0].split(" ")[0];
 
-                    response.data[i].players_data[0].result = response.data[i].players_data[0].result.toLowerCase()
-                    response.data[i].players_data[1].result = response.data[i].players_data[1].result.toLowerCase()
+                    data[i].players_data[0].result = data[i].players_data[0].result.toLowerCase()
+                    data[i].players_data[1].result = data[i].players_data[1].result.toLowerCase()
 
                     // XP earnings prepend with +
-                    var p0_xp = response.data[i].players_data[0].xp_diff;
-                    var p1_xp = response.data[i].players_data[1].xp_diff;
+                    var p0_xp = data[i].players_data[0].xp_diff;
+                    var p1_xp = data[i].players_data[1].xp_diff;
                     if (p0_xp > 0){
-                        response.data[i].players_data[0].xp_diff = "+" + p0_xp;
+                        data[i].players_data[0].xp_diff = "+" + p0_xp;
                     }
                     if (p1_xp > 0){
-                        response.data[i].players_data[1].xp_diff = "+" + p1_xp;
+                        data[i].players_data[1].xp_diff = "+" + p1_xp;
                     }
                 }
-                self.history = response.data;
-                self.history.reverse();
-            };
-
-            // axios
-            //     .get('/v1/history/'+this.$route.params.gateway+'/'+this.$route.params.username_a+'/'+this.$route.params.username_b)
-            //     .then(callback,
-            //           error => axios.get('http://127.0.0.1:/v1/history/'+this.$route.params.gateway+'/'+this.$route.params.username_a+'/'+this.$route.params.username_b)
-            //                         .then(callback));
-            axios
-                .get('/v1/history/'+this.$route.params.gateway+'/'+this.$route.params.username_a+'/'+this.$route.params.username_b)
-                .then(callback);
+                // this.history = data;
+                data.reverse();
+                return data;
+            }
         },
         methods: {
             fixMapName: function(map){
@@ -94,217 +89,151 @@
     <table id="history_table">
         <thead>
             <tr v-if="history[0]">
-                <th>
-                    <router-link :to="{ name: 'rivals', params: {gateway: gateway, username: history[0].players_data[0].username}}">
-                        <img class="race_icon" v-bind:src="playerIconURL(history[0].players_data[1].race)">
-                        {{history[0].players_data[0].username}}
-                    </router-link>
+                <th colspan="7">
+                    <div>
+                        <router-link :to="{ name: 'rivals', params: {gateway: gateway, username: history[0].players_data[0].username}}">
+                            <img class="race_icon" v-bind:src="playerIconURL(history[0].players_data[1].race)">
+                            {{history[0].players_data[0].username}}
+                        </router-link>
+                    </div>
+                    <div>
+                        <div class="vs_sign">vs</div>
+                    </div>
+                    <div>
+                        <router-link :to="{ name: 'rivals', params: {gateway: gateway, username: history[0].players_data[1].username}}">
+                            {{history[0].players_data[1].username}}
+                            <img class="race_icon" v-bind:src="playerIconURL(history[0].players_data[1].race)">
+                        </router-link>
+                    </div>
                 </th>
-                <th><div>vs</div></th>
-                <th>
-                    <router-link :to="{ name: 'rivals', params: {gateway: gateway, username: history[0].players_data[1].username}}">
-                        <img class="race_icon" v-bind:src="playerIconURL(history[0].players_data[1].race)">
-                        {{history[0].players_data[1].username}}
-                    </router-link>
-                </th>
+            </tr>
+            <tr>
+                <th>RESULT</th>
+                <th>RACE</th>
+                <th>DATE</th>
+                <th>LENGTH</th>
+                <th>MAP NAME</th>
+                <th>RACE</th>
+                <th>RESULT</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="record in history" :key="record.date[0]">
-
-                <td class="player_column">
-                    <div v-bind:class="'icon_'+record.players_data[0].result">
-                        <img class="race_icon" v-bind:src="playerIconURL(record.players_data[0].race)">
-                    </div>
-                    <div v-bind:class="'xp_'+record.players_data[0].result">
-                        <p><b>LEVEL:</b> {{ record.players_data[0].level }} ({{ record.players_data[0].xp }} XP)</p>
-                        <p><b>RESULT:</b> {{ record.players_data[0].result }} </p>
-                        <p><b>CHANGE:</b> {{ record.players_data[0].xp_diff }} XP</p>
-                    </div>
-
-                </td>
-
-                <td class="map_column">
-                    <section>
-                        <img v-bind:src="mapURL(record.map)">
-                        <div>
-                            <p><b>{{ fixMapName(record.map) }}</b></p>
-                            <p>{{record.date_short}}</p>
-                            <p>{{record.length}} minutes</p>
-                        </div>
-                    </section>
-                </td>
-
-                <td class="player_column">
-                    <div v-bind:class="'icon_'+record.players_data[1].result">
-                        <img class="race_icon" v-bind:src="playerIconURL(record.players_data[1].race)">
-                    </div>
-                    <div v-bind:class="'xp_'+record.players_data[1].result">
-                        <p><b>LEVEL:</b> {{ record.players_data[1].level }} ({{ record.players_data[1].xp }} XP)</p>
-                        <p><b>RESULT:</b> {{ record.players_data[1].result }} </p>
-                        <p><b>CHANGE:</b> {{ record.players_data[1].xp_diff }} XP</p>
-                    </div>
-                </td>
+                <td class="player_col"><img class="result_icon" v-if="record.players_data[0].result == 'win'" v-bind:src="require('../assets/green.svg')"></td>
+                <td class="player_col"><img class="race_icon" v-bind:src="playerIconURL(record.players_data[0].race)"></td>
+                <td>{{record.date_short}}</td>
+                <td>{{record.length}} min</td>
+                <td class="map_name">{{ fixMapName(record.map) }}</td>
+                <td class="player_col"><img class="race_icon" v-bind:src="playerIconURL(record.players_data[1].race)"></td>
+                <td class="player_col"><img class="result_icon" v-if="record.players_data[1].result == 'win'" v-bind:src="require('../assets/green.svg')"></td>
             </tr>
         </tbody>
     </table>
 
 </template>
 
-<style scoped>
-#history_table {
-    width: 100%;
-}
-#history_table thead tr th img {
-    width: 30px;
-    height: 30px;
+<style lang="sass" scoped>
+%header-font
+    font-family: Roboto
+    font-size: 14px
+    font-weight: 400
+    font-style: normal
+    font-stretch: normal
+    line-height: normal
+    letter-spacing: 0.4px
+    color: #ffffff
 
-    position: relative;
-    top: 7px;
-}
-#history_table thead tr th:nth-child(1),
-#history_table thead tr th:nth-child(3) {
-    font-family: Roboto;
-    font-size: 20px;
-    font-weight: 400;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.5px;
-    color: #ffffff;
-}
+%regular-font
+    font-family: Roboto
+    font-size: 16px
+    font-weight: 300
+    font-style: normal
+    font-stretch: normal
+    line-height: normal
+    letter-spacing: 0.4px
+    color: #ffffff
 
-#history_table thead tr th:nth-child(1) a,
-#history_table thead tr th:nth-child(3) a {
-    text-decoration: none;
-    color: #ffffff;
-}
+#history_table
+    width: 100%
 
-#history_table thead tr th:nth-child(2) div {
-    width: 50px;
-    height: 50px;
-    margin: 0 auto;
-    border: 2px solid #54ea7c;
-    border-radius: 30px;
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 400;
-    font-style: normal;
-    font-stretch: normal;
-    letter-spacing: 0.4px;
-    color: #f0f0f0;
-    line-height: 50px;
-    margin-bottom: 50px;
-}
+    tr
+        height: 50px
+        line-height: 50px
+        border-bottom: 1px solid #6d6d6d
 
-.map_column {
+        td
+            padding-left: 20px
 
-    width: 300px;
-    height: 100px;
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: normal;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.4px;
-    color: #f0f0f0;
-}
-.player_column {
-    width: 250px;
-    border-bottom: 1px solid gray;
-    border-top: 1px solid gray;
-    background-color: rgba(216, 216, 216, 0.05);
-}
-.player_column:nth-child(1) div:nth-child(1) {
-    float:left;
-}
-.player_column:nth-child(1) div:nth-child(1) {
-    float:right;
-}
+    thead
+        @extend %header-font
+        text-align: left
 
-#history_table > tbody > tr > td:nth-child(1) > div {
-    float: left;
-}
-#history_table > tbody > tr > td:nth-child(3) > div {
-    float: right;
-}
+        tr
+            &:nth-child(2)
+                th
+                    padding-left: 20px
 
-.player_column div img {
-    padding: 15px;
-    width: 60px;
-    height: 60px;
-}
+            &:nth-child(1)
+                border-bottom: 0px
+                div
+                    &:nth-child(1),
+                    &:nth-child(2),
+                    &:nth-child(3)
+                        float: left
 
-.map_column > section > div:nth-child(1) {
-    float: left;
-    width: 80px;
-    padding-left: 33px;
-    padding-right: 20px;
+                    &:nth-child(1)
+                        text-align: left
 
-}
+                    &:nth-child(3)
+                        text-align: right
 
-.map_column > section > img {
-    max-width: 80px;
-    max-height: 80px;
-    float: left;
-    padding: 10px 20px 10px 30px;
-}
 
-.map_column > section > div:nth-child(2) {
-    padding-top: 10px;
-    float: left;
-    width: 140px;
-}
-.map_column > section > div:nth-child(2) > p:nth-child(1) {
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 400;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.4px;
-    color: #f0f0f0;
-}
-.map_column > section > div:nth-child(2) > p:nth-child(2) {
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 300;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.4px;
-    color: #f0f0f0;
-}
-.map_column > section > div:nth-child(2) > p:nth-child(3) {
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 300;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.4px;
-    color: #f0f0f0;
-}
+                    &:nth-child(1),
+                    &:nth-child(3)
+                        width: 375px
 
-.xp_win, .xp_loss {
-    line-height: 1.6em;
-    font-size: 12px;
-    font-weight: 300;
-    font-family: Roboto;
-    color: #f0f0f0;
+                        img.race_icon
+                            width: 40px
+                            height: 40px
+                            position: relative
+                            top: 10px
+                        a
+                            text-decoration: none
+                            font-family: Roboto
+                            font-size: 24px
+                            font-weight: 400
+                            color: #ffffff
 
-}
-.xp_win > p > b, .xp_loss > p > b{
-    font-weight: 400;
-}
-.xp_win {
-    /* color: #54ea7c; */
-    padding: 20px 20px 15px 15px;
-}
-.xp_loss {
-    padding: 20px 20px 15px 15px;
+                    &:nth-child(2)
+                        width: 50px
+                        .vs_sign
+                            width: 50px
+                            height: 50px
+                            margin: 0 auto
+                            border: 2px solid #54ea7c
+                            border-radius: 30px
+                            font-size: 16px
+                            font-weight: 400
+                            color: #f0f0f0
+                            line-height: 50px
+                            margin-bottom: 40px
+                            text-align: center;
 
-    /* color: #ea4335; */
-}
+    tbody
+        @extend %regular-font
+
+        .race_icon
+            width: 30px
+            height: 30px
+            top: 10px
+            position: relative
+        .result_icon
+            top: 10px
+            position: relative
+        .player_col
+            background-color: rgba(216, 216, 216, 0.05)
+            width: 70px
+        .map_name
+            color: #54ea7c
+
 </style>
