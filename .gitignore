@@ -4,6 +4,7 @@ wc3rivals_vue/node_modules
 wc3rivals_backend/build/lib
 wc3rivals_backend/wc3rivals.egg-info/
 wc3rivals_backend/wc3rivals/api/v1/__pycache__/
+wc3rivals_backend/wc3rivals/utils/__pycache__/
 
 # local env files
 wc3rivals_vue/.env.local
@@ -25,3 +26,7 @@ wc3rivals_backend/dist/wc3rivals-0.0.1/
 *.njsproj
 *.sln
 *.sw*
+wc3rivals.sublime-project
+wc3rivals.sublime-workspace
+
+dump

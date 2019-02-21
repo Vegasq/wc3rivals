@@ -28,7 +28,7 @@ const api = {
                 .then((response) => {
                     commit('GET_HISTORY', response.data);
                 }, (err) => {
-                    console.log(err);
+                    window.console.log(err);
                 });
         },
         // resetHistory: ({ commit }) => {
@@ -40,7 +40,7 @@ const api = {
                 .then((response) => {
                     commit('GET_DBSTATS', response.data);
                 }, (err) => {
-                    console.log(err);
+                    window.console.log(err);
                 });
         },
         getUsernames: ({ commit }, args) => {
@@ -49,7 +49,7 @@ const api = {
                 .then((response) => {
                     commit('GET_USERNAMES', response.data);
                 }, (err) => {
-                    console.log(err);
+                    window.console.log(err);
                 });
         },
         getEnemies: ({ commit }, args) => {
@@ -58,7 +58,7 @@ const api = {
                 .then((response) => {
                     commit('GET_ENEMIES', response.data);
                 }, (err) => {
-                    console.log(err);
+                    window.console.log(err);
                 });
         }
     },
