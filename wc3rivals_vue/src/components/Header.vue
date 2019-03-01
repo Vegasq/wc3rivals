@@ -23,7 +23,12 @@ export default {
             }
         },
         select_region: function(event){
-            this.current_gateway = event.toElement.id;
+            if (event.hasOwnProperty('toElement')) {
+                this.current_gateway = event.toElement.id;
+            } else {
+                // FireFox
+                this.current_gateway = event.target.id;
+            }
             this.activate_gateway_dropdown();
         },
         close_search_dropdown: function(){
