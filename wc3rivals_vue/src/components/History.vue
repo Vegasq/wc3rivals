@@ -92,7 +92,7 @@
                 <th colspan="7">
                     <div>
                         <router-link :to="{ name: 'rivals', params: {gateway: gateway, username: history[0].players_data[0].username}}">
-                            <img class="race_icon" v-bind:src="playerIconURL(history[0].players_data[1].race)">
+                            <img class="race_icon" v-bind:src="playerIconURL(history[0].players_data[0].race)">
                             {{history[0].players_data[0].username}}
                         </router-link>
                     </div>

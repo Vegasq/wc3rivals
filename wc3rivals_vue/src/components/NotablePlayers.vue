@@ -29,7 +29,7 @@
                 <td>{{ gw_id_to_name(player.gateway) }}</td>
                 <td>
                     <img class="twitch_icon" src="../assets/twitch.png"> 
-                    <a class="twitch_link"
+                    <a class="twitch_link" target="_blank"
                         v-bind:href="'https://twitch.tv/' + player.twitch">{{ player.twitch }}
                 </a></td>
 
@@ -48,11 +48,6 @@ export default {
         }
     },
     mounted() {
-        // axios
-        //     .get('/v1/notable_players')
-        //     .then(response => (this.players = response.data),
-        //           error => axios.get('http://127.0.0.1:5000/v1/notable_players')
-        //                         .then(response => (this.players = response.data)));
         axios
             .get('/v1/notable_players')
             .then(response => (this.players = response.data));
