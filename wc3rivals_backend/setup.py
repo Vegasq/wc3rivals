@@ -32,6 +32,6 @@ setuptools.setup(
         "requests==2.20.0",
         "urllib3==1.24.2",
         "flask==1.0.2",
-        "flask-cors==3.0.7"
+        "flask-cors==3.0.9"
     ]
 )
