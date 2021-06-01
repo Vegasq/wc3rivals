@@ -30,7 +30,7 @@ setuptools.setup(
         "idna==2.6",
         "pymongo==3.6.1",
         "requests==2.20.0",
-        "urllib3==1.24.2",
+        "urllib3==1.26.5",
         "flask==1.0.2",
         "flask-cors==3.0.7"
     ]
